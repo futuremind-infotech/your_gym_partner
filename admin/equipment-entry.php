@@ -159,7 +159,7 @@ header('location:../index.php');
               <label class="control-label">Cost Per Item: </label>
               <div class="controls">
                 <div class="input-append">
-                  <span class="add-on">$</span> 
+                  <span class="add-on">₹</span> 
                   <input type="number" placeholder="269" name="amount" class="span11" required>
                   </div>
               </div>

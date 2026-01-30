@@ -93,7 +93,7 @@ header('location:../index.php');
                 <td><div class='text-center'>".$row['name']."</div></td>
                 <td><div class='text-center'>".$row['description']."</div></td>
                 <td><div class='text-center'>".$row['quantity']."</div></td>
-                <td><div class='text-center'>$".$row['amount']."</div></td>
+                <td><div class='text-center'>₹".$row['amount']."</div></td>
                 <td><div class='text-center'>".$row['vendor']."</div></td>
                 <td><div class='text-center'>".$row['contact']."</div></td>
                 <td><div class='text-center'>".$row['date']."</div></td>

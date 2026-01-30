@@ -180,13 +180,13 @@ while($row=mysqli_fetch_array($result)){
               <div class="controls">
                 <label>
                   <input type="radio" value="Fitness" name="services" />
-                  Fitness <small>- $55 per month</small></label>
+                  Normal Gym <small>- ₹4000 per month</small></label>
                 <label>
                   <input type="radio" value="Sauna" name="services" />
-                  Sauna <small>- $35 per month</small></label>
+                  Trainer <small>- ₹3000 per month</small></label>
                 <label>
                   <input type="radio" value="Cardio" name="services" />
-                  Cardio <small>- $40 per month</small></label>
+                  Cardio + GYM <small>- ₹5000 per month</small></label>
               </div>
             </div>
 
@@ -194,7 +194,7 @@ while($row=mysqli_fetch_array($result)){
               <label class="control-label">Total Amount</label>
               <div class="controls">
                 <div class="input-append">
-                  <span class="add-on">$</span> 
+                  <span class="add-on">₹</span> 
                   <input type="number" value='<?php echo $row['amount']; ?>' name="amount" class="span11">
                   </div>
               </div>
