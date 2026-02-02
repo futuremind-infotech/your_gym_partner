@@ -14,7 +14,9 @@
 # ENVIRONMENT
 #--------------------------------------------------------------------
 
-# CI_ENVIRONMENT = production
+CI_ENVIRONMENT = development
+
+app.baseURL = 'http://localhost/yourproject/public/'
 
 #--------------------------------------------------------------------
 # APP
