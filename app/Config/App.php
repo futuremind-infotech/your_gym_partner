@@ -16,7 +16,20 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost:8080/';
+    public string $baseURL = '';
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Prefer an explicit value from the environment, fallback to a reasonable default
+        $envBase = env('app.baseURL');
+        if (! empty($envBase)) {
+            $this->baseURL = rtrim($envBase, '/') . '/';
+        } else {
+            $this->baseURL = 'http://localhost/your_gym_partner/public/';
+        }
+    }
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

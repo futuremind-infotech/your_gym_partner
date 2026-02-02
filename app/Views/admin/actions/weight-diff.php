@@ -19,3 +19,4 @@ $sql = "SELECT SUM( curr_weight - ini_weight) FROM members WHERE user_id='$id'";
 
                 
 ?>
+

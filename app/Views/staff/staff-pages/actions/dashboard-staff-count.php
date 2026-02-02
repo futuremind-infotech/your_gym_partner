@@ -16,3 +16,4 @@ $sql = "SELECT * FROM staffs";
 
                 echo "$query->num_rows";
 ?>
+

@@ -16,3 +16,4 @@ $sql = "SELECT * FROM attendance";
 
                 echo "$query->num_rows";
 ?><!-- Visit codeastro.com for more projects -->
+

@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+
 if(!isset($_SESSION['user_id'])){
 header('location:../index.php');	
 }
@@ -23,3 +23,4 @@ if($result){
 }
 }
 ?><!-- Visit codeastro.com for more projects -->
+

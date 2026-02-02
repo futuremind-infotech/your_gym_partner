@@ -16,3 +16,4 @@ $sql = "SELECT * FROM staffs WHERE designation='Trainer'";
 
                 echo "$query->num_rows";
 ?>
+

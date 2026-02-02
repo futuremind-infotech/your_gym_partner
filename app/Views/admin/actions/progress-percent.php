@@ -19,3 +19,4 @@ $sql = "SELECT SUM( (curr_weight - ini_weight) / ini_weight * 100) FROM members 
 
                 
 ?>
+

@@ -9,12 +9,11 @@ class Login extends BaseController
     {
         $username = $this->request->getPost('user');
         $password = md5($this->request->getPost('pass'));
-        
-        // Replace with your dbcon.php connection details
+
         $db = \Config\Database::connect();
         $query = $db->query("SELECT * FROM admin WHERE password=? AND username=?", [$password, $username]);
         $user = $query->getRowArray();
-        
+
         if ($user) {
             session()->set([
                 'user_id' => $user['user_id'],
@@ -23,7 +22,7 @@ class Login extends BaseController
             ]);
             return redirect()->to('dashboard');
         }
-        
+
         return redirect()->back()->with('error', 'Invalid credentials');
     }
 }

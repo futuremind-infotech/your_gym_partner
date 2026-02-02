@@ -16,3 +16,4 @@ $sql = "SELECT * FROM members WHERE status ='Active'";
 
                 echo "$query->num_rows";
 ?>
+

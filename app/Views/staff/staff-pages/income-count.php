@@ -17,3 +17,4 @@ $sql = "SELECT SUM( amount) FROM members";
         $totalRows_amountsum = mysqli_num_rows($amountsum);
         echo $row_amountsum['SUM( amount)'];
 ?>
+

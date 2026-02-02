@@ -1,4 +1,5 @@
-<?php session_start();
+<?php
+
 include('dbcon.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -174,3 +175,4 @@ include('dbcon.php'); ?>
     </body>
 
 </html>
+

@@ -12,3 +12,4 @@
     <li class="<?php if($page=='report'){ echo 'active'; }?>"><a href="my-report.php"><i class="icon icon-file"></i> <span>Reports</span></a></li>
   </ul>
 </div>
+
