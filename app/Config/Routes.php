@@ -28,6 +28,11 @@ $routes->get('logout', 'Auth::logout');
 // COMPREHENSIVE LEGACY ROUTE SHORTCUTS - Maps all legacy .php files to controllers
 // ============================================================================
 
+$routes->get('admin/generate_qr/(:num)', 'Admin::generate_qr/$1');
+$routes->get('admin/qr_scanner', 'Admin::qr_scanner');
+$routes->post('admin/mark_qr_attendance', 'Admin::mark_qr_attendance');
+$routes->get('admin/members', 'Admin::members');
+
 // ADMIN - Members Section
 $routes->match(['get', 'post'], 'members', 'Admin::members');
 $routes->match(['get', 'post'], 'members.php', 'Admin::members');
@@ -231,4 +236,17 @@ $routes->group('customer', [], static function ($routes) {
     $routes->get('pages/announcement', 'Customer::announcement');
     $routes->get('pages/customer-reminder', 'Customer::reminder');
     $routes->post('pages/register-cust', 'Customer::registerCustomer');
+    // Add these routes at the BOTTOM (before closing bracket)
+$routes->get('writable/qr_codes/(:any)', 'Admin::serve_qr/$1');
+$routes->get('writable/(:any)', 'Admin::serve_file/$1');
+// Fix old QR paths - ADD THIS LINE
+$routes->get('qr_(:num)', function($id) {
+    $qr_data = site_url('admin/mark_qr_attendance?user_id=' . $id);
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
+    return redirect()->to($qr_url);
+});
+// Handle old QR paths (qr_16 → live QR)
+$routes->get('qr_(:num)', 'Admin::old_qr/$1');
+
+
 });

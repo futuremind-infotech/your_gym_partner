@@ -1,183 +1,154 @@
 <?php
-
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+// CodeIgniter 4 session check
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/'); 
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
+<title>Gym System Admin - Members</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
 
-<!-- Visit codeastro.com for more projects -->
 <!--top-Header-menu-->
-<?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
+<?php include 'includes/topheader.php';?>
 
 <!--sidebar-menu-->
-<?php $page="members"; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
+<?php $page="members"; include 'includes/sidebar.php';?>
 
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="#" class="current">Registered Members</a> </div>
-    <h1 class="text-center">Registered Members List <i class="fas fa-group"></i></h1>
+    <div id="breadcrumb"> 
+      <a href="<?= site_url('admin') ?>"><i class="fas fa-home"></i> Home</a> 
+      <a href="#" class="current">Registered Members</a> 
+    </div>
+    <h1>Registered Members List <i class="fas fa-group"></i></h1>
   </div>
+  
   <div class="container-fluid">
     <hr>
-    <div class="row-fluid">
-      <div class="span12">
 
-      <div class='widget-box'>
-          <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
-            <h5>Member table</h5>
-          </div>
-          <div class='widget-content nopadding'>
-	  
-	  <?php
+    <?php
+    // ALL DATABASE QUERIES AT TOP - NO ERRORS!
+    $db = \Config\Database::connect();
+    $countQry = "SELECT COUNT(*) as total FROM members";
+    $countResult = $db->query($countQry);
+    $totalMembers = $countResult->getRow()->total ?? 0;
+    
+    $qry = "SELECT * FROM members ORDER BY dor DESC";
+    $result = $db->query($qry);
+    $members = $result->getResultArray();
+    ?>
 
-      include "dbcon.php";
-      $qry="select * from members";
-      $cnt = 1;
-        $result=mysqli_query($conn,$qry);
-
+    <div class='widget-box'>
+      <div class='widget-title'> 
+        <span class='icon'><i class='fas fa-th'></i></span>
+        <h5>Member table <span class="badge badge-success"><?= $totalMembers ?> Members</span></h5>
+      </div>
+      <div class='widget-content nopadding'>
         
-          echo"<table class='table table-bordered table-hover'>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Fullname</th>
-                  <th>Username</th>
-                  <th>Gender</th>
-                  <th>Contact Number</th>
-                  <th>D.O.R</th>
-                  <th>Address</th>
-                  <th>Amount</th>
-                  <th>Choosen Service</th>
-                  <th>Plan</th>
-                </tr>
-              </thead>";
-              
-            while($row=mysqli_fetch_array($result)){
-            
-            echo"<tbody> 
-               
-                <td><div class='text-center'>".$cnt."</div></td>
-                <td><div class='text-center'>".$row['fullname']."</div></td>
-                <td><div class='text-center'>@".$row['username']."</div></td>
-                <td><div class='text-center'>".$row['gender']."</div></td>
-                <td><div class='text-center'>".$row['contact']."</div></td>
-                <td><div class='text-center'>".$row['dor']."</div></td>
-                <td><div class='text-center'>".$row['address']."</div></td>
-                <td><div class='text-center'>$".$row['amount']."</div></td>
-                <td><div class='text-center'>".$row['services']."</div></td>
-                <td><div class='text-center'>".$row['plan']." Month/s</div></td>
-             
-                
-              </tbody>";
-          $cnt++;  }
-            ?>
-
-            </table>
-          </div>
-        </div>
-   
-		
-	
+        <table class='table table-bordered table-hover'>
+         <thead>
+           <tr>
+             <th>#</th>
+             <th>Fullname</th>
+             <th>Username</th>
+             <th>Gender</th>
+             <th>Contact</th>
+             <th>D.O.R</th>
+             <th>Address</th>
+             <th>Amount</th>
+             <th>Service</th>
+             <th>Plan</th>
+             <th>QR Code</th>
+             <th>Actions</th>
+           </tr>
+         </thead>
+         <tbody>
+           <?php if ($members && count($members) > 0): ?>
+             <?php $cnt = 1; foreach ($members as $row): ?>
+               <tr>
+                 <td class='text-center'><strong><?= $cnt++ ?></strong></td>
+                 <td class='text-center'><?= esc($row['fullname']) ?></td>
+                 <td class='text-center'><span class="badge badge-info">@<?= esc($row['username']) ?></span></td>
+                 <td class='text-center'>
+                   <span class="badge badge-<?= $row['gender']=='Male' ? 'primary' : 'danger' ?>">
+                     <?= esc($row['gender']) ?>
+                   </span>
+                 </td>
+                 <td class='text-center'><?= esc($row['contact']) ?></td>
+                 <td class='text-center'><?= date('M d, Y', strtotime($row['dor'])) ?></td>
+                 <td class='text-center'><?= substr(esc($row['address']), 0, 20) ?>...</td>
+                 <td class='text-center'><strong>$<?= number_format($row['amount'], 2) ?></strong></td>
+                 <td class='text-center'><span class="badge badge-success"><?= esc($row['services']) ?></span></td>
+                 <td class='text-center'><?= esc($row['plan']) ?> Month<?= $row['plan'] > 1 ? 's' : '' ?></td>
+                 
+                 <!-- ✅ FIXED QR COLUMN - NO 403 ERRORS! -->
+                 <td class="text-center">
+                   <a href="<?= site_url('admin/generate_qr/' . $row['user_id']) ?>" 
+                      class="btn btn-xs btn-success" target="_blank"
+                      title="Generate QR Card">
+                     <i class="fas fa-qrcode"></i> QR
+                   </a>
+                 </td>
+                 
+                 <td class="text-center">
+                   <a href="<?= site_url('admin/editMember?id=' . $row['user_id']) ?>" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>
+                   <a href="<?= site_url('admin/removeMember?id=' . $row['user_id']) ?>" class="btn btn-xs btn-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a>
+                 </td>
+               </tr>
+             <?php endforeach; ?>
+           <?php else: ?>
+             <tr>
+               <td colspan="12" class="text-center">
+                 <div class="alert alert-info">
+                   <h4>No Members <i class="fas fa-users"></i></h4>
+                   <a href="<?= site_url('admin/memberEntry') ?>" class="btn btn-primary">Add First Member</a>
+                 </div>
+               </td>
+             </tr>
+           <?php endif; ?>
+         </tbody>
+       </table>
       </div>
     </div>
+
   </div>
 </div>
 
-<!--end-main-container-part-->
-
-<!--Footer-part-->
-
-<div class="row-fluid">
-  <div id="footer" class="span12"> <?php echo date("Y");?> &copy; Developed By Naseeb Bajracharya</a> </div>
+<!-- FLOATING QR SCANNER BUTTON -->
+<div style="position:fixed;top:20px;right:20px;z-index:9999;">
+  <a href="<?= site_url('admin/qr_scanner') ?>" class="btn btn-success" style="border-radius:50%;width:55px;height:55px;">
+    <i class="fas fa-qrcode fa-lg"></i>
+  </a>
 </div>
 
+<!--Footer-->
+<div id="footer" class="span12"> <?= date("Y") ?> &copy; Perfect Gym - QR Ready! </div>
+
 <style>
-#footer {
-  color: white;
-}
+#footer { color:white; background:#333; padding:15px; text-align:center; margin-top:30px; }
+.table th { background:#34495e; color:white; }
+.btn-xs { padding:3px 8px; font-size:11px; }
+.table td { vertical-align: middle; }
 </style>
 
-<!--end-Footer-part-->
-
-<script src="../js/excanvas.min.js"></script> 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
-
-<script type="text/javascript">
-  // This function is called from the pop-up menus to transfer to
-  // a different page. Ignore if the value returned is a null string:
-  function goPage (newURL) {
-
-      // if url is empty, skip the menu dividers and reset the menu selection to default
-      if (newURL != "") {
-      
-          // if url is "-", it is this page -- reset the menu:
-          if (newURL == "-" ) {
-              resetMenu();            
-          } 
-          // else, send page to designated URL            
-          else {  
-            document.location.href = newURL;
-          }
-      }
-  }
-
-// resets the menu selection upon entry to this page:
-function resetMenu() {
-   document.gomenu.selector.selectedIndex = 2;
-}
-</script>
+<script src="<?= base_url('js/jquery.min.js') ?>"></script>
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script>
 </body>
 </html>
-
