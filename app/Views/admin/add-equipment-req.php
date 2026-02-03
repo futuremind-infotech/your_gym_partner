@@ -14,7 +14,7 @@ header('location:../index.php');
 <link rel="stylesheet" href="../css/bootstrap.min.css" />
 <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
 <link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
+   <link href="<?= base_url('css/gym-theme.css') ?>" rel="stylesheet">
 <link rel="stylesheet" href="../css/matrix-media.css" />
 <link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
 <link href="../font-awesome/css/all.css" rel="stylesheet" />
