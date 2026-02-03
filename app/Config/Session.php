@@ -22,6 +22,7 @@ class Session extends BaseConfig
      *
      * @var class-string<BaseHandler>
      */
+    // Temporarily use file-based sessions to avoid missing DB table errors
     public string $driver = FileHandler::class;
 
     /**
@@ -58,6 +59,7 @@ class Session extends BaseConfig
      *
      * IMPORTANT: You are REQUIRED to set a valid save path!
      */
+    // Session save path for file handler (WRITEPATH . 'session')
     public string $savePath = WRITEPATH . 'session';
 
     /**

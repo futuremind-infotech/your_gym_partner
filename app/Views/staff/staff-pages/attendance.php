@@ -108,14 +108,14 @@ header('location:../index.php');
   
     ?>
                 <td><div class='text-center'><span class="label label-inverse"><?php echo $row_exist['curr_date'];?>  <?php echo $row_exist['curr_time'];?></span></div>
-                <div class='text-center'><a href='actions/delete-attendance.php?id=<?php echo $row['user_id'];?>'><button class='btn btn-danger'>Check Out <i class='icon icon-time'></i></button> </a></div>
+                <div class='text-center'><a href='<?php echo site_url("staff/delete-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-danger'>Check Out <i class='icon icon-time'></i></button> </a></div>
                 </td>
 
               <?php } else {
                   
                   ?>
 
-                <td><div class='text-center'><a href='actions/check-attendance.php?id=<?php echo $row['user_id'];?>'><button class='btn btn-info'>Check In <i class='icon icon-map-marker'></i></button> </a></div></td>
+                <td><div class='text-center'><a href='<?php echo site_url("staff/check-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-info'>Check In <i class='icon icon-map-marker'></i></button> </a></div></td>
              
                 <?php $cnt++; }
 

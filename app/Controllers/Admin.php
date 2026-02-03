@@ -33,8 +33,44 @@ class Admin extends BaseController
     public function deleteEquipment() { return view('admin/actions/delete-equipment', ['page' => 'remove-equip']); }
 
     public function attendance() { return view('admin/attendance', ['page' => 'attendance']); }
-    public function checkAttendance() { return view('admin/actions/check-attendance', ['page' => 'attendance']); }
-    public function deleteAttendance() { return view('admin/actions/delete-attendance', ['page' => 'attendance']); }
+
+    public function checkAttendance()
+    {
+        $id = $this->request->getGet('id');
+        if (! $id) {
+            return redirect()->to('/admin/attendance');
+        }
+
+        $db = \Config\Database::connect();
+        date_default_timezone_set('Asia/Kathmandu');
+        $current_date = date('Y-m-d h:i A');
+        $exp = explode(' ', $current_date);
+        $curr_date = $exp[0];
+        $curr_time = $exp[1] . ' ' . $exp[2];
+
+        // Prevent duplicate check-in for same date
+        $existing = $db->query("SELECT * FROM attendance WHERE curr_date = ? AND user_id = ?", [$curr_date, $id])->getRowArray();
+        if (! $existing) {
+            $db->query("INSERT INTO attendance (user_id, curr_date, curr_time, present) VALUES (?, ?, ?, 1)", [$id, $curr_date, $curr_time]);
+            $db->query("UPDATE members SET attendance_count = attendance_count + 1 WHERE user_id = ?", [$id]);
+        }
+
+        return redirect()->to('/admin/attendance');
+    }
+
+    public function deleteAttendance()
+    {
+        $id = $this->request->getGet('id');
+        if (! $id) {
+            return redirect()->to('/admin/attendance');
+        }
+
+        $db = \Config\Database::connect();
+        $db->query("DELETE FROM attendance WHERE user_id = ?", [$id]);
+        $db->query("UPDATE members SET attendance_count = GREATEST(attendance_count - 1, 0) WHERE user_id = ?", [$id]);
+
+        return redirect()->to('/admin/attendance');
+    }
     public function viewAttendance() { return view('admin/view-attendance', ['page' => 'view-attendance']); }
 
     public function reports() { return view('admin/reports', ['page' => 'chart']); }

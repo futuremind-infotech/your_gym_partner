@@ -102,7 +102,7 @@ if(!isset($_SESSION['user_id'])){
                                                     </span>
                                                 </div>
                                                 <div class='text-center'>
-                                                    <a href='/your_gym_partner/public/index.php/delete-attendance?id=<?php echo $row['user_id']; ?>'>
+                                                    <a href='<?php echo site_url("admin/delete-attendance?id=" . $row['user_id']); ?>'>
                                                         <button class='btn btn-danger btn-mini'>Check Out <i class='fas fa-clock'></i></button>
                                                     </a>
                                                 </div>
@@ -111,7 +111,7 @@ if(!isset($_SESSION['user_id'])){
                                                 // Member not checked in today
                                             ?>
                                                 <div class='text-center'>
-                                                    <a href='/your_gym_partner/public/index.php/check-attendance?id=<?php echo $row['user_id']; ?>'>
+                                                    <a href='<?php echo site_url("admin/check-attendance?id=" . $row['user_id']); ?>'>
                                                         <button class='btn btn-info btn-mini'>Check In <i class='fas fa-map-marker-alt'></i></button>
                                                     </a>
                                                 </div>
