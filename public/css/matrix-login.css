@@ -1,4 +1,4 @@
-/* ===== CLEAN MODERN LOGIN – FINAL FIX ===== */
+/* ===== CLEAN MODERN LOGIN – SINGLE BACKGROUND FIX ===== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 * {
@@ -6,88 +6,116 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* FULL SCREEN CENTER – NO STRIPS */
+/* ===== FULL SCREEN – ONE SOLID BACKGROUND ===== */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
+    /* 🔥 SINGLE BACKGROUND COLOR */
+    background: #0f172a;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     overflow: hidden;
 }
 
-/* REMOVE TEMPLATE BACKGROUNDS */
+/* REMOVE ANY EXTRA TEMPLATE BACKGROUND */
 body > * {
     background: transparent !important;
-    box-shadow: none !important;
 }
 
-/* LOGIN BOX */
+/* ===== LOGIN BOX (UNCHANGED BORDER) ===== */
 #loginbox {
     width: 420px;
     max-width: 92%;
     background: #ffffff;
     border-radius: 22px;
-    padding: 44px 38px;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.18);
+    padding: 46px 40px;
     position: relative;
     z-index: 2;
+
+    /* KEEP FORM BORDER AS IS */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        0 35px 80px rgba(0,0,0,0.45),
+        inset 0 0 0 1px rgba(255,255,255,0.4);
 }
 
-/* LOGO – WHITE */
+/* BORDER GLOW (UNCHANGED) */
+#loginbox::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 23px;
+    background: linear-gradient(
+        135deg,
+        rgba(59,130,246,0.6),
+        rgba(99,102,241,0.6),
+        rgba(147,51,234,0.6)
+    );
+    z-index: -1;
+    opacity: 0.6;
+}
+
+/* ===== LOGO ===== */
 #logo {
     position: absolute;
-    top: -70px;
+    top: -75px;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
 }
 
-/* IMAGE LOGO TURNED WHITE */
 #logo img {
     max-width: 120px;
-    height: auto;
     filter: brightness(0) invert(1);
 }
 
-/* LOGIN TITLE */
+/* ===== TITLE ===== */
 #loginbox h3 {
     text-align: center;
     font-size: 26px;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 32px;
+    color: #0f172a;
+    margin-bottom: 34px;
 }
 
-/* INPUT GROUP */
+/* ===== INPUT GROUP ===== */
 .control-group {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
 }
 
+/* ===== INPUTS ===== */
 .control-group input[type="text"],
 .control-group input[type="password"] {
     width: 100%;
-    height: 54px;
+    height: 56px;
     padding: 0 18px;
     font-size: 15px;
     border-radius: 14px;
     border: 2px solid #e5e7eb;
-    transition: 0.25s ease;
-    background: #fff;
+    background: #ffffff;
+    transition: all 0.25s ease;
+}
+
+.control-group input::placeholder {
+    color: #9ca3af;
 }
 
 .control-group input:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.18);
     outline: none;
 }
 
-/* LOGIN BUTTON */
+/* ===== LOGIN BUTTON ===== */
 .btn-primary {
     width: 100%;
-    height: 54px;
+    height: 56px;
     border-radius: 14px;
     border: none;
     font-size: 16px;
@@ -95,21 +123,32 @@ body > * {
     color: #ffffff;
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     cursor: pointer;
-    box-shadow: 0 14px 35px rgba(37,99,235,0.35);
+    box-shadow: 0 16px 40px rgba(37,99,235,0.45);
     transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 20px 45px rgba(37,99,235,0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 22px 55px rgba(37,99,235,0.6);
 }
 
-/* FOOTER TEXT */
+/* ===== FOOTER TEXT ===== */
 .normal_text {
-    margin-top: 26px;
+    margin-top: 28px;
     padding-top: 18px;
     text-align: center;
     font-size: 14px;
     color: #6b7280;
     border-top: 1px solid #e5e7eb;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+    #loginbox {
+        padding: 38px 28px;
+    }
+
+    #loginbox h3 {
+        font-size: 24px;
+    }
 }
