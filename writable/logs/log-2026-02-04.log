@@ -26,3 +26,48 @@ in APPPATH\Views\admin\add-member-req.php on line 61.
  9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
 10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 04:51:39 --> ErrorException: include(../includes/header.php): Failed to open stream: No such file or directory
+[Method: GET, Route: staff]
+in APPPATH\Views\staff\staff-pages\index.php on line 35.
+ 1 APPPATH\Views\staff\staff-pages\index.php(35): CodeIgniter\Debug\Exceptions->errorHandler(2, 'include(../includes/header.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php', 35)
+ 2 APPPATH\Views\staff\staff-pages\index.php(35): include()
+ 3 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php')
+ 4 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 5 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('staff/staff-pages/index', [], true)
+ 6 APPPATH\Controllers\Staff.php(13): view('staff/staff-pages/index', [...])
+ 7 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Staff->index()
+ 8 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Staff))
+ 9 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 05:03:45 --> ErrorException: include(../includes/header.php): Failed to open stream: No such file or directory
+[Method: GET, Route: staff]
+in APPPATH\Views\staff\staff-pages\index.php on line 35.
+ 1 APPPATH\Views\staff\staff-pages\index.php(35): CodeIgniter\Debug\Exceptions->errorHandler(2, 'include(../includes/header.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php', 35)
+ 2 APPPATH\Views\staff\staff-pages\index.php(35): include()
+ 3 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php')
+ 4 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 5 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('staff/staff-pages/index', [], true)
+ 6 APPPATH\Controllers\Staff.php(13): view('staff/staff-pages/index', [...])
+ 7 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Staff->index()
+ 8 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Staff))
+ 9 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 05:51:08 --> ErrorException: include(../includes/header.php): Failed to open stream: No such file or directory
+[Method: GET, Route: staff]
+in APPPATH\Views\staff\staff-pages\index.php on line 35.
+ 1 APPPATH\Views\staff\staff-pages\index.php(35): CodeIgniter\Debug\Exceptions->errorHandler(2, 'include(../includes/header.php): Failed to open stream: No such file or directory', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php', 35)
+ 2 APPPATH\Views\staff\staff-pages\index.php(35): include()
+ 3 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\staff\\staff-pages\\index.php')
+ 4 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 5 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('staff/staff-pages/index', [], true)
+ 6 APPPATH\Controllers\Staff.php(13): view('staff/staff-pages/index', [...])
+ 7 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Staff->index()
+ 8 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Staff))
+ 9 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
