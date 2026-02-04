@@ -1,45 +1,35 @@
 <?php
-
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+// CodeIgniter 4 session check
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/'); 
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
+<title>Gym System Admin - Add Member</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
 <link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
 <link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
 <link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
 <link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
 <link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
-<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
-<!--Header-part--><!-- Visit codeastro.com for more projects -->
+<!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
 <!--close-Header-part--> 
-
 
 <!--top-Header-menu-->
 <?php include 'includes/topheader.php'?>
 <!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
 
 <!--sidebar-menu-->
 <?php $page='members-entry'; include 'includes/sidebar.php'?>
@@ -193,13 +183,13 @@ header('location:../index.php');
               <div class="controls">
                 <label>
                   <input type="radio" value="Fitness" name="services" />
-                  Fitness <small>- $55 per month</small></label>
+                  Fitness <small>- ₹55 per month</small></label>
                 <label>
                   <input type="radio" value="Sauna" name="services" />
-                  Sauna <small>- $35 per month</small></label>
+                  Sauna <small>- ₹35 per month</small></label>
                 <label>
                   <input type="radio" value="Cardio" name="services" />
-                  Cardio <small>- $40 per month</small></label>
+                  Cardio <small>- ₹40 per month</small></label>
               </div>
             </div>
 
@@ -207,7 +197,7 @@ header('location:../index.php');
               <label class="control-label">Total Amount</label>
               <div class="controls">
                 <div class="input-append">
-                  <span class="add-on">$</span> 
+                  <span class="add-on">₹</span> 
                   <input type="number" placeholder="50" name="amount" class="span11">
                   </div>
               </div>

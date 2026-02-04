@@ -1,54 +1,62 @@
 <?php
+// ✅ FIXED: Proper CodeIgniter 4 authentication and database
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/');
+}
 
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+// Get search query if provided
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
+$db = \Config\Database::connect();
+
+// Search members by fullname
+if (!empty($searchQuery)) {
+    $members = $db->table('members')
+        ->like('fullname', $searchQuery)
+        ->orderBy('fullname', 'ASC')
+        ->get()
+        ->getResultArray();
+} else {
+    $members = $db->table('members')
+        ->orderBy('fullname', 'ASC')
+        ->get()
+        ->getResultArray();
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
+<title>Gym System Admin - Progress Search</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
-
 
 <!--top-Header-menu-->
 <?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
 
 <!--sidebar-menu-->
 <?php $page="manage-customer-progress"; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
 
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="customer-progress.php">Progress</a> <a href="#" class="current">Search Results</a> </div>
-    <h1 class="text-center">Update Customer's Progress <i class="fas fa-signal"></i></h1>
+    <div id="breadcrumb"> 
+      <a href="<?= site_url('admin') ?>" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> 
+      <a href="<?= site_url('admin/customer-progress') ?>">Progress</a> 
+      <a href="#" class="current">Search Results</a> 
+    </div>
+    <h1 class="text-center">Update Customer's Progress - Search Results <i class="fas fa-signal"></i></h1>
   </div>
   <div class="container-fluid">
     <hr>
@@ -56,65 +64,54 @@ header('location:../index.php');
       <div class="span12">
 
       <div class='widget-box'>
-          <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
-            <h5>Progress table</h5>
-            <form id="custom-search-form" role="search" method="POST" action="<?= site_url('admin/search-result-progress') ?>" class="form-search form-horizontal pull-right">
-                <div class="input-append span12">
-                    <input type="text" class="search-query" placeholder="Search" name="search" required>
-                    <button type="submit" class="btn"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
+          <div class='widget-title'> 
+            <span class='icon'> <i class='fas fa-search'></i> </span>
+            <h5>Search Results</h5>
           </div>
           
           <div class='widget-content nopadding'>
-	  <!-- Visit codeastro.com for more projects -->
-	  <?php
-
-      include "dbcon.php";
-      $search=$_POST['search'];
-      $cnt = 1;
-      $qry="select * from members where fullname like '%$search%' or username like '%$search%'";
-        $result=mysqli_query($conn,$qry);
-
-        if (mysqli_num_rows($result)==0){
-
-            echo"<div class='error_ex'>
-            <h1>403</h1>
-            <h3>Opps, Results Not Found!!</h3>
-            <p>It seems like there's no such record available in our database.</p>
-            <a class='btn btn-danger btn-big'  href='payment.php'>Go Back</a> </div>'";
-        }else{
-
-        echo"<table class='table table-bordered table-hover'>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Fullname</th>
-            <th>Choosen Service</th>
-            <th>Plan</th>
-            <th>Action</th>
-          </tr>
-        </thead>";
+	  
+          <?php
+          $cnt = 1;
+          
+          if (empty($members)) {
+            echo "
+            <div class='error_ex' style='text-align: center; padding: 40px;'>
+              <h1 style='color: #d9534f; font-size: 48px;'>No Results</h1>
+              <h3>Opps, Results Not Found!!</h3>
+              <p>It seems like there's no such record available in our database.</p>
+              <a class='btn btn-danger btn-big' href='".site_url('admin/customer-progress')."'>Go Back</a>
+            </div>";
+          } else {
+            echo "
+            <table class='table table-bordered table-hover'>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fullname</th>
+                  <th>Choosen Service</th>
+                  <th>Plan</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>";
             
-    
-            while($row=mysqli_fetch_array($result)){
-
-                
-            
-            echo"<tbody> 
-               
-                <td><div class='text-center'>".$cnt."</div></td>
-                <td><div class='text-center'>".$row['fullname']."</div></td>
-                <td><div class='text-center'>".$row['services']."</div></td>
-                <td><div class='text-center'>".$row['plan']." Days</div></td>
-                <td><div class='text-center'><a href='update-progress.php?id=".$row['user_id']."'><button class='btn btn-warning btn-mini'> Update Progress</button></a></div></td>
-                
-              </tbody>";
-         $cnt++;   }
-        }
-            ?>
-
-            </table>
+            foreach($members as $row) {
+              echo "
+                <tr>
+                  <td><div class='text-center'>".$cnt."</div></td>
+                  <td><div class='text-center'>".esc($row['fullname'])."</div></td>
+                  <td><div class='text-center'>".esc($row['services'])."</div></td>
+                  <td><div class='text-center'>".$row['plan']." Month(s)</div></td>
+                  <td><div class='text-center'><a href='".site_url('admin/update-progress?id='.$row['user_id'])."'><button class='btn btn-warning btn-mini'><i class='fas fa-edit'></i> Update Progress</button></a></div></td>
+                </tr>";
+              $cnt++;
+            }
+            echo "
+              </tbody>
+            </table>";
+          }
+          ?>
           </div>
         </div>
    

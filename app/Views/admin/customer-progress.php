@@ -1,53 +1,42 @@
 <?php
-
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+// CodeIgniter 4 session check
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/');
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
+<title>Gym System Admin - Customer Progress</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
-
 
 <!--top-Header-menu-->
 <?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
-<!-- Visit codeastro.com for more projects -->
+
 <!--sidebar-menu-->
 <?php $page='manage-customer-progress'; include 'includes/sidebar.php'?>
 <!--sidebar-menu-->
 
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="customer-progress.php" class="current">Customer Progress</a> </div>
+    <div id="breadcrumb">
+      <a href="<?= site_url('admin') ?>" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a>
+      <a href="#" class="current">Customer Progress</a>
+    </div>
     <h1 class="text-center">Update Customer's Progress <i class="fas fa-signal"></i></h1>
   </div>
   <div class="container-fluid">
@@ -56,60 +45,48 @@ header('location:../index.php');
       <div class="span12">
 
       <div class='widget-box'>
-          <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
-            <h5>Member's Table</h5>
-            <form id="custom-search-form" role="search" method="POST" action="<?= site_url('admin/search-result-progress') ?>" class="form-search form-horizontal pull-right">
-                <div class="input-append span12">
-                    <input type="text" class="search-query" placeholder="Search" name="search" required>
-                    <button type="submit" class="btn"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
+          <div class='widget-title'>
+            <span class='icon'><i class='fas fa-th'></i></span>
+            <h5>Select Member to Update Progress</h5>
           </div>
           
           <div class='widget-content nopadding'>
-
-
-
-           <!-- <form action="search-result.php" role="search" method="POST">
-            <div id="search">
-            <input type="text" placeholder="Search Here.." name="search"/>
-            <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-          </div>
-          </form> -->
-
 	  
 	  <?php
-
-      include "dbcon.php";
-      $qry="select * from members";
-      $cnt=1;
-        $result=mysqli_query($conn,$qry);
-
-        
-          echo"<table class='table table-bordered table-hover'>
+      $db = \Config\Database::connect();
+      $members = $db->table('members')->orderBy('fullname', 'ASC')->get()->getResultArray();
+      
+      echo"<table class='table table-bordered table-hover'>
               <thead>
                 <tr>
                   <th>#</th>
                   <th>Fullname</th>
                   <th>Choosen Service</th>
                   <th>Plan</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>";
               
-            while($row=mysqli_fetch_array($result)){
-            
+      if ($members && count($members) > 0) {
+        $cnt = 1;
+        foreach($members as $row) {
             echo"<tbody> 
                
                 <td><div class='text-center'>".$cnt."</div></td>
-                <td><div class='text-center'>".$row['fullname']."</div></td>
-                <td><div class='text-center'>".$row['services']."</div></td>
+                <td><div class='text-center'>".esc($row['fullname'])."</div></td>
+                <td><div class='text-center'>".esc($row['services'])."</div></td>
                 <td><div class='text-center'>".$row['plan']." Month/s</div></td>
-                <td><div class='text-center'><a href='update-progress.php?id=".$row['user_id']."'><button class='btn btn-warning btn'> Update Progress</button></a></div></td>
+                <td><div class='text-center'><span class='badge badge-".($row['status']=='Active' ? 'success' : 'danger')."'>".$row['status']."</span></div></td>
+                <td><div class='text-center'><a href='".site_url('admin/update-progress?id='.$row['user_id'])."'><button class='btn btn-warning btn'><i class='fas fa-edit'></i> Update Progress</button></a></div></td>
                 
               </tbody>";
-          $cnt++;  }
-            ?>
+          $cnt++;
+        }
+      } else {
+        echo "<tr><td colspan='6' class='text-center'>No members found</td></tr>";
+      }
+      ?>
 
             </table>
           </div>
@@ -179,27 +156,27 @@ header('location:../index.php');
 </style>
 
 
-<script src="../js/excanvas.min.js"></script> 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="<?= base_url('js/excanvas.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.resize.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.peity.min.js') ?>"></script> 
+<script src="<?= base_url('js/fullcalendar.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.dashboard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.gritter.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.interface.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.chat.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.form_validation.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.wizard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
+<script src="<?= base_url('js/select2.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.popover.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
 </body>
 </html>

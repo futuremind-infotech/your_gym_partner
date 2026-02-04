@@ -90,17 +90,22 @@ if (!$member) {
 			  
 			  
               <div class="span7">
-                <form action=\"<?= site_url('admin/userpay') ?>\" method=\"POST\">
+                <form action="<?= site_url('admin/userpay') ?>" method="POST">
+                  <?= csrf_field() ?>
+                  <!-- Hidden fields for form data -->
+                  <input type="hidden" name="fullname" value="<?php echo htmlspecialchars($member['fullname']); ?>">
+                  <input type="hidden" name="services" value="<?php echo htmlspecialchars($member['services']); ?>">
+                  <input type="hidden" name="paid_date" value="<?php echo htmlspecialchars($member['paid_date']); ?>">
+                  <input type="hidden" name="id" value="<?php echo intval($member['user_id']);?>">
+                  
                   <table class="table table-bordered">
                     <tbody>
                       <tr>
                         <td style="width: 30%; font-weight: bold;">Member's Fullname:</td>
-                        <input type="hidden" name="fullname" value="<?php echo htmlspecialchars($member['fullname']); ?>">
                         <td style="width: 70%;"><?php echo htmlspecialchars($member['fullname']); ?></td>
                       </tr>
                       <tr>
                         <td style="width: 30%; font-weight: bold;">Service:</td>
-                        <input type="hidden" name="services" value="<?php echo htmlspecialchars($member['services']); ?>">
                         <td style="width: 70%;"><?php echo htmlspecialchars($member['services']); ?></td>
                       </tr>
                       <tr>
@@ -111,14 +116,13 @@ if (!$member) {
                               echo '55';
                             } elseif ($member['services'] == 'Sauna') { 
                               echo '35';
-                            } else {
+                            } else { 
                               echo '40';
                             } 
                           ?>" onchange="calculateTotal()" />
                         </td>
                       </tr>
                       <tr>
-                        <input type="hidden" name="paid_date" value="<?php echo htmlspecialchars($member['paid_date']); ?>">
                         <td style="width: 30%; font-weight: bold;">Plan:</td>
                         <td style="width: 70%;">
                           <select name="plan" required="required" id="plan" class="form-control" style="width: 100%; padding: 5px;" onchange="calculateTotal()">
@@ -140,9 +144,21 @@ if (!$member) {
                         </td>
                       </tr>
                       <tr>
+                        <td style="width: 30%; font-weight: bold;">Total Amount:</td>
+                        <td style="width: 70%;">
+                          <div id="totalAmount" style="font-size: 16px; font-weight: bold; color: green; padding: 8px;">
+                            ₹<span id="totalValue">55</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
                         <td colspan="2" style="text-align: center; padding: 20px;">
-                          <input type="hidden" name="id" value="<?php echo intval($member['user_id']);?>">
-                          <button class="btn btn-success btn-large" type="SUBMIT">Make Payment</button>
+                          <button class="btn btn-warning btn-large" type="button" onclick="alertPayment()">
+                            <i class="fas fa-bell"></i> Alert Payment
+                          </button>
+                          <button class="btn btn-success btn-large" type="submit">
+                            <i class="fas fa-money"></i> Make Payment
+                          </button>
                         </td>
                       </tr>
                     </tbody>
@@ -202,6 +218,11 @@ if (!$member) {
 <script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
 <script type="text/javascript">
+  // Initialize calculateTotal on page load
+  window.onload = function() {
+    calculateTotal();
+  };
+
   // This function is called from the pop-up menus to transfer to
   // a different page. Ignore if the value returned is a null string:
   function goPage (newURL) {
@@ -227,11 +248,24 @@ function resetMenu() {
 
 // Calculate total amount based on amount and plan
 function calculateTotal() {
-  var amount = document.getElementById('amount').value || 0;
-  var plan = document.getElementById('plan').value || 1;
+  var amount = parseInt(document.getElementById('amount').value) || 55;
+  var plan = parseInt(document.getElementById('plan').value) || 1;
   var total = amount * plan;
-  console.log('Amount: ' + amount + ', Plan: ' + plan + ', Total: ' + total);
-  // You can display total in a div or update a field if needed
+  document.getElementById('totalValue').textContent = total;
+  console.log('Amount: ₹' + amount + ', Plan: ' + plan + ' month(s), Total: ₹' + total);
+}
+
+// Alert payment handler
+function alertPayment() {
+  var fullname = '<?php echo htmlspecialchars($member['fullname']); ?>';
+  var amount = parseInt(document.getElementById('amount').value) || 55;
+  var plan = parseInt(document.getElementById('plan').value) || 1;
+  var total = amount * plan;
+  
+  alert('Payment Alert for ' + fullname + '\n\nAmount per month: ₹' + amount + 
+        '\nPlan: ' + plan + ' month(s)' + 
+        '\nTotal Amount: ₹' + total + 
+        '\n\nPlease arrange the payment.');
 }
 </script>
 </body>

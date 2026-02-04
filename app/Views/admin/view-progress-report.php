@@ -1,67 +1,63 @@
 <?php
+// CodeIgniter 4 session check
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/');
+}
 
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+// Get member ID from query string
+$member_id = isset($_GET['id']) ? intval($_GET['id']) : null;
+
+if (!$member_id) {
+    return redirect()->to('admin/customer-progress');
+}
+
+// Get member data from database
+$db = \Config\Database::connect();
+$member = $db->query("SELECT * FROM members WHERE user_id = ?", [$member_id])->getRowArray();
+
+if (!$member) {
+    return redirect()->to('admin/customer-progress');
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
+<title>Gym System Admin - Progress Report</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
-
 
 <!--top-Header-menu-->
 <?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
 
 <!--sidebar-menu-->
 <?php $page='c-p-r'; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
 
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="member-report.php" class="current">Member Reports</a> </div>
+    <div id="breadcrumb">
+      <a href="<?= site_url('admin') ?>" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a>
+      <a href="<?= site_url('admin/customer-progress') ?>">Progress Reports</a>
+      <a href="#" class="current">View Report</a>
+    </div>
     <h1 class="text-center">Progress Report <i class="fas fa-tasks"></i></h1>
   </div>
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span12">
-	          <div class="widget-box">
-      <?php
-            include 'dbcon.php';
-            $id=$_GET['id'];
-            $qry= "select * from members where user_id='$id'";
-            $result=mysqli_query($conn,$qry);
-            while($row=mysqli_fetch_array($result)){
-            ?> 
+          <div class="widget-box">
       
      <div class="widget-content">
             <div class="row-fluid">
@@ -98,18 +94,18 @@ header('location:../index.php');
                   </thead>
                   <tbody>
                     <tr>
-                      <td><div class="text-center">PGC-SS-<?php echo $row['user_id']; ?></div></td>
-                      <td><div class="text-center"><?php echo $row['ini_weight']; ?> KG</div></td>
-                      <td><div class="text-center"><?php echo $row['curr_weight']; ?> KG</div></td>
-                      <td><div class="text-center"><?php echo $row['services']; ?></div></td>
-                      <td><div class="text-center"><?php echo $row['plan']; ?> Month/s</div></td>
+                      <td><div class="text-center">PGC-SS-<?= $member['user_id'] ?></div></td>
+                      <td><div class="text-center"><?= $member['ini_weight'] ?? 'N/A' ?> KG</div></td>
+                      <td><div class="text-center"><?= $member['curr_weight'] ?? 'N/A' ?> KG</div></td>
+                      <td><div class="text-center"><?= esc($member['services']) ?></div></td>
+                      <td><div class="text-center"><?= $member['plan'] ?> Month/s</div></td>
                     </tr>
                   </tbody>
                 </table>
                 <table class="table table-bordered table-invoice-full">
                   <tbody>
                     <tr>
-                      <td class="msg-invoice" width="55%"> <div class="text-center"><h5><?php echo $row['fullname']; ?>'s Body Structure stated as from <?php echo $row['ini_bodytype']; ?> to <?php echo $row['curr_bodytype']; ?>. <br /> With Total Weight Differences of <?php include 'actions/weight-diff.php';?> KG <br /> As per records of <?php echo $row['progress_date']; ?></h5>
+                      <td class="msg-invoice" width="55%"> <div class="text-center"><h5><?= esc($member['fullname']) ?>'s Body Structure stated as from <?= $member['ini_bodytype'] ?? 'N/A' ?> to <?= $member['curr_bodytype'] ?? 'N/A' ?>. <br /> With Total Weight Differences of <?= ($member['curr_weight'] ?? 0) - ($member['ini_weight'] ?? 0) ?> KG <br /> As per records of <?= $member['progress_date'] ?></h5>
                         
                         </div>
                     </tr>
@@ -123,11 +119,11 @@ header('location:../index.php');
                 <div class="pull-left">
                 <br>
                 
-                <h4>GYM Member: <?php echo $row['fullname']; ?> <br> Weight Variation of <em style="color:green"><?php include 'actions/progress-percent.php';?>%</em> as per current updates! <i class="fa fa-spinner fa-spin" style="font-size:24px"></i><br/> <br/>  <br/></h4><p>Thank you for choosing our services.<br/>- on the behalf of whole team</p>
+                <h4>GYM Member: <?= esc($member['fullname']) ?> <br> <em style="color:green">Progress Report Generated</em><i class="fa fa-spinner fa-spin" style="font-size:24px"></i><br/> <br/>  <br/></h4><p>Thank you for choosing our services.<br/>- on the behalf of whole team</p>
                 </div>
                 <div class="pull-right">
                   <h4><span>Approved By:</h4>
-                  <img src="../img/report/stamp-sample.png" width="124px;" alt=""><p class="text-center">Note:AutoGenerated</p> </div>
+                  <img src="<?= base_url('img/report/stamp-sample.png') ?>" width="124px;" alt=""><p class="text-center">Note:AutoGenerated</p> </div>
                   
             </div>
           </div>
@@ -135,9 +131,6 @@ header('location:../index.php');
 		</div>
 	
       </div>
-      <?php
-}
-      ?>
     </div>
 
   </div>
@@ -159,27 +152,27 @@ header('location:../index.php');
 
 <!--end-Footer-part-->
 
-<script src="../js/excanvas.min.js"></script> 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="<?= base_url('js/excanvas.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.resize.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.peity.min.js') ?>"></script> 
+<script src="<?= base_url('js/fullcalendar.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.dashboard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.gritter.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.interface.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.chat.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.form_validation.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.wizard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
+<script src="<?= base_url('js/select2.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.popover.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
 <script type="text/javascript">
   // This function is called from the pop-up menus to transfer to

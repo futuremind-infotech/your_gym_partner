@@ -1,8 +1,6 @@
 <?php
-
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to(site_url('admin'));
 }
 ?>
 <!-- Visit codeastro.com for more projects -->
@@ -12,21 +10,21 @@ header('location:../index.php');
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
 <!--close-Header-part--> 
 
@@ -47,7 +45,7 @@ header('location:../index.php');
 
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="member-report.php" class="current">Member Reports</a> </div>
+    <div id="breadcrumb"> <a href="<?= site_url('admin') ?>" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="<?= site_url('admin/members-report') ?>" class="current">Member Reports</a> </div>
     <h1 class="text-center">View Reports <i class="fas fa-file"></i></h1>
   </div>
   <div class="container-fluid">
@@ -63,38 +61,38 @@ header('location:../index.php');
           <div class='widget-content nopadding'>
 	  
 	  <?php
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to(site_url('admin'));
+}
+?>
 
-      include "dbcon.php";
-      $qry="select * from members";
-      $cnt = 1;
-        $result=mysqli_query($conn,$qry);
+<?php 
+$db = \Config\Database::connect();
+$result = $db->table('members')->get()->getResultArray();
+$cnt = 1;
+?>
 
-        
-          echo"<table class='table table-bordered table-hover'>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Fullname</th>
-                  <th>Choosen Service</th>
-                  <th>Action</th>
-                </tr>
-              </thead>";
-              
-            while($row=mysqli_fetch_array($result)){?>
-            
-           <tbody> 
-               
-                <td><div class='text-center'><?php echo $cnt;?></div></td>
-                <td><div class='text-center'><?php echo $row['fullname'];?></div></td>
-                <td><div class='text-center'><?php echo $row['services'];?></div></td>
-                <td><div class='text-center'><a href="view-member-report.php?id= <?php echo $row['user_id'] ?>"><i class="fas fa-file"></i> View Report</a></div></td>
-                
-              </tbody>
-          <?php
-        $cnt++;  }
-            ?>
-
-            </table>
+<table class='table table-bordered table-hover'>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Fullname</th>
+            <th>Chosen Service</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($result as $row): ?>
+            <tr>
+                <td><div class='text-center'><?php echo $cnt; ?></div></td>
+                <td><div class='text-center'><?php echo htmlspecialchars($row['fullname']); ?></div></td>
+                <td><div class='text-center'><?php echo htmlspecialchars($row['services']); ?></div></td>
+                <td><div class='text-center'><a href="<?= site_url('admin/view-member-report?id=' . $row['user_id']) ?>"><i class="fas fa-file"></i> View Report</a></div></td>
+            </tr>
+            <?php $cnt++; ?>
+        <?php endforeach; ?>
+    </tbody>
+</table>
           </div>
         </div>
    

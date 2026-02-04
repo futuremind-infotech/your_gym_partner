@@ -250,6 +250,45 @@ class Admin extends BaseController
         return redirect()->to('admin/members');
     }
 
+    public function updateProgress()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $member_id = $this->request->getPost('id');
+            $ini_weight = $this->request->getPost('ini_weight');
+            $curr_weight = $this->request->getPost('curr_weight');
+            $ini_bodytype = $this->request->getPost('ini_bodytype');
+            $curr_bodytype = $this->request->getPost('curr_bodytype');
+            
+            if (!$member_id) {
+                session()->setFlashdata('error', '❌ Invalid member ID!');
+                return redirect()->back();
+            }
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->where('user_id', $member_id)->update([
+                    'ini_weight' => $ini_weight ?? 0,
+                    'curr_weight' => $curr_weight ?? 0,
+                    'ini_bodytype' => $ini_bodytype ?? '',
+                    'curr_bodytype' => $curr_bodytype ?? '',
+                    'progress_date' => date('Y-m-d')
+                ]);
+                
+                session()->setFlashdata('success', '✅ Progress updated successfully!');
+                return redirect()->to('admin/customer-progress');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating progress: ' . $e->getMessage());
+                return redirect()->back();
+            }
+        }
+        
+        return redirect()->to('admin/customer-progress');
+    }
+    
     public function deleteMember() { return view('admin/actions/delete-member', ['page' => 'members-remove']); }
     public function memberStatus() { return view('admin/member-status', ['page' => 'member-status']); }
 
@@ -455,23 +494,26 @@ class Admin extends BaseController
 
     public function checkAttendance()
     {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to(site_url('admin'));
+        }
         $id = $this->request->getGet('id');
         if (! $id) {
-            return redirect()->to('/admin/attendance');
+            return redirect()->to(site_url('admin/attendance'));
         }
 
         $db = \Config\Database::connect();
-        date_default_timezone_set('Asia/Kolkata');
+        date_default_timezone_set('Asia/Kathmandu');
         $curr_date = date('Y-m-d');
         $curr_time = date('H:i:s');
 
-        $existing = $db->query("SELECT * FROM attendance WHERE curr_date = ? AND user_id = ?", [$curr_date, $id])->getRowArray();
+        $existing = $db->table('attendance')->where('curr_date', $curr_date)->where('user_id', $id)->get()->getRowArray();
         if (! $existing) {
-            $db->query("INSERT INTO attendance (user_id, curr_date, curr_time, present) VALUES (?, ?, ?, 1)", [$id, $curr_date, $curr_time]);
-            $db->query("UPDATE members SET attendance_count = attendance_count + 1 WHERE user_id = ?", [$id]);
+            $db->table('attendance')->insert(['user_id' => $id, 'curr_date' => $curr_date, 'curr_time' => $curr_time, 'present' => 1]);
+            $db->table('members')->where('user_id', $id)->increment('attendance_count');
         }
 
-        return redirect()->to('/admin/attendance');
+        return redirect()->to(site_url('admin/attendance'));
     }
 
     public function mark_qr_attendance()
@@ -566,16 +608,26 @@ class Admin extends BaseController
 
     public function deleteAttendance()
     {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to(site_url('admin'));
+        }
         $id = $this->request->getGet('id');
         if (! $id) {
-            return redirect()->to('/admin/attendance');
+            return redirect()->to(site_url('admin/attendance'));
         }
 
         $db = \Config\Database::connect();
-        $db->query("DELETE FROM attendance WHERE user_id = ?", [$id]);
-        $db->query("UPDATE members SET attendance_count = GREATEST(attendance_count - 1, 0) WHERE user_id = ?", [$id]);
+        date_default_timezone_set('Asia/Kathmandu');
+        $curr_date = date('Y-m-d');
+        
+        $db->table('attendance')->where('user_id', $id)->where('curr_date', $curr_date)->delete();
+        // Decrement attendance_count but don't go below 0
+        $member = $db->table('members')->where('user_id', $id)->get()->getRowArray();
+        if ($member && $member['attendance_count'] > 0) {
+            $db->table('members')->where('user_id', $id)->update(['attendance_count' => $member['attendance_count'] - 1]);
+        }
 
-        return redirect()->to('/admin/attendance');
+        return redirect()->to(site_url('admin/attendance'));
     }
     
     public function viewAttendance() { return view('admin/view-attendance', ['page' => 'view-attendance']); }
@@ -584,14 +636,52 @@ class Admin extends BaseController
     public function reports() { return view('admin/reports', ['page' => 'chart']); }
     public function customerProgress() { return view('admin/customer-progress', ['page' => 'manage-customer-progress']); }
     public function progressReport() { return view('admin/progress-report', ['page' => 'c-p-r']); }
-    public function updateProgress() { return view('admin/update-progress', ['page' => 'c-p-r']); }
     public function viewProgressReport() { return view('admin/view-progress-report', ['page' => 'c-p-r']); }
     public function membersReport() { return view('admin/members-report', ['page' => 'member-repo']); }
-    public function viewMemberReport() { return view('admin/view-member-report', ['page' => 'member-repo']); }
+    public function viewMemberReport() { 
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to(site_url('admin'));
+        }
+        $db = \Config\Database::connect();
+        $member_id = $this->request->getGet('id');
+        if (!$member_id) {
+            return redirect()->to(site_url('admin/members-report'));
+        }
+        $member = $db->table('members')->where('user_id', $member_id)->get()->getRowArray();
+        if (!$member) {
+            return redirect()->to(site_url('admin/members-report'));
+        }
+        return view('admin/view-member-report', ['member' => $member, 'page' => 'member-repo']);
+    }
     public function servicesReport() { return view('admin/services-report', ['page' => 'services-report']); }
 
     public function payment() { return view('admin/payment', ['page' => 'payment']); }
-    public function userPayment() { return view('admin/user-payment', ['page' => 'payment']); }
+    public function userPayment()
+    {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        // Get member ID from query string
+        $member_id = $this->request->getGet('id');
+        
+        if (!$member_id) {
+            return redirect()->to('admin/payment');
+        }
+        
+        // Get member data from database
+        $db = \Config\Database::connect();
+        $member = $db->query("SELECT * FROM members WHERE user_id = ?", [$member_id])->getRowArray();
+        
+        if (!$member) {
+            return redirect()->to('admin/payment');
+        }
+        
+        return view('admin/user-payment', [
+            'page' => 'payment',
+            'member' => $member
+        ]);
+    }
     
     public function userpay()
     {
@@ -599,38 +689,57 @@ class Admin extends BaseController
         if ($this->request->getMethod() === 'post') {
             $db = \Config\Database::connect();
             
-            $fullname = $this->request->getPost('fullname');
-            $services = $this->request->getPost('services');
-            $amount = intval($this->request->getPost('amount'));
-            $plan = intval($this->request->getPost('plan'));
-            $status = $this->request->getPost('status');
-            $member_id = intval($this->request->getPost('id'));
-            
-            // Calculate payable amount
-            $amountpayable = $amount * $plan;
+            $fullname = trim($this->request->getPost('fullname') ?? '');
+            $services = trim($this->request->getPost('services') ?? '');
+            $amount = intval($this->request->getPost('amount') ?? 0);
+            $plan = intval($this->request->getPost('plan') ?? 1);
+            $status = trim($this->request->getPost('status') ?? 'Active');
+            $member_id = intval($this->request->getPost('id') ?? 0);
             
             // Set timezone to Asia/Kolkata
             date_default_timezone_set('Asia/Kolkata');
             $curr_date = date('Y-m-d');
             
-            // Update member payment record
-            $db->query(
-                "UPDATE members SET amount = ?, plan = ?, status = ?, paid_date = ?, reminder = 0 WHERE user_id = ?",
-                [$amountpayable, $plan, $status, $curr_date, $member_id]
-            );
-            
-            // Pass data to receipt view
-            return view('admin/userpay', [
-                'page' => 'payment',
-                'fullname' => $fullname,
-                'services' => $services,
-                'amount' => $amount,
-                'plan' => $plan,
-                'status' => $status,
-                'amountpayable' => $amountpayable,
-                'paid_date' => $curr_date,
-                'success' => true
-            ]);
+            // Validate minimum requirements
+            if (!empty($fullname) && $member_id > 0 && $amount > 0) {
+                // Calculate payable amount
+                $amountpayable = $amount * $plan;
+                
+                // Update member payment record
+                try {
+                    $db->query(
+                        "UPDATE members SET amount = ?, plan = ?, status = ?, paid_date = ?, reminder = 0 WHERE user_id = ?",
+                        [$amountpayable, $plan, $status, $curr_date, $member_id]
+                    );
+                    
+                    // Success - pass data to receipt view
+                    return view('admin/userpay', [
+                        'page' => 'payment',
+                        'fullname' => $fullname,
+                        'services' => $services,
+                        'amount' => $amount,
+                        'plan' => $plan,
+                        'status' => $status,
+                        'amountpayable' => $amountpayable,
+                        'paid_date' => $curr_date,
+                        'success' => true
+                    ]);
+                } catch (\Exception $e) {
+                    // Database error
+                    return view('admin/userpay', [
+                        'page' => 'payment',
+                        'success' => false,
+                        'error' => 'Database error: ' . $e->getMessage()
+                    ]);
+                }
+            } else {
+                // Validation failed - show what was missing
+                return view('admin/userpay', [
+                    'page' => 'payment',
+                    'success' => false,
+                    'error' => 'Missing required data: fullname=' . $fullname . ', member_id=' . $member_id . ', amount=' . $amount
+                ]);
+            }
         }
         
         // GET request - show form

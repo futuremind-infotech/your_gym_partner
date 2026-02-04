@@ -64,7 +64,7 @@ if(!isset($_SESSION['user_id'])){
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
-                                    <th>Amount ($)</th>
+                                    <th>Amount (₹)</th>
                                     <th>Vendor</th>
                                     <th>Date</th>
                                     <th>Actions</th>

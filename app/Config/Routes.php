@@ -67,9 +67,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     // ===================== ATTENDANCE =====================
     $routes->get('attendance', 'Admin::attendance');
     $routes->get('qr-scanner', 'Admin::qr_scanner');
-    $routes->post('check-attendance', 'Admin::checkAttendance');
+    $routes->get('check-attendance', 'Admin::checkAttendance');
     $routes->post('mark-qr-attendance', 'Admin::mark_qr_attendance');
-    $routes->post('delete-attendance', 'Admin::deleteAttendance');
+    $routes->get('delete-attendance', 'Admin::deleteAttendance');
     $routes->get('view-attendance', 'Admin::viewAttendance');
     $routes->get('generate-qr/(:num)', 'Admin::generate_qr/$1');
     $routes->get('old-qr/(:num)', 'Admin::old_qr/$1');
@@ -79,8 +79,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('customer-progress', 'Admin::customerProgress');
     $routes->get('progress-report', 'Admin::progressReport');
     $routes->post('update-progress', 'Admin::updateProgress');
-    $routes->post('search-result-progress', 'Admin::searchResultProgress');
     $routes->get('view-progress-report', 'Admin::viewProgressReport');
+    $routes->post('search-result-progress', 'Admin::searchResultProgress');
     $routes->get('members-report', 'Admin::membersReport');
     $routes->get('view-member-report', 'Admin::viewMemberReport');
     $routes->get('services-report', 'Admin::servicesReport');
@@ -89,6 +89,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('payment', 'Admin::payment');
     $routes->get('user-payment', 'Admin::userPayment');
     $routes->post('userpay', 'Admin::userpay');
+    $routes->get('payment-receipt', 'Admin::userpay');
     $routes->post('search-result', 'Admin::searchResult');
     $routes->post('sendReminder', 'Admin::sendReminder');
 
@@ -136,8 +137,8 @@ $routes->group('staff', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('delete-equipment', 'Staff::deleteEquipment');
 
     $routes->get('attendance', 'Staff::attendance');
-    $routes->post('check-attendance', 'Staff::checkAttendance');
-    $routes->post('delete-attendance', 'Staff::deleteAttendance');
+    $routes->get('check-attendance', 'Staff::checkAttendance');
+    $routes->get('delete-attendance', 'Staff::deleteAttendance');
 
     $routes->get('payment', 'Staff::payment');
     $routes->get('user-payment', 'Staff::userPayment');
@@ -173,10 +174,10 @@ $routes->group('customer', ['namespace' => 'App\Controllers'], function ($routes
 /* DEBUG ROUTES - NO AUTHENTICATION */
 $routes->group('test-debug', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('members', 'TestDebug::members');
+});
 
 /* QUICK TEST ROUTES */
 $routes->group('quick-test', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('add-member', 'QuickTest::addMember');
     $routes->get('view-members', 'QuickTest::viewMembers');
-});
 });

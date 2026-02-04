@@ -70,7 +70,7 @@ if(!isset($_SESSION['user_id'])){
                                 </div>
 
                                 <div class="control-group">
-                                    <label class="control-label">Unit Amount ($):</label>
+                                    <label class="control-label">Unit Amount (₹):</label>
                                     <div class="controls">
                                         <input type="number" step="0.01" class="span5" name="amount" value="<?= $equipment['amount'] / $equipment['quantity'] ?>" required />
                                     </div>

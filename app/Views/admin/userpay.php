@@ -9,6 +9,8 @@ $plan = isset($plan) ? intval($plan) : 0;
 $status = isset($status) ? $status : '';
 $amountpayable = isset($amountpayable) ? $amountpayable : 0;
 $paid_date = isset($paid_date) ? $paid_date : date('Y-m-d');
+$error = isset($error) ? $error : '';
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,7 +85,7 @@ $paid_date = isset($paid_date) ? $paid_date : date('Y-m-d');
 
   <div class="container-fluid">
     
-    <?php if ($success && $status == 'Active') { ?>
+    <?php if ($success) { ?>
         <!-- SUCCESS RECEIPT -->
         <div class="row-fluid">
           <div class="span12">
@@ -172,7 +174,7 @@ $paid_date = isset($paid_date) ? $paid_date : date('Y-m-d');
           </div>
         </div>
         
-    <?php } else if ($success && $status == 'Expired') { ?>
+        <?php } elseif ($status == 'Expired') { ?>
         <!-- EXPIRED ACCOUNT WARNING -->
         <div class="row-fluid">
           <div class="span12">
@@ -187,13 +189,16 @@ $paid_date = isset($paid_date) ? $paid_date : date('Y-m-d');
           </div>
         </div>
         
-    <?php } else { ?>
+        <?php } else { ?>
         <!-- ERROR MESSAGE -->
         <div class="row-fluid">
           <div class="span12">
             <div class="alert alert-danger" style="padding: 20px; text-align: center;">
               <h3><i class="fas fa-times-circle"></i> Something went wrong!</h3>
               <p>The payment could not be processed. Please try again.</p>
+              <?php if (!empty($error)) { ?>
+                <p style="color: red; font-weight: bold; margin-top: 15px;">Debug Info: <?= htmlspecialchars($error) ?></p>
+              <?php } ?>
               <a href="<?= base_url('admin/payment') ?>" class="btn btn-danger">
                 <i class="fas fa-arrow-left"></i> Go Back to Payments
               </a>
