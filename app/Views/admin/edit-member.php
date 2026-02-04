@@ -1,184 +1,182 @@
 <?php
-
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+if (!session()->get('isLoggedIn')) {
+    return redirect()->to('/');
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+    <title>Edit Member - Perfect Gym Admin</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+    <link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+    <style>
+        .error { border-color: #e74c3c !important; }
+        .text-danger { color: #e74c3c; }
+        .help-block { color: #e74c3c; font-size: 12px; }
+    </style>
 </head>
 <body>
 
-<!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+    <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
 
-
-<!--top-Header-menu-->
-<?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
-<!-- Visit codeastro.com for more projects -->
-<!--sidebar-menu-->
-<?php $page='members-update'; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
+<?php $page='members-update'; include 'includes/topheader.php'; ?>
+<?php include 'includes/sidebar.php'; ?>
 
 <div id="content">
-  <div id="content-header">
-    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="fas fa--home"></i> Home</a> <a href="#" class="current">Registered Members</a> </div>
-    <h1 class="text-center">Registered Members List <i class="fas fa-group"></i></h1>
-  </div>
-  <div class="container-fluid">
-    <hr>
-    <div class="row-fluid">
-      <div class="span12">
-
-      <div class='widget-box'>
-          <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
-            <h5>Member table</h5>
-          </div>
-          <div class='widget-content nopadding'>
-	  
-	  <?php
-
-      include "dbcon.php";
-      $qry="select * from members";
-      $cnt = 1;
-        $result=mysqli_query($conn,$qry);
-
-        
-          echo"<table class='table table-bordered table-hover'>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Fullname</th>
-                  <th>Username</th>
-                  <th>Gender</th>
-                  <th>Contact Number</th>
-                  <th>D.O.R</th>
-                  <th>Address</th>
-                  <th>Amount</th>
-                  <th>Choosen Service</th>
-                  <th>Plan</th>
-                  <th>Action</th>
-                </tr>
-              </thead>";
-              // <!-- Visit codeastro.com for more projects -->
-            while($row=mysqli_fetch_array($result)){
-            
-            echo"<tbody> 
-               
-                <td><div class='text-center'>".$cnt."</div></td>
-                <td><div class='text-center'>".$row['fullname']."</div></td>
-                <td><div class='text-center'>@".$row['username']."</div></td>
-                <td><div class='text-center'>".$row['gender']."</div></td>
-                <td><div class='text-center'>".$row['contact']."</div></td>
-                <td><div class='text-center'>".$row['dor']."</div></td>
-                <td><div class='text-center'>".$row['address']."</div></td>
-                <td><div class='text-center'>$".$row['amount']."</div></td>
-                <td><div class='text-center'>".$row['services']."</div></td>
-                <td><div class='text-center'>".$row['plan']." Month/s</div></td>
-                <td><div class='text-center'><a href='edit-memberform.php?id=".$row['user_id']."'><i class='fas fa-edit'></i> Edit</a></div></td>
-                
-              </tbody>";
-         $cnt++;   }
-            ?>
-
-            </table>
-          </div>
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="<?= site_url('admin') ?>"><i class="fas fa-home"></i> Home</a> 
+            <a href="<?= site_url('admin/members') ?>">Members</a>
+            <span class="current">Edit Member #<?= esc($member_id ?? 'New') ?></span>
         </div>
-   
-		
-	
-      </div>
+        <h1>Edit Member <i class="fas fa-user-edit"></i></h1>
     </div>
-  </div>
+
+    <div class="container-fluid">
+        <hr>
+        
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="alert alert-success alert-block">
+                <strong>✅ <?= session()->getFlashdata('success') ?></strong>
+                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">View All Members</a>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger alert-block">
+                <strong>❌ <?= session()->getFlashdata('error') ?></strong>
+            </div>
+        <?php endif; ?>
+
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"><i class="fas fa-user-edit"></i></span>
+                        <h5>Edit Member Details</h5>
+                    </div>
+                    <div class="widget-content padding">
+                        
+                        <?php if (isset($member) && $member): ?>
+                            <!-- ✅ FORM WORKS - Points to CORRECT controller method -->
+                        <!-- ✅ CORRECT -->
+<form class="form-horizontal" method="post" action="<?= site_url('admin/edit-member') ?>">
+                                <input type="hidden" name="user_id" value="<?= esc($member['user_id']) ?>">
+                                
+                                <div class="control-group <?= isset(session('errors')['fullname']) ? 'error' : '' ?>">
+                                    <label class="control-label">Full Name <span class="text-danger">*</span></label>
+                                    <div class="controls">
+                                        <input type="text" name="fullname" class="span8 form-control" 
+                                               value="<?= esc($member['fullname']) ?>" required>
+                                        <?php if (isset(session('errors')['fullname'])): ?>
+                                            <span class="help-block"><?= session('errors')['fullname'] ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="control-group <?= isset(session('errors')['username']) ? 'error' : '' ?>">
+                                    <label class="control-label">Username <span class="text-danger">*</span></label>
+                                    <div class="controls">
+                                        <input type="text" name="username" class="span8 form-control" 
+                                               value="<?= esc($member['username']) ?>" required>
+                                        <?php if (isset(session('errors')['username'])): ?>
+                                            <span class="help-block"><?= session('errors')['username'] ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Gender <span class="text-danger">*</span></label>
+                                    <div class="controls">
+                                        <select name="gender" class="span8 form-control" required>
+                                            <option value="">Select Gender</option>
+                                            <option value="Male" <?= $member['gender']=='Male' ? 'selected' : '' ?>>Male</option>
+                                            <option value="Female" <?= $member['gender']=='Female' ? 'selected' : '' ?>>Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Contact</label>
+                                    <div class="controls">
+                                        <input type="tel" name="contact" class="span8 form-control" 
+                                               value="<?= esc($member['contact']) ?>">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Address</label>
+                                    <div class="controls">
+                                        <textarea name="address" class="span8 form-control" rows="3"><?= esc($member['address']) ?></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Amount (₹)</label>
+                                    <div class="controls">
+                                        <input type="number" name="amount" class="span8 form-control" 
+                                               value="<?= number_format($member['amount'], 2) ?>" step="0.01" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Services</label>
+                                    <div class="controls">
+                                        <input type="text" name="services" class="span8 form-control" 
+                                               value="<?= esc($member['services']) ?>">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Plan (Months)</label>
+                                    <div class="controls">
+                                        <input type="number" name="plan" class="span8 form-control" 
+                                               value="<?= esc($member['plan']) ?>" min="1" max="24">
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success btn-large">
+                                        <i class="fas fa-save"></i> Update Member
+                                    </button>
+                                    <a href="<?= site_url('admin/members') ?>" class="btn btn-default">Cancel</a>
+                                    <a href="<?= site_url('admin/generate_qr/' . $member['user_id']) ?>" class="btn btn-info">
+                                        <i class="fas fa-qrcode"></i> Generate QR
+                                    </a>
+                                </div>
+                            </form>
+                            
+                        <?php elseif (isset($member_id)): ?>
+                            <div class="alert alert-danger">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Member Not Found!</h4>
+                                <p>ID: <?= esc($member_id) ?> does not exist.</p>
+                                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">← Back to Members</a>
+                            </div>
+                            
+                        <?php else: ?>
+                            <div class="alert alert-warning">
+                                <h4><i class="fas fa-question-circle"></i> No Member Selected!</h4>
+                                <p>Please select a member from the members list.</p>
+                                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">← Go to Members</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!--end-main-container-part-->
+<div id="footer" class="span12"> <?= date("Y") ?> © Perfect Gym Admin</div>
 
-<!--Footer-part-->
-<!-- Visit codeastro.com for more projects -->
-<div class="row-fluid">
-  <div id="footer" class="span12"> <?php echo date("Y");?> &copy; Developed By Naseeb Bajracharya</a> </div>
-</div>
-
-<style>
-#footer {
-  color: white;
-}
-</style>
-
-<!--end-Footer-part-->
-
-<script src="../js/excanvas.min.js"></script> 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
-
-<script type="text/javascript">
-  // This function is called from the pop-up menus to transfer to
-  // a different page. Ignore if the value returned is a null string:
-  function goPage (newURL) {
-
-      // if url is empty, skip the menu dividers and reset the menu selection to default
-      if (newURL != "") {
-      
-          // if url is "-", it is this page -- reset the menu:
-          if (newURL == "-" ) {
-              resetMenu();            
-          } 
-          // else, send page to designated URL            
-          else {  
-            document.location.href = newURL;
-          }
-      }
-  }
-
-// resets the menu selection upon entry to this page:
-function resetMenu() {
-   document.gomenu.selector.selectedIndex = 2;
-}
-</script>
+<script src="<?= base_url('js/jquery.min.js') ?>"></script>
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script>
 </body>
 </html>
-

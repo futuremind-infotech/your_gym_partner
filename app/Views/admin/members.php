@@ -17,6 +17,14 @@ if (!session()->get('isLoggedIn')) {
 <link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
 <link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
 <link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<style>
+#footer { color:white; background:#333; padding:15px; text-align:center; margin-top:30px; }
+.table th { background:#34495e; color:white; }
+.btn-xs { padding:3px 8px; font-size:11px; }
+.table td { vertical-align: middle; }
+.btn-group-xs .btn { margin-right: 3px; }
+.alert { margin: 20px 0; }
+</style>
 </head>
 <body>
 
@@ -43,6 +51,18 @@ if (!session()->get('isLoggedIn')) {
   <div class="container-fluid">
     <hr>
 
+    <?php if (session()->getFlashdata('success')): ?>
+      <div class="alert alert-success alert-block">
+        <strong>✅ <?= session()->getFlashdata('success') ?></strong>
+      </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+      <div class="alert alert-danger alert-block">
+        <strong>❌ <?= session()->getFlashdata('error') ?></strong>
+      </div>
+    <?php endif; ?>
+
     <?php
     // ALL DATABASE QUERIES AT TOP - NO ERRORS!
     $db = \Config\Database::connect();
@@ -59,6 +79,11 @@ if (!session()->get('isLoggedIn')) {
       <div class='widget-title'> 
         <span class='icon'><i class='fas fa-th'></i></span>
         <h5>Member table <span class="badge badge-success"><?= $totalMembers ?> Members</span></h5>
+        <div class="buttons">
+          <a href="<?= site_url('admin/member-entry') ?>" class="btn btn-primary btn-small">
+            <i class="fas fa-plus"></i> Add New Member
+          </a>
+        </div>
       </div>
       <div class='widget-content nopadding'>
         
@@ -75,7 +100,7 @@ if (!session()->get('isLoggedIn')) {
              <th>Amount</th>
              <th>Service</th>
              <th>Plan</th>
-             <th>QR Code</th>
+             <th>Attendance</th>
              <th>Actions</th>
            </tr>
          </thead>
@@ -84,32 +109,50 @@ if (!session()->get('isLoggedIn')) {
              <?php $cnt = 1; foreach ($members as $row): ?>
                <tr>
                  <td class='text-center'><strong><?= $cnt++ ?></strong></td>
-                 <td class='text-center'><?= esc($row['fullname']) ?></td>
-                 <td class='text-center'><span class="badge badge-info">@<?= esc($row['username']) ?></span></td>
-                 <td class='text-center'>
+                 <td><?= esc($row['fullname']) ?></td>
+                 <td><span class="badge badge-info">@<?= esc($row['username']) ?></span></td>
+                 <td>
                    <span class="badge badge-<?= $row['gender']=='Male' ? 'primary' : 'danger' ?>">
                      <?= esc($row['gender']) ?>
                    </span>
                  </td>
-                 <td class='text-center'><?= esc($row['contact']) ?></td>
-                 <td class='text-center'><?= date('M d, Y', strtotime($row['dor'])) ?></td>
-                 <td class='text-center'><?= substr(esc($row['address']), 0, 20) ?>...</td>
-                 <td class='text-center'><strong>$<?= number_format($row['amount'], 2) ?></strong></td>
-                 <td class='text-center'><span class="badge badge-success"><?= esc($row['services']) ?></span></td>
-                 <td class='text-center'><?= esc($row['plan']) ?> Month<?= $row['plan'] > 1 ? 's' : '' ?></td>
-                 
-                 <!-- ✅ FIXED QR COLUMN - NO 403 ERRORS! -->
-                 <td class="text-center">
-                   <a href="<?= site_url('admin/generate_qr/' . $row['user_id']) ?>" 
-                      class="btn btn-xs btn-success" target="_blank"
-                      title="Generate QR Card">
-                     <i class="fas fa-qrcode"></i> QR
-                   </a>
+                 <td><?= esc($row['contact']) ?></td>
+                 <td><?= date('M d, Y', strtotime($row['dor'])) ?></td>
+                 <td><?= substr(esc($row['address']), 0, 20) ?>...</td>
+                 <td><strong>₹<?= number_format($row['amount'], 2) ?></strong></td>
+                 <td><span class="badge badge-success"><?= esc($row['services']) ?></span></td>
+                 <td><?= esc($row['plan']) ?> Month<?= $row['plan'] > 1 ? 's' : '' ?></td>
+                 <td>
+                   <span class="badge badge-<?= $row['attendance_count'] > 10 ? 'success' : 'warning' ?>">
+                     <?= $row['attendance_count'] ?> visits
+                   </span>
                  </td>
                  
+                 <!-- ✅ PERFECT ACTION BUTTONS -->
                  <td class="text-center">
-                   <a href="<?= site_url('admin/editMember?id=' . $row['user_id']) ?>" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>
-                   <a href="<?= site_url('admin/removeMember?id=' . $row['user_id']) ?>" class="btn btn-xs btn-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a>
+                   <div class="btn-group btn-group-xs" role="group">
+                     
+                     <!-- EDIT BUTTON -->
+                     <a href="<?= site_url('admin/edit-member?id=' . $row['user_id']) ?>" 
+                        class="btn btn-warning" title="Edit Member">
+                       <i class="fas fa-edit"></i>
+                     </a>
+                     
+                     <!-- DELETE BUTTON -->
+                     <a href="<?= site_url('admin/remove-member?id=' . $row['user_id']) ?>" 
+                        class="btn btn-danger" 
+                        onclick="return confirm('Delete <?= esc($row['fullname']) ?>? This cannot be undone!')"
+                        title="Delete Member">
+                       <i class="fas fa-trash"></i>
+                     </a>
+                     
+                     <!-- QR BUTTON -->
+                     <a href="<?= site_url('admin/generate_qr/' . $row['user_id']) ?>" 
+                        class="btn btn-success" target="_blank" title="Generate QR Code">
+                       <i class="fas fa-qrcode"></i>
+                     </a>
+                     
+                   </div>
                  </td>
                </tr>
              <?php endforeach; ?>
@@ -117,15 +160,18 @@ if (!session()->get('isLoggedIn')) {
              <tr>
                <td colspan="12" class="text-center">
                  <div class="alert alert-info">
-                   <h4>No Members <i class="fas fa-users"></i></h4>
-                   <a href="<?= site_url('admin/memberEntry') ?>" class="btn btn-primary">Add First Member</a>
+                   <h4><i class="fas fa-users"></i> No Members Yet</h4>
+                   <p>Add your first member to get started!</p>
+                   <a href="<?= site_url('admin/member-entry') ?>" class="btn btn-primary btn-lg">
+                     <i class="fas fa-plus"></i> Add First Member
+                   </a>
                  </div>
                </td>
              </tr>
            <?php endif; ?>
          </tbody>
        </table>
-      </div>
+     </div>
     </div>
 
   </div>
@@ -133,22 +179,25 @@ if (!session()->get('isLoggedIn')) {
 
 <!-- FLOATING QR SCANNER BUTTON -->
 <div style="position:fixed;top:20px;right:20px;z-index:9999;">
-  <a href="<?= site_url('admin/qr_scanner') ?>" class="btn btn-success" style="border-radius:50%;width:55px;height:55px;">
-    <i class="fas fa-qrcode fa-lg"></i>
+  <a href="<?= site_url('admin/qr_scanner') ?>" class="btn btn-success" style="border-radius:50%;width:60px;height:60px;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+    <i class="fas fa-qrcode fa-2x"></i>
   </a>
 </div>
 
 <!--Footer-->
 <div id="footer" class="span12"> <?= date("Y") ?> &copy; Perfect Gym - QR Ready! </div>
 
-<style>
-#footer { color:white; background:#333; padding:15px; text-align:center; margin-top:30px; }
-.table th { background:#34495e; color:white; }
-.btn-xs { padding:3px 8px; font-size:11px; }
-.table td { vertical-align: middle; }
-</style>
-
 <script src="<?= base_url('js/jquery.min.js') ?>"></script>
 <script src="<?= base_url('js/bootstrap.min.js') ?>"></script>
+
+<script>
+// Flash messages auto-hide
+$(document).ready(function() {
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 5000);
+});
+</script>
+
 </body>
 </html>

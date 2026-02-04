@@ -28,32 +28,17 @@ $routes->get('logout', 'Auth::logout');
 // COMPREHENSIVE LEGACY ROUTE SHORTCUTS - Maps all legacy .php files to controllers
 // ============================================================================
 
-$routes->get('admin/generate_qr/(:num)', 'Admin::generate_qr/$1');
-$routes->get('admin/qr_scanner', 'Admin::qr_scanner');
-$routes->post('admin/mark_qr_attendance', 'Admin::mark_qr_attendance');
-$routes->get('admin/members', 'Admin::members');
-
-// ADMIN - Members Section
-$routes->match(['get', 'post'], 'members', 'Admin::members');
-$routes->match(['get', 'post'], 'members.php', 'Admin::members');
-$routes->match(['get', 'post'], 'member-entry', 'Admin::memberEntry');
-$routes->match(['get', 'post'], 'member-entry.php', 'Admin::memberEntry');
-$routes->match(['get', 'post'], 'add-member', 'Admin::addMember');
-$routes->match(['get', 'post'], 'add-member.php', 'Admin::addMember');
-$routes->match(['get', 'post'], 'add-member-req', 'Admin::addMember');
-$routes->match(['get', 'post'], 'add-member-req.php', 'Admin::addMember');
-$routes->match(['get', 'post'], 'edit-member', 'Admin::editMember');
-$routes->match(['get', 'post'], 'edit-member.php', 'Admin::editMember');
-$routes->match(['get', 'post'], 'edit-memberform', 'Admin::editMemberform');
-$routes->match(['get', 'post'], 'edit-memberform.php', 'Admin::editMemberform');
-$routes->match(['get', 'post'], 'edit-member-req', 'Admin::editMemberReq');
-$routes->match(['get', 'post'], 'edit-member-req.php', 'Admin::editMemberReq');
-$routes->match(['get', 'post'], 'delete-member', 'Admin::deleteMember');
-$routes->match(['get', 'post'], 'delete-member.php', 'Admin::deleteMember');
-$routes->match(['get', 'post'], 'remove-member', 'Admin::removeMember');
-$routes->match(['get', 'post'], 'remove-member.php', 'Admin::removeMember');
-$routes->match(['get', 'post'], 'member-status', 'Admin::memberStatus');
-$routes->match(['get', 'post'], 'member-status.php', 'Admin::memberStatus');
+// 🔥 ADMIN MEMBERS - FULL CRUD ROUTES (REPLACE ALL)
+$routes->group('admin', ['namespace' => 'App\Controllers'], function($routes) {
+    $routes->get('/', 'Admin::index');
+    $routes->get('members', 'Admin::members');
+    $routes->get('member-entry', 'Admin::memberEntry');
+    $routes->match(['get','post'], 'add-member', 'Admin::addMember');
+    $routes->get('edit-member', 'Admin::editMember');
+    $routes->post('edit-member', 'Admin::editMemberReq');
+    $routes->get('remove-member', 'Admin::removeMember');
+    $routes->delete('delete-member', 'Admin::deleteMember');
+});
 
 // ADMIN - Equipment Section
 $routes->match(['get', 'post'], 'equipment', 'Admin::equipment');
@@ -236,17 +221,4 @@ $routes->group('customer', [], static function ($routes) {
     $routes->get('pages/announcement', 'Customer::announcement');
     $routes->get('pages/customer-reminder', 'Customer::reminder');
     $routes->post('pages/register-cust', 'Customer::registerCustomer');
-    // Add these routes at the BOTTOM (before closing bracket)
-$routes->get('writable/qr_codes/(:any)', 'Admin::serve_qr/$1');
-$routes->get('writable/(:any)', 'Admin::serve_file/$1');
-// Fix old QR paths - ADD THIS LINE
-$routes->get('qr_(:num)', function($id) {
-    $qr_data = site_url('admin/mark_qr_attendance?user_id=' . $id);
-    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
-    return redirect()->to($qr_url);
-});
-// Handle old QR paths (qr_16 → live QR)
-$routes->get('qr_(:num)', 'Admin::old_qr/$1');
-
-
 });
