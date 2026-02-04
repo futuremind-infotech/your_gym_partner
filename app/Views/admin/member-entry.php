@@ -12,15 +12,15 @@ header('location:../index.php');
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
@@ -54,7 +54,7 @@ header('location:../index.php');
   <div class="row-fluid">
     <div class="span6">
       <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-align-justify"></i> </span>
+        <div class="widget-title"> <span class="icon"> <i class="fas fa-user"></i> </span>
           <h5>Personal-info</h5>
         </div>
         <div class="widget-content nopadding">
@@ -92,16 +92,13 @@ header('location:../index.php');
               <label class="control-label">D.O.R :</label>
               <div class="controls">
                 <input type="date" name="dor" class="span11" />
-                <span class="help-block">Date of registration</span> </div>
+                <span class="help-block">Date of registration</span>
+              </div>
             </div>
-            
-          
         </div>
-     
         
-        <div class="widget-content nopadding">
-          <div class="form-horizontal">
-          
+        <div class="widget-title"> <span class="icon"> <i class="fas fa-calendar"></i> </span>
+          <h5>Plans</h5>
         </div>
         <div class="widget-content nopadding">
           <div class="form-horizontal">
@@ -113,21 +110,10 @@ header('location:../index.php');
                   <option value="3">Three Month</option>
                   <option value="6">Six Month</option>
                   <option value="12">One Year</option>
-
                 </select>
               </div>
-
-            </div>
-            <div class="control-group">
-              
-              
             </div>
           </div>
-
-          </div>
-
-
-
         </div>
       </div>
 	  
@@ -138,7 +124,7 @@ header('location:../index.php');
     
     <div class="span6">
       <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-align-justify"></i> </span>
+        <div class="widget-title"> <span class="icon"> <i class="fas fa-phone"></i> </span>
           <h5>Contact Details</h5>
         </div>
         <div class="widget-content nopadding">
@@ -148,7 +134,13 @@ header('location:../index.php');
               <div class="controls">
                 <input type="number" id="mask-phone" name="contact" placeholder="9876543210" class="span8 mask text">
                 <span class="help-block blue span8">(999) 999-9999</span> 
-                </div>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Email Address :</label>
+              <div class="controls">
+                <input type="email" class="span11" name="email" placeholder="Email@example.com" />
+              </div>
             </div>
             <div class="control-group">
               <label class="control-label">Address :</label>
@@ -157,14 +149,13 @@ header('location:../index.php');
               </div>
             </div>
           </div>
-
-              <div class="widget-title"> <span class="icon"> <i class="fas fa-align-justify"></i> </span>
+        </div>
+        
+        <div class="widget-title"> <span class="icon"> <i class="fas fa-dumbbell"></i> </span>
           <h5>Service Details</h5>
         </div>
         <div class="widget-content nopadding">
           <div class="form-horizontal">
-            
-            
             <div class="control-group">
               <label class="control-label">Services</label>
               <div class="controls">
@@ -229,27 +220,27 @@ header('location:../index.php');
 
 <!--end-Footer-part-->
 
-<script src="../js/excanvas.min.js"></script> 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="<?= base_url('js/excanvas.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.resize.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.peity.min.js') ?>"></script> 
+<script src="<?= base_url('js/fullcalendar.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.dashboard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.gritter.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.interface.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.chat.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.form_validation.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.wizard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
+<script src="<?= base_url('js/select2.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.popover.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
 <script type="text/javascript">
   // This function is called from the pop-up menus to transfer to

@@ -12,15 +12,15 @@ header('location:../index.php');
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
@@ -139,11 +139,11 @@ while($row=mysqli_fetch_array($result)){
                   <label class="control-label">Designation</label>
                   <div class="controls">
                   <select name="designation" id="designation">
-                    <option value="Cashier">Cashier</option>
-                    <option value="Trainer">Trainer</option>
-                    <option value="GYM Assistant">GYM Assistant</option>
-                    <option value="Front Desk Staff">Front Desk Staff</option>
-                    <option value="Manager">Manager</option>
+                    <option value="Cashier" <?php echo ($row['designation'] == 'Cashier') ? 'selected="selected"' : ''; ?>>Cashier</option>
+                    <option value="Trainer" <?php echo ($row['designation'] == 'Trainer') ? 'selected="selected"' : ''; ?>>Trainer</option>
+                    <option value="GYM Assistant" <?php echo ($row['designation'] == 'GYM Assistant') ? 'selected="selected"' : ''; ?>>GYM Assistant</option>
+                    <option value="Front Desk Staff" <?php echo ($row['designation'] == 'Front Desk Staff') ? 'selected="selected"' : ''; ?>>Front Desk Staff</option>
+                    <option value="Manager" <?php echo ($row['designation'] == 'Manager') ? 'selected="selected"' : ''; ?>>Manager</option>
                     </select>
                   </div>
                 </div>

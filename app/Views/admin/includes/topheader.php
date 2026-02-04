@@ -6,11 +6,11 @@
         <li class="divider"></li>
         <li><a href="#"><i class="fas fa-check"></i> My Tasks</a></li>
         <li class="divider"></li>
-        <li><a href="../logout.php"><i class="fas fa-key"></i> Log Out</a></li>
+        <li><a href="<?= base_url('logout') ?>"><i class="fas fa-key"></i> Log Out</a></li>
       </ul>
     </li>
     
-    <li class=""><a title="" href="../logout.php"><i class="fas fa-power-off"></i> <span class="text">Logout</span></a></li>
+    <li class=""><a title="" href="<?= base_url('logout') ?>"><i class="fas fa-power-off"></i> <span class="text">Logout</span></a></li>
   </ul>
 </div><!-- Visit codeastro.com for more projects -->
 

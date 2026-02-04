@@ -52,7 +52,7 @@ header('location:../index.php');
   <div class="row-fluid">
     <div class="span6">
       <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+        <div class="widget-title"> <span class="icon"> <i class="icon-user"></i> </span>
           <h5>Personal-info</h5>
         </div>
         <div class="widget-content nopadding">
@@ -86,16 +86,13 @@ header('location:../index.php');
               <label class="control-label">D.O.R :</label>
               <div class="controls">
                 <input type="date" name="dor" class="span11" />
-                <span class="help-block">Date of registration</span> </div>
+                <span class="help-block">Date of registration</span>
+              </div>
             </div>
-            
-          
         </div>
-     
         
-        <div class="widget-content nopadding">
-          <div class="form-horizontal">
-          
+        <div class="widget-title"> <span class="icon"> <i class="icon-calendar"></i> </span>
+          <h5>Plans</h5>
         </div>
         <div class="widget-content nopadding">
           <div class="form-horizontal">
@@ -107,21 +104,10 @@ header('location:../index.php');
                   <option value="90">Three Month</option>
                   <option value="180">Six Month</option>
                   <option value="365">One Year</option>
-
                 </select>
               </div>
-
-            </div>
-            <div class="control-group">
-              
-              
             </div>
           </div>
-
-          </div>
-
-
-
         </div>
       </div>
 	  
@@ -132,7 +118,7 @@ header('location:../index.php');
     
     <div class="span6">
       <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+        <div class="widget-title"> <span class="icon"> <i class="icon-phone"></i> </span>
           <h5>Contact Details</h5>
         </div>
         <div class="widget-content nopadding">
@@ -142,7 +128,13 @@ header('location:../index.php');
               <div class="controls">
                 <input type="number" id="mask-phone" name="contact" class="span8 mask text">
                 <span class="help-block blue span8">(999) 999-9999</span> 
-                </div>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Email Address :</label>
+              <div class="controls">
+                <input type="email" class="span11" name="email" placeholder="Email@example.com" />
+              </div>
             </div>
             <div class="control-group">
               <label class="control-label">Address :</label>
@@ -151,8 +143,9 @@ header('location:../index.php');
               </div>
             </div>
           </div>
-
-              <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+        </div>
+        
+        <div class="widget-title"> <span class="icon"> <i class="icon-dumbbell"></i> </span>
           <h5>Service Details</h5>
         </div>
         <div class="widget-content nopadding">

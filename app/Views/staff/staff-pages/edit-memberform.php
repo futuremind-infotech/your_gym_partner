@@ -62,7 +62,7 @@ while($row=mysqli_fetch_array($result)){
   <div class="row-fluid">
     <div class="span6">
       <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+        <div class="widget-title"> <span class="icon"> <i class="icon-user"></i> </span>
           <h5>Personal-info</h5>
         </div>
         <div class="widget-content nopadding">
@@ -97,17 +97,16 @@ while($row=mysqli_fetch_array($result)){
               <label class="control-label">D.O.R :</label>
               <div class="controls">
                 <input type="date" name="dor" class="span11" value='<?php echo $row['dor']; ?>' />
-                <span class="help-block">Date of registration</span> </div>
+                <span class="help-block">Date of registration</span>
+              </div>
             </div>
-            
-          
         </div>
-     
         
+        <div class="widget-title"> <span class="icon"> <i class="icon-calendar"></i> </span>
+          <h5>Plans</h5>
+        </div>
         <div class="widget-content nopadding">
           <div class="form-horizontal">
-          
-        </div>
         <div class="widget-content nopadding">
           <div class="form-horizontal">
             <div class="control-group">

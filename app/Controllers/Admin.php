@@ -311,6 +311,33 @@ class Admin extends BaseController
         ]);
     }
 
+<<<<<<< Updated upstream
+=======
+    if (!$member_id || !is_numeric($member_id)) {
+        return view('admin/error_qr');
+    }
+
+    $db = \Config\Database::connect();
+    $member = $db->query("SELECT fullname, username FROM members WHERE user_id = ?", [$member_id])->getRowArray();
+    
+    if (!$member) {
+        return view('admin/error_qr');
+    }
+
+    // 🔥 MAGIC: QR contains ONLY member ID!
+    $qr_data = "GYM_ATTENDANCE:user_id=" . $member_id;
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
+    
+    return view('admin/qr_generated', [
+        'qr_url' => $qr_url,
+        'member' => $member,
+        'qr_data' => $qr_data,
+        'member_id' => $member_id
+    ]);
+}
+
+    // Handle old QR paths
+>>>>>>> Stashed changes
     public function old_qr($member_id)
     {
         $base_url = config('App')->baseURL;
@@ -347,7 +374,51 @@ class Admin extends BaseController
 
     public function payment() { return view('admin/payment', ['page' => 'payment']); }
     public function userPayment() { return view('admin/user-payment', ['page' => 'payment']); }
-    public function userpay() { return view('admin/userpay', ['page' => 'payment']); }
+    
+    public function userpay()
+    {
+        // Handle POST request for payment processing
+        if ($this->request->getMethod() === 'post') {
+            $db = \Config\Database::connect();
+            
+            $fullname = $this->request->getPost('fullname');
+            $services = $this->request->getPost('services');
+            $amount = intval($this->request->getPost('amount'));
+            $plan = intval($this->request->getPost('plan'));
+            $status = $this->request->getPost('status');
+            $member_id = intval($this->request->getPost('id'));
+            
+            // Calculate payable amount
+            $amountpayable = $amount * $plan;
+            
+            // Set timezone to Asia/Kolkata
+            date_default_timezone_set('Asia/Kolkata');
+            $curr_date = date('Y-m-d');
+            
+            // Update member payment record
+            $db->query(
+                "UPDATE members SET amount = ?, plan = ?, status = ?, paid_date = ?, reminder = 0 WHERE user_id = ?",
+                [$amountpayable, $plan, $status, $curr_date, $member_id]
+            );
+            
+            // Pass data to receipt view
+            return view('admin/userpay', [
+                'page' => 'payment',
+                'fullname' => $fullname,
+                'services' => $services,
+                'amount' => $amount,
+                'plan' => $plan,
+                'status' => $status,
+                'amountpayable' => $amountpayable,
+                'paid_date' => $curr_date,
+                'success' => true
+            ]);
+        }
+        
+        // GET request - show form
+        return view('admin/userpay', ['page' => 'payment', 'success' => false]);
+    }
+    
     public function searchResult() { return view('admin/search-result', ['page' => 'payment']); }
     public function sendReminder() { return view('admin/sendReminder', ['page' => 'payment']); }
     public function searchResultProgress() { return view('admin/search-result-progress', ['page' => 'c-p-r']); }
