@@ -49,7 +49,7 @@ header('location:../index.php');
   <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="payment.php" class="tip-bottom">Payment</a> <a href="#" class="current">Make Payments</a> </div>
   <h1>Payments</h1>
 </div>
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('staff/userpay') ?>" method="POST">
     <?php 
 
             if(isset($_POST['amount'])){ 

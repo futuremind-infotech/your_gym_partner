@@ -59,7 +59,7 @@ header('location:../index.php');
       </div>
       <div class="widget-content">
         <div class="control-group">
-          <form action="post-announcement.php" method="POST">
+          <form action="<?= site_url('admin/post-announcement') ?>" method="POST">
             <div class="controls">
               <textarea class="span12" name="message" rows="6" placeholder="Enter text ..."></textarea>
             </div>

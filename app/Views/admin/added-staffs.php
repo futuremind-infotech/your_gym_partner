@@ -41,7 +41,7 @@ header('location:../index.php');
     <h1 class="text-center">GYM's Staff <i class="fas fa-users"></i></h1>
   </div>
   
-  <form role="form" action="index.php" method="POST">
+  <form role="form" action="<?= site_url('admin/added-staffs') ?>" method="POST">
             <?php 
 
             if(isset($_POST['fullname'])){

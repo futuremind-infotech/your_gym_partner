@@ -50,7 +50,7 @@ header('location:../index.php');
   <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="fa fa-home"></i> Home</a> <a href="#" class="tip-bottom">Manamge Members</a> <a href="#" class="current">Add Members</a> </div>
   <h1>Equipment Entry Form</h1>
 </div>
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('admin/add-equipment') ?>" method="POST">
             <?php 
 
 if(isset($_POST['ename'])){

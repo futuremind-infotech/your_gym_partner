@@ -147,7 +147,7 @@ if (!session()->get('isLoggedIn')) {
                      </a>
                      
                      <!-- QR BUTTON -->
-                     <a href="<?= site_url('admin/generate_qr/' . $row['user_id']) ?>" 
+                     <a href="<?= site_url('admin/generate-qr/' . $row['user_id']) ?>" 
                         class="btn btn-success" target="_blank" title="Generate QR Code">
                        <i class="fas fa-qrcode"></i>
                      </a>
@@ -161,10 +161,7 @@ if (!session()->get('isLoggedIn')) {
                <td colspan="12" class="text-center">
                  <div class="alert alert-info">
                    <h4><i class="fas fa-users"></i> No Members Yet</h4>
-                   <p>Add your first member to get started!</p>
-                   <a href="<?= site_url('admin/member-entry') ?>" class="btn btn-primary btn-lg">
-                     <i class="fas fa-plus"></i> Add First Member
-                   </a>
+                   <p>Add your first member to get started — use the "Add New Member" button above.</p>
                  </div>
                </td>
              </tr>
@@ -179,7 +176,7 @@ if (!session()->get('isLoggedIn')) {
 
 <!-- FLOATING QR SCANNER BUTTON -->
 <div style="position:fixed;top:20px;right:20px;z-index:9999;">
-  <a href="<?= site_url('admin/qr_scanner') ?>" class="btn btn-success" style="border-radius:50%;width:60px;height:60px;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+  <a href="<?= site_url('admin/qr-scanner') ?>" class="btn btn-success" style="border-radius:50%;width:60px;height:60px;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
     <i class="fas fa-qrcode fa-2x"></i>
   </a>
 </div>

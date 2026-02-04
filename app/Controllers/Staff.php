@@ -13,22 +13,384 @@ class Staff extends BaseController
         return view('staff/staff-pages/index', ['page' => 'dashboard']);
     }
 
-    public function members() { return view('staff/staff-pages/members', ['page' => 'members']); }
-    public function memberEntry() { return view('staff/staff-pages/member-entry', ['page' => 'members-entry']); }
-    public function addMember() { return view('staff/staff-pages/add-member-req', ['page' => 'add-member']); }
-    public function editMember() { return view('staff/staff-pages/edit-member', ['page' => 'members-update']); }
-    public function editMemberReq() { return view('staff/staff-pages/edit-member-req', ['page' => 'members-update']); }
-    public function removeMember() { return view('staff/staff-pages/remove-member', ['page' => 'members-remove']); }
-    public function deleteMember() { return view('staff/staff-pages/actions/delete-member', ['page' => 'members-remove']); }
-    public function memberStatus() { return view('staff/staff-pages/member-status', ['page' => 'membersts']); }
+    // ===================== MEMBER METHODS =====================
+    public function members() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/members', ['page' => 'members']); 
+    }
 
-    public function equipment() { return view('staff/staff-pages/equipment', ['page' => 'list-equip']); }
-    public function equipmentEntry() { return view('staff/staff-pages/equipment-entry', ['page' => 'add-equip']); }
-    public function addEquipment() { return view('staff/staff-pages/add-equipment-req', ['page' => 'add-equip']); }
-    public function editEquipment() { return view('staff/staff-pages/edit-equipment', ['page' => 'update-equip']); }
-    public function editEquipmentReq() { return view('staff/staff-pages/edit-equipment-req', ['page' => 'update-equip']); }
-    public function removeEquipment() { return view('staff/staff-pages/remove-equipment', ['page' => 'remove-equip']); }
-    public function deleteEquipment() { return view('staff/staff-pages/actions/delete-equipment', ['page' => 'remove-equip']); }
+    public function memberEntry() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']); 
+    }
+
+    // ✅ FIXED addMember - HANDLES POST DATA FOR MEMBER CREATION
+    public function addMember() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $rules = [
+                'fullname' => 'required|min_length[2]',
+                'username' => 'required|min_length[3]|is_unique[members.username]',
+                'password' => 'required|min_length[6]',
+                'gender' => 'required',
+                'services' => 'required',
+                'amount' => 'required|numeric|greater_than[0]',
+                'plan' => 'required|integer|greater_than[0]'
+            ];
+            
+            if (! $this->validate($rules)) {
+                return view('staff/staff-pages/member-entry', [
+                    'page' => 'members-entry',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            // Validation passed - proceed with insertion
+            $data = [
+                'fullname' => $this->request->getPost('fullname'),
+                'username' => $this->request->getPost('username'),
+                'password' => md5($this->request->getPost('password')),
+                'dor' => $this->request->getPost('dor') ?: date('Y-m-d'),
+                'gender' => $this->request->getPost('gender'),
+                'services' => $this->request->getPost('services'),
+                'amount' => floatval($this->request->getPost('amount')) * intval($this->request->getPost('plan')),
+                'p_year' => date('Y'),
+                'paid_date' => date('Y-m-d'),
+                'plan' => $this->request->getPost('plan'),
+                'address' => $this->request->getPost('address'),
+                'contact' => $this->request->getPost('contact'),
+                'attendance_count' => 0,
+                'last_attendance' => null
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->insert($data);
+                session()->setFlashdata('success', '✅ New member added successfully!');
+                return redirect()->to('staff/members');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error adding member: ' . $e->getMessage());
+                return view('staff/staff-pages/member-entry', ['page' => 'members-entry']);
+            }
+        }
+        
+        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']); 
+    }
+
+    // ✅ FIXED editMember - LOADS FORM DATA FOR EDITING
+    public function editMember() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $member_id = $this->request->getGet('id');
+        $data = [];
+        
+        if ($member_id) {
+            $db = \Config\Database::connect();
+            $member = $db->table('members')
+                        ->where('user_id', $member_id)
+                        ->get()
+                        ->getRowArray();
+            
+            if ($member) {
+                $data['member'] = $member;
+            }
+            $data['member_id'] = $member_id;
+        }
+        
+        // Use edit-memberform.php instead of edit-member.php (which is the list view)
+        return view('staff/staff-pages/edit-memberform', $data); 
+    }
+
+    // ✅ FIXED editMemberReq - UPDATES MEMBER DATA
+    public function editMemberReq() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $user_id = $this->request->getPost('user_id');
+            
+            if (!$user_id) {
+                session()->setFlashdata('error', '❌ Invalid member ID!');
+                return redirect()->to('staff/members');
+            }
+            
+            $rules = [
+                'fullname' => 'required|min_length[2]',
+                'username' => 'required|min_length[3]',
+                'gender' => 'required',
+                'services' => 'required',
+                'amount' => 'required|numeric|greater_than[0]',
+                'plan' => 'required|integer|greater_than[0]'
+            ];
+            
+            if (! $this->validate($rules)) {
+                $db = \Config\Database::connect();
+                $member = $db->table('members')->where('user_id', $user_id)->get()->getRowArray();
+                return view('staff/staff-pages/edit-member', [
+                    'member' => $member,
+                    'member_id' => $user_id,
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $data = [
+                'fullname' => $this->request->getPost('fullname'),
+                'username' => $this->request->getPost('username'),
+                'gender' => $this->request->getPost('gender'),
+                'contact' => $this->request->getPost('contact'),
+                'address' => $this->request->getPost('address'),
+                'amount' => $this->request->getPost('amount'),
+                'services' => $this->request->getPost('services'),
+                'plan' => $this->request->getPost('plan')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->where('user_id', $user_id)->update($data);
+                
+                if ($db->affectedRows() > 0) {
+                    session()->setFlashdata('success', '✅ Member updated successfully!');
+                } else {
+                    session()->setFlashdata('error', '⚠️ No changes made!');
+                }
+                return redirect()->to('staff/members');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating member: ' . $e->getMessage());
+                return redirect()->back();
+            }
+        }
+        
+        return view('staff/staff-pages/edit-member', ['page' => 'members-update']); 
+    }
+
+    public function removeMember() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/remove-member', ['page' => 'members-remove']); 
+    }
+
+    // ✅ FIXED deleteMember - HANDLES POST DELETION
+    public function deleteMember() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $user_id = $this->request->getPost('user_id');
+            
+            if (!$user_id) {
+                session()->setFlashdata('error', '❌ Invalid member ID!');
+                return redirect()->to('staff/members');
+            }
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->where('user_id', $user_id)->delete();
+                session()->setFlashdata('success', '✅ Member deleted successfully!');
+                return redirect()->to('staff/members');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error deleting member: ' . $e->getMessage());
+                return redirect()->to('staff/members');
+            }
+        }
+        
+        return view('staff/staff-pages/actions/delete-member', ['page' => 'members-remove']); 
+    }
+
+    public function memberStatus() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/member-status', ['page' => 'membersts']); 
+    }
+
+    // ===================== EQUIPMENT METHODS =====================
+    public function equipment() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/equipment', ['page' => 'list-equip']); 
+    }
+
+    public function equipmentEntry() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/equipment-entry', ['page' => 'add-equip']); 
+    }
+
+    // ✅ FIXED addEquipment - HANDLES POST DATA FOR EQUIPMENT CREATION
+    public function addEquipment() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $rules = [
+                'name' => 'required|min_length[2]',
+                'description' => 'required',
+                'quantity' => 'required|integer|greater_than[0]',
+                'amount' => 'required|numeric|greater_than[0]'
+            ];
+            
+            if (! $this->validate($rules)) {
+                return view('staff/staff-pages/equipment-entry', [
+                    'page' => 'add-equip',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $data = [
+                'name' => $this->request->getPost('name'),
+                'description' => $this->request->getPost('description'),
+                'quantity' => $this->request->getPost('quantity'),
+                'amount' => $this->request->getPost('amount'),
+                'date' => $this->request->getPost('date') ?: date('Y-m-d'),
+                'contact' => $this->request->getPost('contact'),
+                'vendor' => $this->request->getPost('vendor'),
+                'address' => $this->request->getPost('address')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('equipments')->insert($data);
+                session()->setFlashdata('success', '✅ Equipment added successfully!');
+                return redirect()->to('staff/equipment');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error adding equipment: ' . $e->getMessage());
+                return view('staff/staff-pages/equipment-entry', ['page' => 'add-equip']);
+            }
+        }
+        
+        return view('staff/staff-pages/equipment-entry', ['page' => 'add-equip']); 
+    }
+
+    public function editEquipment() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $equip_id = $this->request->getGet('id');
+        $data = [];
+        
+        if ($equip_id) {
+            $db = \Config\Database::connect();
+            $equipment = $db->table('equipments')
+                           ->where('equipment_id', $equip_id)
+                           ->get()
+                           ->getRowArray();
+            
+            if ($equipment) {
+                $data['equipment'] = $equipment;
+            }
+            $data['equip_id'] = $equip_id;
+        }
+        
+        return view('staff/staff-pages/edit-equipment', $data); 
+    }
+
+    // ✅ FIXED editEquipmentReq - UPDATES EQUIPMENT DATA
+    public function editEquipmentReq() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $equip_id = $this->request->getPost('equipment_id');
+            
+            if (!$equip_id) {
+                session()->setFlashdata('error', '❌ Invalid equipment ID!');
+                return redirect()->to('staff/equipment');
+            }
+            
+            $rules = [
+                'equipment_name' => 'required|min_length[2]',
+                'brand' => 'required',
+                'cost' => 'required|numeric|greater_than[0]',
+                'quantity' => 'required|integer|greater_than[0]'
+            ];
+            
+            if (! $this->validate($rules)) {
+                $db = \Config\Database::connect();
+                $equipment = $db->table('equipments')->where('equipment_id', $equip_id)->get()->getRowArray();
+                return view('staff/staff-pages/edit-equipment', [
+                    'equipment' => $equipment,
+                    'equip_id' => $equip_id,
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $data = [
+                'equipment_name' => $this->request->getPost('equipment_name'),
+                'brand' => $this->request->getPost('brand'),
+                'cost' => $this->request->getPost('cost'),
+                'quantity' => $this->request->getPost('quantity')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('equipments')->where('equipment_id', $equip_id)->update($data);
+                
+                if ($db->affectedRows() > 0) {
+                    session()->setFlashdata('success', '✅ Equipment updated successfully!');
+                } else {
+                    session()->setFlashdata('error', '⚠️ No changes made!');
+                }
+                return redirect()->to('staff/equipment');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating equipment: ' . $e->getMessage());
+                return redirect()->back();
+            }
+        }
+        
+        return view('staff/staff-pages/edit-equipment', ['page' => 'update-equip']); 
+    }
+
+    public function removeEquipment() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/remove-equipment', ['page' => 'remove-equip']); 
+    }
+
+    // ✅ FIXED deleteEquipment - HANDLES POST DELETION
+    public function deleteEquipment() { 
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $equip_id = $this->request->getPost('equipment_id');
+            
+            if (!$equip_id) {
+                session()->setFlashdata('error', '❌ Invalid equipment ID!');
+                return redirect()->to('staff/equipment');
+            }
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('equipments')->where('equipment_id', $equip_id)->delete();
+                session()->setFlashdata('success', '✅ Equipment deleted successfully!');
+                return redirect()->to('staff/equipment');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error deleting equipment: ' . $e->getMessage());
+                return redirect()->to('staff/equipment');
+            }
+        }
+        
+        return view('staff/staff-pages/actions/delete-equipment', ['page' => 'remove-equip']); 
+    }
 
     public function attendance() { return view('staff/staff-pages/attendance', ['page' => 'attendance']); }
 

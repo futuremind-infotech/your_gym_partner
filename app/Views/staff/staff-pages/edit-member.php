@@ -31,7 +31,7 @@ header('location:../index.php');
 
 
 <!--top-Header-menu-->
-<?php include '../includes/header.php'?>
+<?php include APPPATH . 'Views/staff/includes/header.php'?>
 <!--close-top-Header-menu-->
 <!--start-top-serch-->
 <!-- <div id="search">
@@ -41,7 +41,7 @@ header('location:../index.php');
 <!--close-top-serch-->
 <!--sidebar-menu-->
 
-<?php $page="member"; include '../includes/sidebar.php'?>
+<?php $page="member"; include APPPATH . 'Views/staff/includes/sidebar.php'?>
 
 <!--sidebar-menu-->
 

@@ -49,7 +49,7 @@ header('location:../index.php');
   <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="#" class="current">Announcement</a> </div>
   <h1>Announcement</h1>
 </div>
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('admin/post-announcement') ?>" method="POST">
 <?php
 
 if(isset($_POST['message'])){

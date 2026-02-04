@@ -54,9 +54,44 @@ class Admin extends BaseController
             ];
             
             if (! $this->validate($rules)) {
+                return view('admin/member-entry', [
+                    'page' => 'members-entry',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            // Validation passed - proceed with insertion
+            $data = [
+                'fullname' => $this->request->getPost('fullname'),
+                'username' => $this->request->getPost('username'),
+                'password' => md5($this->request->getPost('password')),
+                'dor' => $this->request->getPost('dor') ?: date('Y-m-d'),
+                'gender' => $this->request->getPost('gender'),
+                'services' => $this->request->getPost('services'),
+                'amount' => floatval($this->request->getPost('amount')) * intval($this->request->getPost('plan')),
+                'p_year' => date('Y'),
+                'paid_date' => date('Y-m-d'),
+                'plan' => $this->request->getPost('plan'),
+                'address' => $this->request->getPost('address'),
+                'contact' => $this->request->getPost('contact'),
+                'attendance_count' => 0,
+                'last_attendance' => null,
+                // Ensure required columns are present to satisfy DB NOT NULL constraints
+                'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
+                'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
+                'progress_date' => date('Y-m-d'),
+                'status' => 'Active'
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->insert($data);
+                session()->setFlashdata('success', '✅ New member added successfully!');
+                return redirect()->to('admin/members');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error adding member: ' . $e->getMessage());
                 return view('admin/member-entry', ['page' => 'members-entry']);
             }
-            return $this->addMemberReq(); 
         }
         
         return view('admin/member-entry', ['page' => 'members-entry']); 
@@ -70,20 +105,23 @@ class Admin extends BaseController
         }
         
         $member_id = $this->request->getGet('id');
-        $data = [];
         
-        if ($member_id) {
-            $db = \Config\Database::connect();
-            $member = $db->table('members')
-                        ->where('user_id', $member_id)
-                        ->get()
-                        ->getRowArray();
-            
-            if ($member) {
-                $data['member'] = $member;
-            }
-            $data['member_id'] = $member_id;
+        if (empty($member_id) || !is_numeric($member_id)) {
+            session()->setFlashdata('error', 'Invalid member ID!');
+            return redirect()->to('admin/members');
         }
+        
+        $db = \Config\Database::connect();
+        $member = $db->table('members')
+                    ->where('user_id', intval($member_id))
+                    ->limit(1)
+                    ->get()
+                    ->getRowArray();
+        
+        $data = [
+            'page' => 'members-update',
+            'member' => $member
+        ];
         
         return view('admin/edit-member', $data);
     }
@@ -110,12 +148,17 @@ class Admin extends BaseController
                 'address' => $this->request->getPost('address'),
                 'contact' => $this->request->getPost('contact'),
                 'attendance_count' => 0,
-                'last_attendance' => null
+                'last_attendance' => null,
+                // Add missing required columns
+                'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
+                'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
+                'progress_date' => date('Y-m-d'),
+                'status' => 'Active'
             ];
-            
+
             $db = \Config\Database::connect();
-            $db->query("INSERT INTO members (fullname,username,password,dor,gender,services,amount,p_year,paid_date,plan,address,contact,attendance_count,last_attendance) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
-                array_values($data));
+            // Use Query Builder to avoid column-order issues
+            $db->table('members')->insert($data);
             
             if ($db->affectedRows() > 0) {
                 session()->setFlashdata('success', '✅ New member added successfully!');
@@ -137,6 +180,13 @@ class Admin extends BaseController
         }
         
         if ($this->request->getMethod() === 'post') {
+            $user_id = $this->request->getPost('user_id');
+            
+            if (!$user_id) {
+                session()->setFlashdata('error', '❌ Invalid member ID!');
+                return redirect()->to('admin/members');
+            }
+            
             $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]',
@@ -147,13 +197,15 @@ class Admin extends BaseController
             ];
             
             if (! $this->validate($rules)) {
-                $user_id = $this->request->getPost('user_id');
                 $db = \Config\Database::connect();
                 $member = $db->table('members')->where('user_id', $user_id)->get()->getRowArray();
-                return view('admin/edit-member', ['member' => $member, 'member_id' => $user_id]);
+                return view('admin/edit-member', [
+                    'member' => $member,
+                    'member_id' => $user_id,
+                    'validation' => $this->validator
+                ]);
             }
             
-            $user_id = $this->request->getPost('user_id');
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
@@ -165,17 +217,20 @@ class Admin extends BaseController
                 'plan' => $this->request->getPost('plan')
             ];
             
-            $db = \Config\Database::connect();
-            $db->query("UPDATE members SET fullname=?, username=?, gender=?, contact=?, address=?, amount=?, services=?, plan=? WHERE user_id=?", 
-                array_values($data) + [$user_id]);
-            
-            if ($db->affectedRows() > 0) {
-                session()->setFlashdata('success', '✅ Member updated successfully!');
-            } else {
-                session()->setFlashdata('error', '❌ No changes made or member not found!');
+            try {
+                $db = \Config\Database::connect();
+                $db->table('members')->where('user_id', $user_id)->update($data);
+                
+                if ($db->affectedRows() > 0) {
+                    session()->setFlashdata('success', '✅ Member updated successfully!');
+                } else {
+                    session()->setFlashdata('error', '⚠️ No changes made!');
+                }
+                return redirect()->to('admin/members');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating member: ' . $e->getMessage());
+                return redirect()->back();
             }
-            
-            return redirect()->to('admin/members');
         }
         
         return view('admin/edit-member', ['page' => 'members-update']);
@@ -198,15 +253,198 @@ class Admin extends BaseController
     public function deleteMember() { return view('admin/actions/delete-member', ['page' => 'members-remove']); }
     public function memberStatus() { return view('admin/member-status', ['page' => 'member-status']); }
 
-    // EQUIPMENT SECTION
-    public function equipment() { return view('admin/equipment', ['page' => 'list-equip']); }
-    public function equipmentEntry() { return view('admin/equipment-entry', ['page' => 'add-equip']); }
-    public function addEquipment() { return view('admin/add-equipment-req', ['page' => 'add-equip']); }
-    public function editEquipment() { return view('admin/edit-equipment', ['page' => 'update-equip']); }
-    public function editEquipmentform() { return view('admin/edit-equipmentform', ['page' => 'update-equip']); }
-    public function editEquipmentReq() { return view('admin/edit-equipment-req', ['page' => 'update-equip']); }
-    public function removeEquipment() { return view('admin/remove-equipment', ['page' => 'remove-equip']); }
+    // ✅ EQUIPMENT SECTION - FULL CRUD
+    public function equipment()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $db = \Config\Database::connect();
+        $data['equipment'] = $db->table('equipment')->orderBy('id', 'DESC')->get()->getResultArray();
+        $data['page'] = 'list-equip';
+        
+        return view('admin/equipment', $data);
+    }
+
+    public function equipmentEntry()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('admin/equipment-entry', ['page' => 'add-equip']);
+    }
+
+    // ✅ ADD EQUIPMENT - INSERT
+    public function addEquipment()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $rules = [
+                'ename' => 'required|min_length[2]',
+                'description' => 'required|min_length[3]',
+                'quantity' => 'required|numeric|greater_than[0]',
+                'amount' => 'required|numeric|greater_than[0]',
+                'vendor' => 'required|min_length[2]',
+                'date' => 'required'
+            ];
+            
+            if (! $this->validate($rules)) {
+                return view('admin/equipment-entry', [
+                    'page' => 'add-equip',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $quantity = intval($this->request->getPost('quantity'));
+            $amount = floatval($this->request->getPost('amount'));
+            $totalamount = $amount * $quantity;
+            
+            $data = [
+                'name' => $this->request->getPost('ename'),
+                'description' => $this->request->getPost('description'),
+                'amount' => $totalamount,
+                'quantity' => $quantity,
+                'vendor' => $this->request->getPost('vendor'),
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact') ?? '',
+                'date' => $this->request->getPost('date')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('equipment')->insert($data);
+                session()->setFlashdata('success', '✅ Equipment added successfully!');
+                return redirect()->to('admin/equipment');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error adding equipment: ' . $e->getMessage());
+                return view('admin/equipment-entry', ['page' => 'add-equip']);
+            }
+        }
+        
+        return view('admin/equipment-entry', ['page' => 'add-equip']);
+    }
+
+    public function editEquipment()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $equip_id = $this->request->getGet('id');
+        $data = ['page' => 'update-equip'];
+        
+        if ($equip_id) {
+            $db = \Config\Database::connect();
+            $equip = $db->table('equipment')
+                        ->where('id', $equip_id)
+                        ->get()
+                        ->getRowArray();
+            
+            if ($equip) {
+                $data['equipment'] = $equip;
+                $data['equip_id'] = $equip_id;
+            } else {
+                session()->setFlashdata('error', '❌ Equipment not found!');
+                return redirect()->to('admin/equipment');
+            }
+        } else {
+            session()->setFlashdata('error', '❌ No equipment ID provided!');
+            return redirect()->to('admin/equipment');
+        }
+        
+        return view('admin/edit-equipment', $data);
+    }
+
+    public function editEquipmentReq()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $equip_id = $this->request->getPost('equip_id');
+            
+            if (!$equip_id) {
+                session()->setFlashdata('error', '❌ Invalid equipment ID!');
+                return redirect()->to('admin/equipment');
+            }
+            
+            $rules = [
+                'ename' => 'required|min_length[2]',
+                'description' => 'required|min_length[3]',
+                'quantity' => 'required|numeric|greater_than[0]',
+                'amount' => 'required|numeric|greater_than[0]',
+                'vendor' => 'required|min_length[2]'
+            ];
+            
+            if (! $this->validate($rules)) {
+                $db = \Config\Database::connect();
+                $equip = $db->table('equipment')->where('id', $equip_id)->get()->getRowArray();
+                return view('admin/edit-equipment', [
+                    'equipment' => $equip,
+                    'equip_id' => $equip_id,
+                    'page' => 'update-equip',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $quantity = intval($this->request->getPost('quantity'));
+            $amount = floatval($this->request->getPost('amount'));
+            $totalamount = $amount * $quantity;
+            
+            $data = [
+                'name' => $this->request->getPost('ename'),
+                'description' => $this->request->getPost('description'),
+                'amount' => $totalamount,
+                'quantity' => $quantity,
+                'vendor' => $this->request->getPost('vendor'),
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact') ?? ''
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('equipment')->where('id', $equip_id)->update($data);
+                
+                if ($db->affectedRows() > 0) {
+                    session()->setFlashdata('success', '✅ Equipment updated successfully!');
+                } else {
+                    session()->setFlashdata('error', '⚠️ No changes made!');
+                }
+                return redirect()->to('admin/equipment');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating equipment: ' . $e->getMessage());
+                return redirect()->back();
+            }
+        }
+        
+        return redirect()->to('admin/equipment');
+    }
+
+    public function removeEquipment()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $id = $this->request->getGet('id') ?? 0;
+        if ($id) {
+            $db = \Config\Database::connect();
+            $db->query("DELETE FROM equipment WHERE id = ?", [$id]);
+            session()->setFlashdata('success', '✅ Equipment deleted successfully!');
+        }
+        return redirect()->to('admin/equipment');
+    }
+
     public function deleteEquipment() { return view('admin/actions/delete-equipment', ['page' => 'remove-equip']); }
+    
+    // ✅ STUB METHODS (for backward compatibility)
+    public function editEquipmentform() { return view('admin/edit-equipmentform', ['page' => 'update-equip']); }
+    public function addedStaffs() { return view('admin/added-staffs', ['page' => 'staff-management']); }
 
     // ATTENDANCE SECTION
     public function attendance() { return view('admin/attendance', ['page' => 'attendance']); }
@@ -408,11 +646,185 @@ class Admin extends BaseController
     public function manageAnnouncement() { return view('admin/manage-announcement', ['page' => 'announcement']); }
     public function removeAnnouncement() { return view('admin/actions/remove-announcement', ['page' => 'announcement']); }
 
-    public function staffs() { return view('admin/staffs', ['page' => 'staff-management']); }
-    public function staffsEntry() { return view('admin/staffs-entry', ['page' => 'staff-management']); }
-    public function addedStaffs() { return view('admin/added-staffs', ['page' => 'staff-management']); }
-    public function editStaffForm() { return view('admin/edit-staff-form', ['page' => 'staff-management']); }
-    public function editStaffReq() { return view('admin/edit-staff-req', ['page' => 'staff-management']); }
-    public function removeStaff() { return view('admin/remove-staff', ['page' => 'staff-management']); }
+    // ✅ STAFF SECTION - FULL CRUD
+    public function staffs()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $db = \Config\Database::connect();
+        $data['staffs'] = $db->table('staffs')->orderBy('user_id', 'DESC')->get()->getResultArray();
+        $data['page'] = 'staff-management';
+        
+        return view('admin/staffs', $data);
+    }
+
+    public function staffsEntry()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('admin/staffs-entry', ['page' => 'staff-management']);
+    }
+
+    // ✅ ADD STAFF - INSERT
+    public function addStaff()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $rules = [
+                'fullname' => 'required|min_length[2]',
+                'username' => 'required|min_length[3]|is_unique[staffs.username]',
+                'password' => 'required|min_length[6]',
+                'email' => 'required|valid_email',
+                'gender' => 'required',
+                'designation' => 'required|min_length[2]',
+                'contact' => 'required|numeric'
+            ];
+            
+            if (! $this->validate($rules)) {
+                return view('admin/staffs-entry', [
+                    'page' => 'staff-management',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $data = [
+                'fullname' => $this->request->getPost('fullname'),
+                'username' => $this->request->getPost('username'),
+                'password' => md5($this->request->getPost('password')),
+                'email' => $this->request->getPost('email'),
+                'gender' => $this->request->getPost('gender'),
+                'designation' => $this->request->getPost('designation'),
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('staffs')->insert($data);
+                session()->setFlashdata('success', '✅ Staff member added successfully!');
+                return redirect()->to('admin/staffs');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error adding staff: ' . $e->getMessage());
+                return view('admin/staffs-entry', ['page' => 'staff-management']);
+            }
+        }
+        
+        return view('admin/staffs-entry', ['page' => 'staff-management']);
+    }
+
+    public function editStaffForm()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $staff_id = $this->request->getGet('id');
+        $data = ['page' => 'staff-management'];
+        
+        if ($staff_id) {
+            $db = \Config\Database::connect();
+            $staff = $db->table('staffs')
+                        ->where('user_id', $staff_id)
+                        ->get()
+                        ->getRowArray();
+            
+            if ($staff) {
+                $data['staff'] = $staff;
+                $data['staff_id'] = $staff_id;
+            } else {
+                session()->setFlashdata('error', '❌ Staff member not found!');
+                return redirect()->to('admin/staffs');
+            }
+        } else {
+            session()->setFlashdata('error', '❌ No staff ID provided!');
+            return redirect()->to('admin/staffs');
+        }
+        
+        return view('admin/edit-staff-form', $data);
+    }
+
+    public function editStaffReq()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        if ($this->request->getMethod() === 'post') {
+            $staff_id = $this->request->getPost('staff_id');
+            
+            if (!$staff_id) {
+                session()->setFlashdata('error', '❌ Invalid staff ID!');
+                return redirect()->to('admin/staffs');
+            }
+            
+            $rules = [
+                'fullname' => 'required|min_length[2]',
+                'username' => 'required|min_length[3]',
+                'email' => 'required|valid_email',
+                'gender' => 'required',
+                'designation' => 'required|min_length[2]',
+                'contact' => 'required|numeric'
+            ];
+            
+            if (! $this->validate($rules)) {
+                $db = \Config\Database::connect();
+                $staff = $db->table('staffs')->where('user_id', $staff_id)->get()->getRowArray();
+                return view('admin/edit-staff-form', [
+                    'staff' => $staff,
+                    'staff_id' => $staff_id,
+                    'page' => 'staff-management',
+                    'validation' => $this->validator
+                ]);
+            }
+            
+            $data = [
+                'fullname' => $this->request->getPost('fullname'),
+                'username' => $this->request->getPost('username'),
+                'email' => $this->request->getPost('email'),
+                'gender' => $this->request->getPost('gender'),
+                'designation' => $this->request->getPost('designation'),
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact')
+            ];
+            
+            try {
+                $db = \Config\Database::connect();
+                $db->table('staffs')->where('user_id', $staff_id)->update($data);
+                
+                if ($db->affectedRows() > 0) {
+                    session()->setFlashdata('success', '✅ Staff updated successfully!');
+                } else {
+                    session()->setFlashdata('error', '⚠️ No changes made!');
+                }
+                return redirect()->to('admin/staffs');
+            } catch (\Exception $e) {
+                session()->setFlashdata('error', '❌ Error updating staff: ' . $e->getMessage());
+                return redirect()->back();
+            }
+        }
+        
+        return redirect()->to('admin/staffs');
+    }
+
+    public function removeStaff()
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        
+        $id = $this->request->getGet('id') ?? 0;
+        if ($id) {
+            $db = \Config\Database::connect();
+            $db->query("DELETE FROM staffs WHERE user_id = ?", [$id]);
+            session()->setFlashdata('success', '✅ Staff deleted successfully!');
+        }
+        return redirect()->to('admin/staffs');
+    }
 }
 ?>

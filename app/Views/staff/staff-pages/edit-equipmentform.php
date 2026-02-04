@@ -65,7 +65,7 @@ header('location:../index.php');
           <h5>Eqipment-info</h5>
         </div>
         <div class="widget-content nopadding">
-          <form action="edit-equipment-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('staff/edit-equipment-req') ?>" method="POST" class="form-horizontal">
             <div class="control-group">
               <label class="control-label">Equipment Name :</label>
               <div class="controls">

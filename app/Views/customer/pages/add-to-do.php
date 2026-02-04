@@ -51,7 +51,7 @@ header('location:../index.php');
 <!--End-Action boxes-->    
 
     <div class="row-fluid">
-	<form role="form" action="index.php" method="POST">  
+	<form role="form" action="<?= site_url('customer/pages/add-to-do') ?>" method="POST">  
     <?php 
 
         include 'session.php';

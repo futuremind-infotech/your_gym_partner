@@ -49,7 +49,7 @@ header('location:../index.php');
             <h5>Staff Details</h5>
           </div>
           <div class="widget-content nopadding">
-            <form id="form-wizard" action="added-staffs.php" class="form-horizontal" method="POST">
+            <form id="form-wizard" action="<?= site_url('admin/added-staffs') ?>" class="form-horizontal" method="POST">
               <div id="form-wizard-1" class="step">
 
               <div class="control-group">

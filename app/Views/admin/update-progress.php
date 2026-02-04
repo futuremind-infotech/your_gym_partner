@@ -76,7 +76,7 @@ while($row=mysqli_fetch_array($result)){
                 <table class="table table-bordered table-invoice">
 				
                   <tbody>
-				  <form action="userprogress-req.php" method="POST">
+				  <form action="<?= site_url('admin/updateProgress') ?>" method="POST">
                     <tr>
                     <tr>
                       <td class="width30">Member's Fullname:</td>

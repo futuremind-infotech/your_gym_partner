@@ -50,7 +50,7 @@ header('location:../index.php');
   <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="customer-progress.php" class="tip-bottom">Progress Form</a> <a href="#" class="current">Update Progress</a> </div>
   <h1 class="text-center">Update Customer's Progress <i class="fas fa-signal"></i></h1>
 </div>
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('admin/updateProgress') ?>" method="POST">
     <?php 
 
             if(isset($_POST['ini_weight'])){ 

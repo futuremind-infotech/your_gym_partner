@@ -51,6 +51,37 @@ header('location:../index.php');
 </div>
 <div class="container-fluid">
   <hr>
+  
+  <!-- VALIDATION ERROR MESSAGES -->
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger alert-block">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>Error!</h4>
+      <strong><?= session()->getFlashdata('error') ?></strong>
+    </div>
+  <?php endif; ?>
+  
+  <?php if (isset($validation) && $validation): ?>
+    <div class="alert alert-danger alert-block">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>Validation Errors:</h4>
+      <ul>
+        <?php foreach ($validation->getErrors() as $field => $error): ?>
+          <li><strong><?= ucfirst($field) ?>:</strong> <?= $error ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  <?php endif; ?>
+  
+  <!-- SUCCESS MESSAGE -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success alert-block">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>Success!</h4>
+      <strong><?= session()->getFlashdata('success') ?></strong>
+    </div>
+  <?php endif; ?>
+  
   <div class="row-fluid">
     <div class="span6">
       <div class="widget-box">
@@ -58,7 +89,8 @@ header('location:../index.php');
           <h5>Personal-info</h5>
         </div>
         <div class="widget-content nopadding">
-          <form action="add-member-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('admin/add-member') ?>" method="POST" class="form-horizontal">
+            <?= csrf_field() ?>
             <div class="control-group">
               <label class="control-label">Full Name :</label>
               <div class="controls">

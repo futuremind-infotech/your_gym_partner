@@ -31,7 +31,7 @@ header('location:../index.php');
 
 
 <!--top-Header-menu-->
-<?php include '../includes/header.php'?>
+<?php include APPPATH . 'Views/staff/includes/header.php'?>
 <!--close-top-Header-menu-->
 <!--start-top-serch-->
 <!-- <div id="search">
@@ -40,7 +40,7 @@ header('location:../index.php');
 </div> -->
 <!--close-top-serch-->
 <!--sidebar-menu-->
-<?php $page="member"; include '../includes/sidebar.php'?>
+<?php $page="member"; include APPPATH . 'Views/staff/includes/sidebar.php'?>
 
 <!--sidebar-menu-->
 
@@ -67,7 +67,30 @@ while($row=mysqli_fetch_array($result)){
         </div>
         <div class="widget-content nopadding">
 
-          <form action="edit-member-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('staff/edit-member-req') ?>" method="POST" class="form-horizontal">
+            <?= csrf_field() ?>
+            <!-- ✅ Validation Error Display -->
+            <?php if (!empty($validation)): ?>
+                <div class="alert alert-danger" style="margin: 15px;">
+                    <strong>⚠️ Please fix the following errors:</strong>
+                    <ul>
+                        <?php foreach ($validation->getErrors() as $field => $error): ?>
+                            <li><?= $field ?>: <?= $error ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            <!-- ✅ Success/Error Messages -->
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success" style="margin: 15px;">
+                    <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger" style="margin: 15px;">
+                    <?= session()->getFlashdata('error') ?>
+                </div>
+            <?php endif; ?>
             <div class="control-group">
               <label class="control-label">Full Name :</label>
               <div class="controls">
@@ -198,7 +221,7 @@ while($row=mysqli_fetch_array($result)){
             
             <div class="form-actions text-center">
              <!-- user's ID is hidden here -->
-             <input type="hidden" name="id" value="<?php echo $row['user_id'];?>">
+             <input type="hidden" name="user_id" value="<?php echo $row['user_id'];?>">
               <button type="submit" class="btn btn-success">Update Member Details</button>
             </div>
             </form>

@@ -43,76 +43,8 @@ if (!session()->get('isLoggedIn')) {
     </div>
 
     <div class="container-fluid">
-<<<<<<< Updated upstream
         <hr>
-=======
-        <?php 
-        if(isset($_POST['fullname']) && !empty($_POST['fullname'])) {
-            $fullname = trim($_POST["fullname"] ?? '');
-            $username = trim($_POST["username"] ?? '');
-            $password = trim($_POST["password"] ?? '');
-            $dor = trim($_POST["dor"] ?? date('Y-m-d'));
-            $gender = trim($_POST["gender"] ?? '');
-            $services = trim($_POST["services"] ?? '');
-            $amount = floatval($_POST["amount"] ?? 0);
-            $p_year = date('Y');
-            $paid_date = date("Y-m-d");
-            $plan = intval($_POST["plan"] ?? 1);
-            $address = trim($_POST["address"] ?? '');
-            $contact = trim($_POST["contact"] ?? '');
-            $email = trim($_POST["email"] ?? '');
 
-            $password = md5($password);
-            $totalamount = $amount * $plan;
-
-            include 'dbcon.php';
-
-            $stmt = $conn->prepare("INSERT INTO members(fullname,username,password,dor,gender,services,amount,p_year,paid_date,plan,address,contact,email) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->bind_param("sssssdissiiss", $fullname, $username, $password, $dor, $gender, $services, $totalamount, $p_year, $paid_date, $plan, $address, $contact, $email);
-
-            if($stmt->execute()) {
-                $new_member_id = $conn->insert_id;
-                echo "
-                <div class='row-fluid'>
-                    <div class='span12'>
-                        <div class='widget-box'>
-                            <div class='widget-title'>
-                                <span class='icon'><i class='fas fa-check-circle'></i></span>
-                                <h5>SUCCESS</h5>
-                            </div>
-                            <div class='widget-content padding'>
-                                <h1>New member '$fullname' added successfully!</h1>
-                                <p>Member ID: #$new_member_id</p>
-                                <p>Total Amount: ₹$totalamount for $plan months</p>
-                                <a href='members.php' class='btn btn-success'>View All Members</a>
-                                <a href='add-member-req.php' class='btn btn-primary'>Add Another Member</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>";
-            } else {
-                echo "
-                <div class='row-fluid'>
-                    <div class='span12'>
-                        <div class='widget-box'>
-                            <div class='widget-title'>
-                                <span class='icon'><i class='fas fa-exclamation-triangle'></i></span>
-                                <h5>ERROR</h5>
-                            </div>
-                            <div class='widget-content padding'>
-                                <h1>Error occurred while adding member</h1>
-                                <p>Error: " . $conn->error . "</p>
-                                <a href='javascript:window.location.reload()' class='btn btn-warning'>Try Again</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>";
-            }
-            $stmt->close();
-        } else {
-        ?>
->>>>>>> Stashed changes
-        
         <!-- Success/Error Messages -->
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success alert-block">
@@ -137,7 +69,8 @@ if (!session()->get('isLoggedIn')) {
                     </div>
                     <div class="widget-content padding">
                         
-                        <form class="form-horizontal" method="post" action="<?= site_url('admin/addMemberReq') ?>">
+                        <form class="form-horizontal" method="post" action="<?= site_url('admin/add-member') ?>">
+                            <?= csrf_field() ?>
                             
                             <div class="control-group <?= session('errors.fullname') ? 'error' : '' ?>">
                                 <label class="control-label">Full Name <span class="text-danger">*</span></label>

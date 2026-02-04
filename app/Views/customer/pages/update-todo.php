@@ -59,7 +59,7 @@ header('location:../index.php');
           </div>
    
           <div class="widget-content nopadding">
-            <form id="form-wizard" class="form-horizontal" action="actions/modified-todo.php" method="POST">
+            <form id="form-wizard" class="form-horizontal" action="<?= site_url('customer/pages/modified-todo') ?>" method="POST">
               <div id="form-wizard-1" class="step">
               <?php
       include 'dbcon.php';

@@ -59,21 +59,27 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('equipment-entry', 'Admin::equipmentEntry');
     $routes->post('add-equipment', 'Admin::addEquipment');
     $routes->get('edit-equipment', 'Admin::editEquipment');
+    $routes->get('edit-equipmentform', 'Admin::editEquipmentform');
     $routes->post('edit-equipment-req', 'Admin::editEquipmentReq');
     $routes->get('remove-equipment', 'Admin::removeEquipment');
     $routes->post('delete-equipment', 'Admin::deleteEquipment');
 
     // ===================== ATTENDANCE =====================
     $routes->get('attendance', 'Admin::attendance');
+    $routes->get('qr-scanner', 'Admin::qr_scanner');
     $routes->post('check-attendance', 'Admin::checkAttendance');
+    $routes->post('mark-qr-attendance', 'Admin::mark_qr_attendance');
     $routes->post('delete-attendance', 'Admin::deleteAttendance');
     $routes->get('view-attendance', 'Admin::viewAttendance');
+    $routes->get('generate-qr/(:num)', 'Admin::generate_qr/$1');
+    $routes->get('old-qr/(:num)', 'Admin::old_qr/$1');
 
     // ===================== REPORTS =====================
     $routes->get('reports', 'Admin::reports');
     $routes->get('customer-progress', 'Admin::customerProgress');
     $routes->get('progress-report', 'Admin::progressReport');
     $routes->post('update-progress', 'Admin::updateProgress');
+    $routes->post('search-result-progress', 'Admin::searchResultProgress');
     $routes->get('view-progress-report', 'Admin::viewProgressReport');
     $routes->get('members-report', 'Admin::membersReport');
     $routes->get('view-member-report', 'Admin::viewMemberReport');
@@ -95,10 +101,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     // ===================== STAFF =====================
     $routes->get('staffs', 'Admin::staffs');
     $routes->get('staffs-entry', 'Admin::staffsEntry');
-    $routes->post('added-staffs', 'Admin::addedStaffs');
+    $routes->post('add-staff', 'Admin::addStaff');
     $routes->get('edit-staff-form', 'Admin::editStaffForm');
     $routes->post('edit-staff-req', 'Admin::editStaffReq');
-    $routes->post('remove-staff', 'Admin::removeStaff');
+    $routes->get('remove-staff', 'Admin::removeStaff');
+    $routes->post('added-staffs', 'Admin::addedStaffs');
 });
 
 /*
@@ -118,12 +125,15 @@ $routes->group('staff', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('edit-member-req', 'Staff::editMemberReq');
     $routes->get('remove-member', 'Staff::removeMember');
     $routes->post('delete-member', 'Staff::deleteMember');
+    $routes->get('member-status', 'Staff::memberStatus');
 
     $routes->get('equipment', 'Staff::equipment');
     $routes->get('equipment-entry', 'Staff::equipmentEntry');
     $routes->post('add-equipment', 'Staff::addEquipment');
     $routes->get('edit-equipment', 'Staff::editEquipment');
     $routes->post('edit-equipment-req', 'Staff::editEquipmentReq');
+    $routes->get('remove-equipment', 'Staff::removeEquipment');
+    $routes->post('delete-equipment', 'Staff::deleteEquipment');
 
     $routes->get('attendance', 'Staff::attendance');
     $routes->post('check-attendance', 'Staff::checkAttendance');
@@ -132,6 +142,7 @@ $routes->group('staff', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('payment', 'Staff::payment');
     $routes->get('user-payment', 'Staff::userPayment');
     $routes->post('userpay', 'Staff::userpay');
+    $routes->post('search-result', 'Staff::searchResult');
 });
 
 /*
@@ -157,4 +168,15 @@ $routes->group('customer', ['namespace' => 'App\Controllers'], function ($routes
     $routes->get('pages/announcement', 'Customer::announcement');
     $routes->get('pages/customer-reminder', 'Customer::reminder');
     $routes->post('pages/register-cust', 'Customer::registerCustomer');
+});
+
+/* DEBUG ROUTES - NO AUTHENTICATION */
+$routes->group('test-debug', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('members', 'TestDebug::members');
+
+/* QUICK TEST ROUTES */
+$routes->group('quick-test', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->get('add-member', 'QuickTest::addMember');
+    $routes->get('view-members', 'QuickTest::viewMembers');
+});
 });

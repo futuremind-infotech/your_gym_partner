@@ -59,7 +59,7 @@ header('location:../index.php');
             <h5>To-Do Lists</h5>
           </div>
           <div class="widget-content nopadding">
-            <form id="form-wizard" class="form-horizontal" action="add-to-do.php" method="POST">
+            <form id="form-wizard" class="form-horizontal" action="<?= site_url('customer/pages/add-to-do') ?>" method="POST">
               <div id="form-wizard-1" class="step">
 
               <div class="control-group">

@@ -51,7 +51,7 @@ header('location:../index.php');
   <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="tip-bottom">Manage Equipments</a> <a href="#" class="current">Update Equipment</a> </div>
   <h1>Update Equipment</h1>
 </div>
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('staff/edit-equipment-req') ?>" method="POST">
     <?php 
 
             if(isset($_POST['name'])){

@@ -90,7 +90,7 @@ if (!$member) {
 			  
 			  
               <div class="span7">
-                <form action="<?= base_url('admin/userpay') ?>" method="POST">
+                <form action=\"<?= site_url('admin/userpay') ?>\" method=\"POST\">
                   <table class="table table-bordered">
                     <tbody>
                       <tr>

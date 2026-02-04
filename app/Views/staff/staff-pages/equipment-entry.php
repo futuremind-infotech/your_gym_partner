@@ -31,7 +31,7 @@ header('location:../index.php');
 
 
 <!--top-Header-menu-->
-<?php include '../includes/header.php'?>
+<?php include APPPATH . 'Views/staff/includes/header.php'?>
 <!--close-top-Header-menu-->
 <!--start-top-serch-->
 <!-- <div id="search">
@@ -40,7 +40,7 @@ header('location:../index.php');
 </div> -->
 <!--close-top-serch-->
 <!--sidebar-menu-->
-<?php $page="equipment"; include '../includes/sidebar.php'?>
+<?php $page="equipment"; include APPPATH . 'Views/staff/includes/sidebar.php'?>
 <!--sidebar-menu-->
 <div id="content">
 <div id="content-header">
@@ -56,7 +56,30 @@ header('location:../index.php');
           <h5>Eqipment-info</h5>
         </div>
         <div class="widget-content nopadding">
-          <form action="add-equipment-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('staff/add-equipment') ?>" method="POST" class="form-horizontal">
+            <?= csrf_field() ?>
+            <!-- ✅ Validation Error Display -->
+            <?php if (!empty($validation)): ?>
+                <div class="alert alert-danger" style="margin: 15px;">
+                    <strong>⚠️ Please fix the following errors:</strong>
+                    <ul>
+                        <?php foreach ($validation->getErrors() as $field => $error): ?>
+                            <li><?= $field ?>: <?= $error ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            <!-- ✅ Success/Error Messages -->
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success" style="margin: 15px;">
+                    <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger" style="margin: 15px;">
+                    <?= session()->getFlashdata('error') ?>
+                </div>
+            <?php endif; ?>
             <div class="control-group">
               <label class="control-label">Equipment Name :</label>
               <div class="controls">

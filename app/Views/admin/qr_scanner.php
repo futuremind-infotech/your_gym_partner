@@ -119,7 +119,7 @@
     function markAttendance(user_id) {
         updateDebug(`📤 Marking ID ${user_id}...`);
         
-        fetch('<?= site_url("admin/mark_qr_attendance") ?>', {
+        fetch('<?= site_url("admin/mark-qr-attendance") ?>', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: `user_id=${user_id}`

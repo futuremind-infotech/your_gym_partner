@@ -68,7 +68,7 @@ while($row=mysqli_fetch_array($result)){
         </div>
         <div class="widget-content nopadding">
 
-          <form action="edit-staff-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('admin/edit-staff-req') ?>" method="POST" class="form-horizontal">
             <div class="control-group">
               <label class="control-label">Full Name :</label>
               <div class="controls">

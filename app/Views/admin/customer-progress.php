@@ -58,7 +58,7 @@ header('location:../index.php');
       <div class='widget-box'>
           <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
             <h5>Member's Table</h5>
-            <form id="custom-search-form" role="search" method="POST" action="search-result-progress.php" class="form-search form-horizontal pull-right">
+            <form id="custom-search-form" role="search" method="POST" action="<?= site_url('admin/search-result-progress') ?>" class="form-search form-horizontal pull-right">
                 <div class="input-append span12">
                     <input type="text" class="search-query" placeholder="Search" name="search" required>
                     <button type="submit" class="btn"><i class="fas fa-search"></i></button>

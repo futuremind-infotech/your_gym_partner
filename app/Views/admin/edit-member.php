@@ -44,17 +44,44 @@ if (! session()->get('isLoggedIn')) {
 
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success">
-                <?= session()->getFlashdata('success') ?>
+                <strong>✅ <?= session()->getFlashdata('success') ?></strong>
             </div>
         <?php endif; ?>
 
         <?php if (session()->getFlashdata('error')): ?>
             <div class="alert alert-danger">
-                <?= session()->getFlashdata('error') ?>
+                <strong>❌ <?= session()->getFlashdata('error') ?></strong>
             </div>
         <?php endif; ?>
 
-        <?php if (!empty($member)): ?>
+        <?php if (!isset($member)): ?>
+            <!-- MEMBER NOT SET - show error -->
+            <div class="alert alert-danger">
+                <h4>❌ Error: Member not found</h4>
+                <p>The member data is not available. This could mean:</p>
+                <ul>
+                    <li>The member may have been deleted</li>
+                    <li>The member ID is invalid</li>
+                    <li>There was a database error</li>
+                </ul>
+                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">← Back to Members List</a>
+            </div>
+        <?php elseif (empty($member) || !is_array($member)): ?>
+            <!-- MEMBER IS EMPTY - show error -->
+            <div class="alert alert-danger">
+                <h4>❌ Error: Member data is empty</h4>
+                <p>Could not load member information.</p>
+                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">← Back to Members List</a>
+            </div>
+        <?php elseif (!isset($member['user_id'])): ?>
+            <!-- MEMBER HAS NO user_id - corrupted data -->
+            <div class="alert alert-danger">
+                <h4>❌ Error: Invalid member data</h4>
+                <p>Member data is corrupted or incomplete.</p>
+                <a href="<?= site_url('admin/members') ?>" class="btn btn-primary">← Back to Members List</a>
+            </div>
+        <?php else: ?>
+            <!-- MEMBER EXISTS - SHOW FORM -->
             <div class="row-fluid">
                 <div class="span12">
                     <div class="widget-box">
@@ -142,10 +169,8 @@ if (! session()->get('isLoggedIn')) {
                     </div>
                 </div>
             </div>
-
-        <?php else: ?>
-            <div class="alert alert-danger">Member not found.</div>
         <?php endif; ?>
+
     </div>
 </div>
 

@@ -74,7 +74,7 @@ include('dbcon.php'); ?>
                     }
             ?>
             </form>
-            <form id="recoverform" action="../customer/pages/register-cust.php" method="POST" class="form-vertical">
+            <form id="recoverform" action="<?= site_url('customer/pages/register-cust') ?>" method="POST" class="form-vertical">
 				<p class="normal_text">Enter your details below and we will send your details for further activation process.</p>
 			
 

@@ -59,7 +59,7 @@ header('location:../index.php');
           <h5>Eqipment-info</h5>
         </div>
         <div class="widget-content nopadding">
-          <form action="add-equipment-req.php" method="POST" class="form-horizontal">
+          <form action="<?= site_url('admin/add-equipment') ?>" method="POST" class="form-horizontal">
             <div class="control-group">
               <label class="control-label">Equipment :</label>
               <div class="controls">

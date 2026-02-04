@@ -16,7 +16,7 @@
 <body>
 
 
-<form role="form" action="index.php" method="POST">
+<form role="form" action="<?= site_url('customer/pages/register-cust') ?>" method="POST">
             <?php 
 
 if(isset($_POST['fullname'])){

@@ -96,7 +96,7 @@ while($row=mysqli_fetch_array($result)){
                 <table class="table table-bordered table-invoice">
 				
                   <tbody>
-				  <form action="userpay.php" method="POST">
+				  <form action="<?= site_url('staff/userpay') ?>" method="POST">
                     <tr>
                     <tr>
                       <td class="width30">Member's Fullname:</td>

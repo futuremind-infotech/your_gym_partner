@@ -35,6 +35,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'basehref'      => \App\Filters\BaseHref::class,
+        'adminauth'     => \App\Filters\AdminAuth::class,
     ];
 
     /**

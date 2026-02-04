@@ -56,7 +56,7 @@ header('location:../index.php');
       <div class='widget-box'>
           <div class='widget-title'> <span class='icon'> <i class='icon-th'></i> </span>
             <h5>Member's Payment table</h5>
-            <form id="custom-search-form" role="search" method="POST" action="search-result.php" class="form-search form-horizontal pull-right">
+            <form id="custom-search-form" role="search" method="POST" action="<?= site_url('staff/search-result') ?>" class="form-search form-horizontal pull-right">
                 <div class="input-append span12">
                     <input type="text" class="search-query" placeholder="Search" name="search" required>
                     <button type="submit" class="btn"><i class="icon-search"></i></button>

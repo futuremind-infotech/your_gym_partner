@@ -32,12 +32,12 @@ header('location:../index.php');
 
 
 <!--top-Header-menu-->
-<?php $page="dashboard"; include '../includes/header.php'?>
+<?php $page="dashboard"; include APPPATH . 'Views/staff/includes/header.php'?>
 <!--close-top-Header-menu-->
 
 
 <!--sidebar-menu-->
-<?php $page="dashboard"; include '../includes/sidebar.php'?>
+<?php $page="dashboard"; include APPPATH . 'Views/staff/includes/sidebar.php'?>
 <!--sidebar-menu-->
 
 <!--main-container-part-->
