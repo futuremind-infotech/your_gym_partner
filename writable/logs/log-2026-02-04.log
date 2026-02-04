@@ -12,3 +12,17 @@ in APPPATH\Views\admin\add-member-req.php on line 61.
  9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
 10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 04:17:10 --> ErrorException: Undefined array key "services"
+[Method: POST, Route: add-member]
+in APPPATH\Views\admin\add-member-req.php on line 61.
+ 1 APPPATH\Views\admin\add-member-req.php(61): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "services"', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\add-member-req.php', 61)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\add-member-req.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/add-member-req', [], true)
+ 5 APPPATH\Controllers\Admin.php(18): view('admin/add-member-req', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->addMember()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

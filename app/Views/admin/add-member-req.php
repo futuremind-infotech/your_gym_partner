@@ -1,200 +1,232 @@
 <?php
+session_start();
 
-//the isset function to check username is already loged in and stored on the session
 if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
+    header('location:../index.php');    
+    exit();
 }
 ?>
-<!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Gym System Admin</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+    <title>Add New Member - Perfect Gym Admin</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
+    <link rel="stylesheet" href="../css/matrix-style.css" />
+    <link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../font-awesome/css/all.css" rel="stylesheet" />
 </head>
 <body>
-<!-- Visit codeastro.com for more projects -->
+
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+    <h1><a href="index.php">Perfect Gym Admin</a></h1>
 </div>
-<!--close-Header-part--> 
-
 
 <!--top-Header-menu-->
-<?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
+<?php include 'includes/topheader.php';?>
 
 <!--sidebar-menu-->
-  <?php $page='members-entry'; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
+<?php $page='members-entry'; include 'includes/sidebar.php';?>
+
+<!-- MAIN CONTENT -->
 <div id="content">
-<div id="content-header">
-  <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="#" class="tip-bottom">Manamge Members</a> <a href="#" class="current">Add Members</a> </div>
-  <h1>Member Entry Form</h1>
-</div>
-<form role="form" action="index.php" method="POST">
-            <?php 
+    <div id="content-header">
+        <div id="breadcrumb"> 
+            <a href="index.php"><i class="fas fa-home"></i> Home</a> 
+            <a href="members.php">Manage Members</a> 
+            <a href="#">Add New Member</a> 
+        </div>
+        <h1>Member Entry Form</h1>
+    </div>
 
-if(isset($_POST['fullname'])){
-  $fullname = $_POST["fullname"];    
-  $username = $_POST["username"];
-  $password = $_POST["password"];
-  $dor = $_POST["dor"];
-  $gender = $_POST["gender"];
-  $services = $_POST["services"];
-  // $paid_date='$curr_date';
-  $amount = $_POST["amount"];
-  $p_year = date('Y');
-  $paid_date = date("Y-m-d");
-  $plan = $_POST["plan"];
-  $address = $_POST["address"];
-  $contact = $_POST["contact"];
+    <div class="container-fluid">
+        <?php 
+        if(isset($_POST['fullname']) && !empty($_POST['fullname'])) {
+            $fullname = trim($_POST["fullname"] ?? '');
+            $username = trim($_POST["username"] ?? '');
+            $password = trim($_POST["password"] ?? '');
+            $dor = trim($_POST["dor"] ?? date('Y-m-d'));
+            $gender = trim($_POST["gender"] ?? '');
+            $services = trim($_POST["services"] ?? '');
+            $amount = floatval($_POST["amount"] ?? 0);
+            $p_year = date('Y');
+            $paid_date = date("Y-m-d");
+            $plan = intval($_POST["plan"] ?? 1);
+            $address = trim($_POST["address"] ?? '');
+            $contact = trim($_POST["contact"] ?? '');
 
-  $password = md5($password);
+            $password = md5($password);
+            $totalamount = $amount * $plan;
 
-  $totalamount = $amount * $plan;
-  // <!-- Visit codeastro.com for more projects -->
-include 'dbcon.php';
-//code after connection is successfull
-$qry = "INSERT INTO members(fullname,username,password,dor,gender,services,amount,p_year,paid_date,plan,address,contact) values ('$fullname','$username','$password','$dor','$gender','$services','$totalamount','$p_year','$paid_date','$plan','$address','$contact')";
-$result = mysqli_query($conn,$qry); //query executes
+            include 'dbcon.php';
 
-if(!$result){
-  echo"<div class='container-fluid'>";
-      echo"<div class='row-fluid'>";
-      echo"<div class='span12'>";
-      echo"<div class='widget-box'>";
-      echo"<div class='widget-title'> <span class='icon'> <i class='fas fa-info'></i> </span>";
-          echo"<h5>Error Message</h5>";
-          echo"</div>";
-          echo"<div class='widget-content'>";
-              echo"<div class='error_ex'>";
-              echo"<h1 style='color:maroon;'>Error 404</h1>";
-              echo"<h3>Error occured while entering your details</h3>";
-              echo"<p>Please Try Again</p>";
-              echo"<a class='btn btn-warning btn-big'  href='edit-member.php'>Go Back</a> </div>";
-          echo"</div>";
-          echo"</div>";
-      echo"</div>";
-      echo"</div>";
-  echo"</div>";
-}else {
+            $stmt = $conn->prepare("INSERT INTO members(fullname,username,password,dor,gender,services,amount,p_year,paid_date,plan,address,contact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+            $stmt->bind_param("sssssdissiis", $fullname, $username, $password, $dor, $gender, $services, $totalamount, $p_year, $paid_date, $plan, $address, $contact);
 
-  echo"<div class='container-fluid'>";
-      echo"<div class='row-fluid'>";
-      echo"<div class='span12'>";
-      echo"<div class='widget-box'>";
-      echo"<div class='widget-title'> <span class='icon'> <i class='fas fa-info'></i> </span>";
-          echo"<h5>Message</h5>";
-          echo"</div>";
-          echo"<div class='widget-content'>";
-              echo"<div class='error_ex'>";
-              echo"<h1>Success</h1>";
-              echo"<h3>Member details has been added!</h3>";
-              echo"<p>The requested details are added. Please click the button to go back.</p>";
-              echo"<a class='btn btn-inverse btn-big'  href='members.php'>Go Back</a> </div>";
-          echo"</div>";
-          echo"</div>";
-      echo"</div>";
-      echo"</div>";
-  echo"</div>";
-
-}
-
-}else{
-    echo"<h3>YOU ARE NOT AUTHORIZED TO REDIRECT THIS PAGE. GO BACK to <a href='index.php'> DASHBOARD </a></h3>";
-}
-
-
-?>
-                                    
-                                
-                                        
-                
-                                    </form>
+            if($stmt->execute()) {
+                $new_member_id = $conn->insert_id;
+                echo "
+                <div class='row-fluid'>
+                    <div class='span12'>
+                        <div class='widget-box'>
+                            <div class='widget-title'>
+                                <span class='icon'><i class='fas fa-check-circle'></i></span>
+                                <h5>SUCCESS</h5>
+                            </div>
+                            <div class='widget-content padding'>
+                                <h1>New member '$fullname' added successfully!</h1>
+                                <p>Member ID: #$new_member_id</p>
+                                <p>Total Amount: ₹$totalamount for $plan months</p>
+                                <a href='members.php' class='btn btn-success'>View All Members</a>
+                                <a href='add-member-req.php' class='btn btn-primary'>Add Another Member</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
+            } else {
+                echo "
+                <div class='row-fluid'>
+                    <div class='span12'>
+                        <div class='widget-box'>
+                            <div class='widget-title'>
+                                <span class='icon'><i class='fas fa-exclamation-triangle'></i></span>
+                                <h5>ERROR</h5>
+                            </div>
+                            <div class='widget-content padding'>
+                                <h1>Error occurred while adding member</h1>
+                                <p>Error: " . $conn->error . "</p>
+                                <a href='javascript:window.location.reload()' class='btn btn-warning'>Try Again</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
+            }
+            $stmt->close();
+        } else {
+        ?>
+        
+        <form method="POST" action="add-member-req.php" class="form-horizontal">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-title">
+                            <span class="icon"><i class="fas fa-user-plus"></i></span>
+                            <h5>Add New Member</h5>
+                        </div>
+                        <div class="widget-content padding">
+                            
+                            <div class="control-group">
+                                <label class="control-label">Full Name *</label>
+                                <div class="controls">
+                                    <input type="text" name="fullname" class="span8" placeholder="Enter full name" required>
                                 </div>
-</div></div>
-</div>
+                            </div>
 
-<!--end-main-container-part-->
+                            <div class="control-group">
+                                <label class="control-label">Username *</label>
+                                <div class="controls">
+                                    <input type="text" name="username" class="span8" placeholder="Enter username" required>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Password *</label>
+                                <div class="controls">
+                                    <input type="password" name="password" class="span8" placeholder="Enter password" required>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Date of Registration</label>
+                                <div class="controls">
+                                    <input type="date" name="dor" class="span8" value="<?php echo date('Y-m-d'); ?>">
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Gender *</label>
+                                <div class="controls">
+                                    <select name="gender" class="span8" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Services *</label>
+                                <div class="controls">
+                                    <select name="services" class="span8" required>
+                                        <option value="">Select Service</option>
+                                        <option value="Gym">Gym</option>
+                                        <option value="Yoga">Yoga</option>
+                                        <option value="Zumba">Zumba</option>
+                                        <option value="Personal Training">Personal Training</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Amount per Month (₹) *</label>
+                                <div class="controls">
+                                    <input type="number" name="amount" class="span8" min="0" step="0.01" placeholder="1000" value="1000" required>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Plan Duration *</label>
+                                <div class="controls">
+                                    <select name="plan" class="span8" required>
+                                        <option value="1">1 Month</option>
+                                        <option value="3">3 Months</option>
+                                        <option value="6">6 Months</option>
+                                        <option value="12">12 Months</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Address</label>
+                                <div class="controls">
+                                    <textarea name="address" class="span8" rows="3" placeholder="Enter full address"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Contact Number</label>
+                                <div class="controls">
+                                    <input type="tel" name="contact" class="span8" placeholder="Enter phone number">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Add Member</button>
+                                <a href="members.php" class="btn btn-inverse">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <?php } ?>
+    </div>
+</div>
 
 <!--Footer-part-->
-<!-- Visit codeastro.com for more projects -->
 <div class="row-fluid">
-  <div id="footer" class="span12"> <?php echo date("Y");?> &copy; Developed By Naseeb Bajracharya</a> </div>
+    <div id="footer" class="span12"> 
+        <?php echo date("Y");?> &copy; Perfect Gym Admin
+    </div>
 </div>
 
-<style>
-#footer {
-  color: white;
-}
-</style>
-
-<!--end-Footer-part-->
-
-<script src="../js/excanvas.min.js"></script> 
+<!-- Scripts -->
 <script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
 <script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<script src="../js/matrix.interface.js"></script> 
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="../js/matrix.js"></script>
 
-<script type="text/javascript">
-  // This function is called from the pop-up menus to transfer to
-  // a different page. Ignore if the value returned is a null string:
-  function goPage (newURL) {
-
-      // if url is empty, skip the menu dividers and reset the menu selection to default
-      if (newURL != "") {
-      
-          // if url is "-", it is this page -- reset the menu:
-          if (newURL == "-" ) {
-              resetMenu();            
-          } 
-          // else, send page to designated URL            
-          else {  
-            document.location.href = newURL;
-          }
-      }
-  }
-
-// resets the menu selection upon entry to this page:
-function resetMenu() {
-   document.gomenu.selector.selectedIndex = 2;
-}
-</script>
 </body>
 </html>
-
