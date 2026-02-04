@@ -281,63 +281,43 @@ class Admin extends BaseController
         ]);
     }
 
-    public function generate_qr($member_id = null)
-    {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to('/');
-        }
-
-        if (!$member_id || !is_numeric($member_id)) {
-            return view('admin/error_qr');
-        }
-
-        $db = \Config\Database::connect();
-        $member = $db->query("SELECT fullname, username FROM members WHERE user_id = ?", [$member_id])->getRowArray();
-  
-        if (!$member) {
-            return view('admin/error_qr');
-        }
-
-        $qr_data = "GYM_ATTENDANCE:user_id=" . $member_id;
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
-  
-        $db->query("UPDATE members SET qr_code_path = ? WHERE user_id = ?", ['SIMPLE_QR:' . $member_id, $member_id]);
-  
-        return view('admin/qr_generated', [
-            'qr_url' => $qr_url,
-            'member' => $member,
-            'qr_data' => $qr_data,
-            'member_id' => $member_id
-        ]);
+   public function generate_qr($member_id = null)
+{
+    if (! session()->get('isLoggedIn')) {
+        return redirect()->to('/');
     }
 
-<<<<<<< Updated upstream
-=======
     if (!$member_id || !is_numeric($member_id)) {
         return view('admin/error_qr');
     }
 
     $db = \Config\Database::connect();
-    $member = $db->query("SELECT fullname, username FROM members WHERE user_id = ?", [$member_id])->getRowArray();
-    
+    $member = $db->query(
+        "SELECT fullname, username FROM members WHERE user_id = ?",
+        [$member_id]
+    )->getRowArray();
+
     if (!$member) {
         return view('admin/error_qr');
     }
 
-    // 🔥 MAGIC: QR contains ONLY member ID!
     $qr_data = "GYM_ATTENDANCE:user_id=" . $member_id;
-    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
-    
+    $qr_url  = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qr_data);
+
+    $db->query(
+        "UPDATE members SET qr_code_path = ? WHERE user_id = ?",
+        ['SIMPLE_QR:' . $member_id, $member_id]
+    );
+
     return view('admin/qr_generated', [
-        'qr_url' => $qr_url,
-        'member' => $member,
-        'qr_data' => $qr_data,
+        'qr_url'    => $qr_url,
+        'member'    => $member,
+        'qr_data'   => $qr_data,
         'member_id' => $member_id
     ]);
 }
 
-    // Handle old QR paths
->>>>>>> Stashed changes
+
     public function old_qr($member_id)
     {
         $base_url = config('App')->baseURL;
