@@ -38,12 +38,11 @@ class Admin extends BaseController
     // ✅ FIXED addMember - CLEAN SYNTAX + VALIDATION
     public function addMember() 
     { 
-        if (! session()->get('isLoggedIn')) {
+            if (! session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
-            $rules = [
+        if (strtolower($this->request->getMethod()) === 'post') {            $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]|is_unique[members.username]',
                 'password' => 'required|min_length[6]',
@@ -75,7 +74,7 @@ class Admin extends BaseController
                 'address' => $this->request->getPost('address'),
                 'contact' => $this->request->getPost('contact'),
                 'attendance_count' => 0,
-                'last_attendance' => null,
+                
                 // Ensure required columns are present to satisfy DB NOT NULL constraints
                 'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
                 'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
@@ -133,7 +132,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
@@ -148,7 +147,6 @@ class Admin extends BaseController
                 'address' => $this->request->getPost('address'),
                 'contact' => $this->request->getPost('contact'),
                 'attendance_count' => 0,
-                'last_attendance' => null,
                 // Add missing required columns
                 'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
                 'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
@@ -179,7 +177,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $user_id = $this->request->getPost('user_id');
             
             if (!$user_id) {
@@ -191,7 +189,6 @@ class Admin extends BaseController
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]',
                 'gender' => 'required',
-                'services' => 'required',
                 'amount' => 'required|numeric|greater_than[0]',
                 'plan' => 'required|integer|greater_than[0]'
             ];
@@ -256,7 +253,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $member_id = $this->request->getPost('id');
             $ini_weight = $this->request->getPost('ini_weight');
             $curr_weight = $this->request->getPost('curr_weight');
@@ -321,7 +318,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $rules = [
                 'ename' => 'required|min_length[2]',
                 'description' => 'required|min_length[3]',
@@ -404,7 +401,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $equip_id = $this->request->getPost('equip_id');
             
             if (!$equip_id) {
@@ -486,7 +483,13 @@ class Admin extends BaseController
     public function addedStaffs() { return view('admin/added-staffs', ['page' => 'staff-management']); }
 
     // ATTENDANCE SECTION
-    public function attendance() { return view('admin/attendance', ['page' => 'attendance']); }
+    public function attendance() 
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('admin/attendance', ['page' => 'attendance']); 
+    }
     
     public function qr_scanner() { 
         return view('admin/qr_scanner', ['page' => 'attendance']); 
@@ -498,6 +501,8 @@ class Admin extends BaseController
             return redirect()->to(site_url('admin'));
         }
         $id = $this->request->getGet('id');
+        $clientTime = $this->request->getGet('time'); // Get time from client
+        
         if (! $id) {
             return redirect()->to(site_url('admin/attendance'));
         }
@@ -505,7 +510,8 @@ class Admin extends BaseController
         $db = \Config\Database::connect();
         date_default_timezone_set('Asia/Kathmandu');
         $curr_date = date('Y-m-d');
-        $curr_time = date('H:i:s');
+        // Use client time if provided, otherwise fall back to server time
+        $curr_time = $clientTime ? $clientTime : date('H:i:s');
 
         $existing = $db->table('attendance')->where('curr_date', $curr_date)->where('user_id', $id)->get()->getRowArray();
         if (! $existing) {
@@ -533,7 +539,7 @@ class Admin extends BaseController
             return $this->response->setJSON(['success' => false, 'message' => 'Member not found ID: ' . $member_id]);
         }
 
-        date_default_timezone_set('Asia/Kolkata');
+        date_default_timezone_set('Asia/Kathmandu');
         $curr_date = date('Y-m-d');
         $curr_time = date('H:i:s');
         
@@ -548,8 +554,8 @@ class Admin extends BaseController
 
         $db->query("INSERT INTO attendance (user_id, curr_date, curr_time, present) VALUES (?, ?, ?, 1)", 
             [$member_id, $curr_date, $curr_time]);
-        $db->query("UPDATE members SET attendance_count = attendance_count + 1, last_attendance = ? WHERE user_id = ?", 
-            [$curr_date, $member_id]);
+        $db->query("UPDATE members SET attendance_count = attendance_count + 1 WHERE user_id = ?", 
+            [$member_id]);
 
         return $this->response->setJSON([
             'success' => true, 
@@ -630,7 +636,13 @@ class Admin extends BaseController
         return redirect()->to(site_url('admin/attendance'));
     }
     
-    public function viewAttendance() { return view('admin/view-attendance', ['page' => 'view-attendance']); }
+    public function viewAttendance() 
+    {
+        if (! session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('admin/view-attendance', ['page' => 'view-attendance']); 
+    }
 
     // ALL OTHER METHODS - UNCHANGED
     public function reports() { return view('admin/reports', ['page' => 'chart']); }
@@ -686,7 +698,7 @@ class Admin extends BaseController
     public function userpay()
     {
         // Handle POST request for payment processing
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $db = \Config\Database::connect();
             
             $fullname = trim($this->request->getPost('fullname') ?? '');
@@ -784,7 +796,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]|is_unique[staffs.username]',
@@ -864,7 +876,7 @@ class Admin extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $staff_id = $this->request->getPost('staff_id');
             
             if (!$staff_id) {

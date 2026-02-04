@@ -82,7 +82,7 @@ header('location:../index.php');
             <div class="left peity_line_neutral"><span><span style="display: none;">10,15,8,14,13,10,10,15</span>
               <canvas width="60" height="24"></canvas>
               </span>17.8%</div>
-            <div class="right"> <strong>$<?php include 'income-count.php' ?></strong> Total Earnings </div>
+            <div class="right"> <strong>₹<?php include 'income-count.php' ?></strong> Total Earnings </div>
           </li>
           <li>
             <div class="left peity_bar_bad"><span><span style="display: none;">3,5,6,16,8,10,6</span>

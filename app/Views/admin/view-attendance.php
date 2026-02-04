@@ -1,9 +1,7 @@
 <?php
 
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
-}
+$db = \Config\Database::connect();
+$members = $db->table('members')->where('status', 'Active')->get()->getResultArray();
 ?>
 <!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
@@ -12,21 +10,21 @@ header('location:../index.php');
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/uniform.css" />
-<link rel="stylesheet" href="../css/select2.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/uniform.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/select2.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
 <!--Header-part-->
 <div id="header">
-  <h1><a href="dashboard.html">Perfect Gym Admin</a></h1>
+  <h1><a href="<?= base_url('admin') ?>">Perfect Gym Admin</a></h1>
 </div>
 <!--close-Header-part--> 
 
@@ -34,15 +32,9 @@ header('location:../index.php');
 <!--top-Header-menu-->
 <?php include 'includes/topheader.php'?>
 <!--close-top-Header-menu-->
-<!--start-top-serch-->
-<!-- <div id="search">
-  <input type="hidden" placeholder="Search here..."/>
-  <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div> -->
-<!--close-top-serch-->
 
 <!--sidebar-menu-->
-<?php $page="attendance"; include 'includes/sidebar.php'?>
+<?php $page="view-attendance"; include 'includes/sidebar.php'?>
 <!--sidebar-menu-->
 
 <div id="content">
@@ -70,25 +62,41 @@ header('location:../index.php');
                   <th>Attendance Count</th> 
                 </tr>
               </thead>
-
-             <?php include "dbcon.php";
-              
-                     $qry="SELECT * FROM members WHERE status = 'Active'";
-                    $result=mysqli_query($conn,$qry);
-                   
-              $cnt = 1;
-            while($row=mysqli_fetch_array($result)){ ?>
-            
-           <tbody> 
-               
-                <td><div class='text-center'><?php echo $cnt; ?></div></td>
-                <td><div class='text-center'><?php echo $row['fullname']; ?></div></td>
-                <td><div class='text-center'><?php if($row['plan'] == 1) { echo $row['plan']. ' Month';} else if($row['plan'] == '0') { echo'Expired';} else { echo $row['plan']. ' Months'; } ?></div></td>
-                <td><div class='text-center'><?php if($row['attendance_count'] == 1) { echo $row['attendance_count']. ' Day';} else if($row['attendance_count'] == '0') { echo'None';} else { echo $row['attendance_count']. ' Days'; } ?>  </div></td>
+              <tbody>
+           <?php 
+           $cnt = 1;
+           if(count($members) > 0) {
+               foreach($members as $row) { ?>
+                <tr>
+                    <td><div class='text-center'><?php echo $cnt; ?></div></td>
+                    <td><div class='text-center'><?php echo htmlspecialchars($row['fullname']); ?></div></td>
+                    <td><div class='text-center'><?php 
+                        if($row['plan'] == 1) { 
+                            echo $row['plan']. ' Month';
+                        } else if($row['plan'] == '0') { 
+                            echo 'Expired';
+                        } else { 
+                            echo $row['plan']. ' Months'; 
+                        } 
+                    ?></div></td>
+                    <td><div class='text-center'><?php 
+                        if($row['attendance_count'] == 1) { 
+                            echo $row['attendance_count']. ' Day';
+                        } else if($row['attendance_count'] == '0') { 
+                            echo 'None';
+                        } else { 
+                            echo $row['attendance_count']. ' Days'; 
+                        } 
+                    ?></div></td>
+                </tr>
+           <?php 
+                   $cnt++; 
+               }
+           } else {
+               echo "<tr><td colspan='4' class='text-center'>No active members found.</td></tr>";
+           }
+           ?>
               </tbody>
-           <?php $cnt++; } ?>
-           
-
             </table>
           </div>
         </div>
@@ -116,17 +124,16 @@ header('location:../index.php');
 
 <!--end-Footer-part-->
 
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script>  
-<script src="../js/matrix.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script>  
+<script src="<?= base_url('js/matrix.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
+<script src="<?= base_url('js/select2.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
-</script>
 </body>
 </html>
 

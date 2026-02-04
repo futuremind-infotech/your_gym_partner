@@ -1,16 +1,10 @@
 <?php
 
-//the isset function to check username is already loged in and stored on the session
-if(!isset($_SESSION['user_id'])){
-header('location:../index.php');	
-}
-include "dbcon.php";
-$qry="SELECT services, count(*) as number FROM members GROUP BY services";
-$result=mysqli_query($con,$qry);
-$qry="SELECT gender, count(*) as enumber FROM members GROUP BY gender";
-$result3=mysqli_query($con,$qry);
-$qry="SELECT designation, count(*) as snumber FROM staffs GROUP BY designation";
-$result5=mysqli_query($con,$qry);
+// Connect to database for dashboard stats
+$db = \Config\Database::connect();
+$result = $db->query("SELECT services, count(*) as number FROM members GROUP BY services")->getResultArray();
+$result3 = $db->query("SELECT gender, count(*) as enumber FROM members GROUP BY gender")->getResultArray();
+$result5 = $db->query("SELECT designation, count(*) as snumber FROM staffs GROUP BY designation")->getResultArray();
 ?>
 <!-- Visit codeastro.com for more projects -->
 <!DOCTYPE html>
@@ -20,14 +14,14 @@ $result5=mysqli_query($con,$qry);
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" href="../css/fullcalendar.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link href="../font-awesome/css/all.css" rel="stylesheet" />
-<link href="../font-awesome/css/fontawesome.css" rel="stylesheet" />
-<link rel="stylesheet" href="../css/jquery.gritter.css" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
+<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
+<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 
 
@@ -41,7 +35,7 @@ $result5=mysqli_query($con,$qry);
                 var data = google.visualization.arrayToDataTable([  
                           ['Services', 'Number'],  
                           <?php  
-                          while($row = mysqli_fetch_array($result))  
+                          foreach($result as $row)  
                           {  
                                echo "['".$row["services"]."', ".$row["number"]."],";  
                           }  
@@ -72,9 +66,7 @@ $result5=mysqli_query($con,$qry);
           // ['Other', 3]
 
           <?php
-            $query="SELECT services, count(*) as number FROM members GROUP BY services";
-            $res=mysqli_query($con,$query);
-            while($data=mysqli_fetch_array($res)){
+            foreach($result as $data){
               $services=$data['services'];
               $number=$data['number'];
            ?>
@@ -118,13 +110,10 @@ $result5=mysqli_query($con,$qry);
           ['Terms', 'Total Amount',],
           
           <?php
-          $query1 = "SELECT gender, SUM(amount) as numberone FROM members; ";
-
-            $rezz=mysqli_query($con,$query1);
-            while($data=mysqli_fetch_array($rezz)){
+          $earningsResult = $db->query("SELECT gender, SUM(amount) as numberone FROM members")->getResultArray();
+            foreach($earningsResult as $data){
               $services='Earnings';
               $numberone=$data['numberone'];
-              // $numbertwo=$data['numbertwo'];
            ?>
            ['<?php echo $services;?>',<?php echo $numberone;?>,],   
            <?php   
@@ -132,12 +121,10 @@ $result5=mysqli_query($con,$qry);
            ?> 
 
       <?php
-          $query10 = "SELECT quantity, SUM(amount) as numbert FROM equipment";
-            $res1000=mysqli_query($con,$query10);
-            while($data=mysqli_fetch_array($res1000)){
+          $expensesResult = $db->query("SELECT quantity, SUM(amount) as numbert FROM equipment")->getResultArray();
+            foreach($expensesResult as $data){
               $expenses='Expenses';
               $numbert=$data['numbert'];
-              
            ?>
            ['<?php echo $expenses;?>',<?php echo $numbert;?>,],   
            <?php   
@@ -176,7 +163,7 @@ $result5=mysqli_query($con,$qry);
         var data = google.visualization.arrayToDataTable([  
                           ['Gender', 'Number'],  
                           <?php  
-                          while($row = mysqli_fetch_array($result3))  
+                          foreach($result3 as $row)  
                           {  
                                echo "['".$row["gender"]."', ".$row["enumber"]."],";  
                           }  
@@ -200,7 +187,7 @@ $result5=mysqli_query($con,$qry);
         var data = google.visualization.arrayToDataTable([  
                           ['Designation', 'Number'],  
                           <?php  
-                          while($row = mysqli_fetch_array($result5))  
+                          foreach($result5 as $row)  
                           {  
                                echo "['".$row["designation"]."', ".$row["snumber"]."],";  
                           }  
@@ -351,12 +338,9 @@ $result5=mysqli_query($con,$qry);
               <li>
 
               <?php
-
-                include "dbcon.php";
-                $qry="SELECT * FROM announcements";
-                $result=mysqli_query($conn,$qry);
+                $announcementsResult = $db->query("SELECT * FROM announcements")->getResultArray();
                   
-                while($row=mysqli_fetch_array($result)){
+                foreach($announcementsResult as $row){
                   echo"<div class='user-thumb'> <img width='70' height='40' alt='User' src='../img/demo/av1.jpg'> </div>";
                   echo"<div class='article-post'>"; 
                   echo"<span class='user-info'> By: System Administrator / Date: ".$row['date']." </span>";
@@ -386,12 +370,9 @@ $result5=mysqli_query($con,$qry);
             <div class="todo">
               <ul>
               <?php
+                $todoResult = $db->query("SELECT * FROM todo")->getResultArray();
 
-                include "dbcon.php";
-                $qry="SELECT * FROM todo";
-                $result=mysqli_query($con,$qry);
-
-                while($row=mysqli_fetch_array($result)){ ?>
+                foreach($todoResult as $row){ ?>
 
                 <li class='clearfix'> 
                                                                         
@@ -435,27 +416,27 @@ $result5=mysqli_query($con,$qry);
 
 <!--end-Footer-part-->
 
-<script src="../js/excanvas.min.js"></script> <!-- Visit codeastro.com for more projects -->
-<script src="../js/jquery.min.js"></script> 
-<script src="../js/jquery.ui.custom.js"></script> 
-<script src="../js/bootstrap.min.js"></script> 
-<script src="../js/jquery.flot.min.js"></script> 
-<script src="../js/jquery.flot.resize.min.js"></script> 
-<script src="../js/jquery.peity.min.js"></script> 
-<script src="../js/fullcalendar.min.js"></script> 
-<script src="../js/matrix.js"></script> 
-<script src="../js/matrix.dashboard.js"></script> 
-<script src="../js/jquery.gritter.min.js"></script> 
-<!-- <script src="../js/matrix.interface.js"></script>  -->
-<script src="../js/matrix.chat.js"></script> 
-<script src="../js/jquery.validate.js"></script> 
-<script src="../js/matrix.form_validation.js"></script> 
-<script src="../js/jquery.wizard.js"></script> 
-<script src="../js/jquery.uniform.js"></script> 
-<script src="../js/select2.min.js"></script> 
-<script src="../js/matrix.popover.js"></script> 
-<script src="../js/jquery.dataTables.min.js"></script> 
-<script src="../js/matrix.tables.js"></script> 
+<script src="<?= base_url('js/excanvas.min.js') ?>"></script> <!-- Visit codeastro.com for more projects -->
+<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
+<script src="<?= base_url('js/bootstrap.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.flot.resize.min.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.peity.min.js') ?>"></script> 
+<script src="<?= base_url('js/fullcalendar.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.dashboard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.gritter.min.js') ?>"></script> 
+<!-- <script src="<?= base_url('js/matrix.interface.js') ?>"></script>  -->
+<script src="<?= base_url('js/matrix.chat.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.form_validation.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.wizard.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
+<script src="<?= base_url('js/select2.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.popover.js') ?>"></script> 
+<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
+<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
 
 <script type="text/javascript">
   // This function is called from the pop-up menus to transfer to

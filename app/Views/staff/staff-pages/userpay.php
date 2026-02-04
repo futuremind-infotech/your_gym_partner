@@ -131,13 +131,13 @@ header('location:../index.php');
 
                                                                     <tr>
                                                                         <td><?php echo 'Charge Per Month'; ?></td>
-                                                                        <td class="alignright"><?php echo '$'.$amount?></td>
+                                                                        <td class="alignright"><?php echo '₹'.$amount?></td>
                                                                     </tr>
                                                                    
                                                                     
                                                                     <tr class="total">
                                                                         <td class="alignright" width="80%">Total Amount</td>
-                                                                        <td class="alignright">$<?php echo $amountpayable; ?></td>
+                                                                        <td class="alignright">₹<?php echo $amountpayable; ?></td>
                                                                     </tr>
                                                                 </tbody></table>
                                                             </td>

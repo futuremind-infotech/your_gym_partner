@@ -90,7 +90,7 @@
                       <td><div class="text-center"><?php echo $row['services']; ?></div></td>
                       <td><div class="text-center"><?php echo $row['plan']; ?> Month/s</div></td>
                       <td><div class="text-center"><?php echo $row['address']; ?></div></td>
-                      <td><div class="text-center"><?php echo '$'.$row['amount']; ?></div></td>
+                      <td><div class="text-center"><?php echo '₹'.$row['amount']; ?></div></td>
                       <td><div class="text-center"><?php echo $row['attendance_count']; ?> Day/s</div></td>
                     </tr>
                   </tbody>
@@ -98,7 +98,7 @@
                 <table class="table table-bordered table-invoice-full">
                   <tbody>
                     <tr>
-                      <td class="msg-invoice" width="55%"> <div class="text-center"><h4>Last Payment Done:  $<?php echo $row['amount']; ?>/-</h4>
+                      <td class="msg-invoice" width="55%"> <div class="text-center"><h4>Last Payment Done:  ₹<?php echo $row['amount']; ?>/-</h4>
                         <em><a href="#" class="tip-bottom" title="Registration Date" style="font-size:15px;">Member Since: <?php echo $row['dor']; ?> </a></em> </td>
                         </div>
                     </tr>

@@ -18,6 +18,7 @@
 <body>
     <div id="loginbox">             
         <form id="loginform" method="POST" class="form-vertical" action="<?= base_url('login/process') ?>">
+            <?= csrf_field() ?>
             <div class="control-group normal_text"> 
                         <h3><img src="<?= base_url('img/icontest3.png') ?>" alt="Logo" /></h3>
             </div>

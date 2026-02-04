@@ -96,7 +96,7 @@ $cnt = 1;
           <td><div class='text-center'><?php echo $row['fullname']?></div></td>
           <td><div class='text-center'><?php echo($row['paid_date'] == 0 ? "New Member" : $row['paid_date'])?></div></td>
           
-          <td><div class='text-center'><?php echo '$'.$row['amount']?></div></td>
+          <td><div class='text-center'><?php echo '₹'.$row['amount']?></div></td>
           <td><div class='text-center'><?php echo $row['services']?></div></td>
           <td><div class='text-center'><?php echo $row['plan']." Month/s"?></div></td>
           <td><div class='text-center'><a href='user-payment.php?id=<?php echo $row['user_id']?>'><button class='btn btn-success btn'><i class='icon icon-money'></i> Make Payment</button></a></div></td>

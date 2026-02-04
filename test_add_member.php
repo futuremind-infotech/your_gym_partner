@@ -23,7 +23,7 @@ $testData = [
     'address' => '123 Main Street',
     'contact' => '9876543210',
     'attendance_count' => 0,
-    'last_attendance' => null
+    
 ];
 
 try {

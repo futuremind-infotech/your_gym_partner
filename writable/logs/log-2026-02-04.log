@@ -1,0 +1,94 @@
+CRITICAL - 2026-02-04 14:44:39 --> Error: Call to a member function getMethod() on null
+[Method: GET, Route: quick-test/test-edit]
+in APPPATH\Controllers\Admin.php on line 180.
+ 1 APPPATH\Controllers\TestEditFlow.php(25): App\Controllers\Admin->editMemberReq()
+ 2 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\TestEditFlow->simulateFormSubmit()
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\TestEditFlow))
+ 4 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:08:45 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(630): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:08:58 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(630): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:08:59 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(630): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:12:16 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(636): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:12:16 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(636): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-04 15:12:41 --> ErrorException: Undefined variable $conn
+[Method: GET, Route: admin/view-attendance]
+in APPPATH\Views\admin\view-attendance.php on line 77.
+ 1 APPPATH\Views\admin\view-attendance.php(77): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $conn', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php', 77)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\view-attendance.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/view-attendance', [], true)
+ 5 APPPATH\Controllers\Admin.php(636): view('admin/view-attendance', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->viewAttendance()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

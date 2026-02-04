@@ -1,0 +1,30 @@
+[2026-02-04 14:33:41] Incoming POST:
+Array
+(
+    [fullname] => AdminFinalTest
+    [username] => admintest12345
+    [password] => pass
+    [dor] => 2026-02-04
+    [gender] => Male
+    [services] => Gym
+    [amount] => 100
+    [plan] => 1
+    [address] => Addr
+    [contact] => 1234567890
+)
+
+[2026-02-04 14:33:56] Incoming POST:
+Array
+(
+    [fullname] => AdminFinalTest
+    [username] => admintest12346
+    [password] => pass1234
+    [dor] => 2026-02-04
+    [gender] => Male
+    [services] => Gym
+    [amount] => 100
+    [plan] => 1
+    [address] => Addr
+    [contact] => 1234567890
+)
+

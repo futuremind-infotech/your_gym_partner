@@ -34,7 +34,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]|is_unique[members.username]',
@@ -67,7 +67,7 @@ class Staff extends BaseController
                 'address' => $this->request->getPost('address'),
                 'contact' => $this->request->getPost('contact'),
                 'attendance_count' => 0,
-                'last_attendance' => null
+                
             ];
             
             try {
@@ -116,7 +116,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $user_id = $this->request->getPost('user_id');
             
             if (!$user_id) {
@@ -128,7 +128,6 @@ class Staff extends BaseController
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]',
                 'gender' => 'required',
-                'services' => 'required',
                 'amount' => 'required|numeric|greater_than[0]',
                 'plan' => 'required|integer|greater_than[0]'
             ];
@@ -150,7 +149,6 @@ class Staff extends BaseController
                 'contact' => $this->request->getPost('contact'),
                 'address' => $this->request->getPost('address'),
                 'amount' => $this->request->getPost('amount'),
-                'services' => $this->request->getPost('services'),
                 'plan' => $this->request->getPost('plan')
             ];
             
@@ -186,7 +184,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $user_id = $this->request->getPost('user_id');
             
             if (!$user_id) {
@@ -236,7 +234,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $rules = [
                 'name' => 'required|min_length[2]',
                 'description' => 'required',
@@ -306,7 +304,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $equip_id = $this->request->getPost('equipment_id');
             
             if (!$equip_id) {
@@ -370,7 +368,7 @@ class Staff extends BaseController
             return redirect()->to('/');
         }
         
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $equip_id = $this->request->getPost('equipment_id');
             
             if (!$equip_id) {
@@ -392,7 +390,13 @@ class Staff extends BaseController
         return view('staff/staff-pages/actions/delete-equipment', ['page' => 'remove-equip']); 
     }
 
-    public function attendance() { return view('staff/staff-pages/attendance', ['page' => 'attendance']); }
+    public function attendance() 
+    { 
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+        return view('staff/staff-pages/attendance', ['page' => 'attendance']); 
+    }
 
     public function checkAttendance()
     {
