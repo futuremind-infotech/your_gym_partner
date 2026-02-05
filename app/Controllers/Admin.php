@@ -513,10 +513,37 @@ class Admin extends BaseController
         // Use client time if provided, otherwise fall back to server time
         $curr_time = $clientTime ? $clientTime : date('H:i:s');
 
+        // Ensure checkout_time column exists (backfill if DB is older)
+        $col = $db->query("SHOW COLUMNS FROM attendance LIKE 'checkout_time'")->getRowArray();
+        if (! $col) {
+            try {
+                $db->query("ALTER TABLE attendance ADD COLUMN checkout_time VARCHAR(10) NULL DEFAULT NULL");
+                log_message('info', 'Added checkout_time column to attendance table');
+            } catch (\Exception $e) {
+                log_message('error', 'Failed to add checkout_time column: ' . $e->getMessage());
+            }
+        }
+
         $existing = $db->table('attendance')->where('curr_date', $curr_date)->where('user_id', $id)->get()->getRowArray();
         if (! $existing) {
+            // First check-in of the day
             $db->table('attendance')->insert(['user_id' => $id, 'curr_date' => $curr_date, 'curr_time' => $curr_time, 'present' => 1]);
             $db->table('members')->where('user_id', $id)->increment('attendance_count');
+            log_message('info', "Admin Check-in: User $id at $curr_time");
+        } else {
+            // If already checked in and no checkout recorded, record checkout time
+            $hasCheckout = array_key_exists('checkout_time', $existing) && !empty($existing['checkout_time']);
+            if (! $hasCheckout) {
+                   $mysqli = mysqli_connect("localhost","root","","gymnsb");
+                   $update_sql = "UPDATE attendance SET checkout_time = '" . mysqli_real_escape_string($mysqli, $curr_time) . "' WHERE id = " . intval($existing['id']);
+                   $result = mysqli_query($mysqli, $update_sql);
+                   if (!$result) {
+                       error_log("Admin checkout update failed: " . mysqli_error($mysqli));
+                   }
+                   mysqli_close($mysqli);
+            } else {
+                log_message('info', "User $id already checked out at {$existing['checkout_time']}");
+            }
         }
 
         return redirect()->to(site_url('admin/attendance'));
@@ -543,11 +570,30 @@ class Admin extends BaseController
         $curr_date = date('Y-m-d');
         $curr_time = date('H:i:s');
         
-        $existing = $db->query("SELECT id FROM attendance WHERE curr_date = ? AND user_id = ?", [$curr_date, $member_id])->getRowArray();
+        $existing = $db->query("SELECT * FROM attendance WHERE curr_date = ? AND user_id = ?", [$curr_date, $member_id])->getRowArray();
+        // Ensure checkout_time column exists
+        $col = $db->query("SHOW COLUMNS FROM attendance LIKE 'checkout_time'")->getRowArray();
+        if (! $col) {
+            try { $db->query("ALTER TABLE attendance ADD COLUMN checkout_time TEXT NULL"); } catch (\Exception $e) {}
+        }
+
         if ($existing) {
+            // If checked-in but no checkout recorded, set checkout
+            if (empty($existing['checkout_time'])) {
+                $db->query("UPDATE attendance SET checkout_time = ? WHERE id = ?", [$curr_time, $existing['id']]);
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => '✅ Checkout recorded for ' . $member['fullname'],
+                    'member_id' => $member_id,
+                    'time' => $curr_time,
+                    'member_name' => $member['fullname'],
+                    'date' => $curr_date
+                ]);
+            }
+
             return $this->response->setJSON([
                 'success' => false, 
-                'message' => 'Already marked today for ' . $member['fullname'],
+                'message' => 'Already marked and checked-out today for ' . $member['fullname'],
                 'member_name' => $member['fullname']
             ]);
         }

@@ -132,13 +132,7 @@ if (!session()->get('isLoggedIn')) {
                             <div class="control-group <?= session('errors.services') ? 'error' : '' ?>">
                                 <label class="control-label">Services <span class="text-danger">*</span></label>
                                 <div class="controls">
-                                    <select name="services" class="span8 form-control" required>
-                                        <option value="">Select Service</option>
-                                        <option value="Gym" <?= old('services') == 'Gym' ? 'selected' : '' ?>>Gym</option>
-                                        <option value="Yoga" <?= old('services') == 'Yoga' ? 'selected' : '' ?>>Yoga</option>
-                                        <option value="Zumba" <?= old('services') == 'Zumba' ? 'selected' : '' ?>>Zumba</option>
-                                        <option value="Personal Training" <?= old('services') == 'Personal Training' ? 'selected' : '' ?>>Personal Training</option>
-                                    </select>
+                                    <input type="text" name="services" class="span8 form-control" value="<?= old('services') ?>" placeholder="Enter service name (e.g. Fitness)" required>
                                     <?php if (session('errors.services')): ?>
                                         <span class="help-block text-danger"><?= session('errors.services') ?></span>
                                     <?php endif; ?>

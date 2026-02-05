@@ -168,15 +168,8 @@ while($row=mysqli_fetch_array($result)){
             <div class="control-group">
               <label class="control-label">Services</label>
               <div class="controls">
-                <label>
-                  <input type="radio" value="Fitness" name="services" <?php echo ($row['services'] == 'Fitness') ? 'checked="checked"' : ''; ?> />
-                  Fitness <small>- ₹55 per month</small></label>
-                <label>
-                  <input type="radio" value="Sauna" name="services" <?php echo ($row['services'] == 'Sauna') ? 'checked="checked"' : ''; ?> />
-                  Sauna <small>- ₹35 per month</small></label>
-                <label>
-                  <input type="radio" value="Cardio" name="services" <?php echo ($row['services'] == 'Cardio') ? 'checked="checked"' : ''; ?> />
-                  Cardio <small>- ₹40 per month</small></label>
+                <input type="text" class="span11" name="services" value="<?php echo htmlspecialchars($row['services']); ?>" placeholder="Enter service name" />
+                <span class="help-block">Type service name (previous value preserved).</span>
               </div>
             </div>
 

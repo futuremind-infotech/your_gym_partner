@@ -181,15 +181,8 @@ if (!session()->get('isLoggedIn')) {
             <div class="control-group">
               <label class="control-label">Services</label>
               <div class="controls">
-                <label>
-                  <input type="radio" value="Fitness" name="services" />
-                  Fitness <small>- ₹55 per month</small></label>
-                <label>
-                  <input type="radio" value="Sauna" name="services" />
-                  Sauna <small>- ₹35 per month</small></label>
-                <label>
-                  <input type="radio" value="Cardio" name="services" />
-                  Cardio <small>- ₹40 per month</small></label>
+                <input type="text" class="span8" name="services" placeholder="Enter service (e.g. Fitness, Sauna, Cardio)" />
+                <span class="help-block">Admin may enter any service name here.</span>
               </div>
             </div>
 

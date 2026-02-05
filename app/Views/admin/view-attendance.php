@@ -47,6 +47,15 @@ $members = $db->table('members')->where('status', 'Active')->get()->getResultArr
       <div class="span12">
 
       <div class='widget-box'>
+          <div class="widget-title"><h5>Filter by Date</h5></div>
+          <div class="widget-content padding">
+            <form method="get" class="form-inline" style="margin-bottom:10px;">
+              <label for="date">Date:</label>
+              <input type="date" id="date" name="date" value="<?= isset($_GET['date']) ? htmlspecialchars($_GET['date']) : date('Y-m-d') ?>" class="form-control" />
+              <button type="submit" class="btn btn-primary">Show</button>
+              <a href="<?= site_url('admin/view-attendance') ?>" class="btn btn-default">Today</a>
+            </form>
+          </div>
           <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
             <h5>Attendance Table</h5>
           </div>
@@ -59,14 +68,22 @@ $members = $db->table('members')->where('status', 'Active')->get()->getResultArr
                   <th>#</th>
                   <th>Fullname</th>
                   <th>Plan</th>
-                  <th>Attendance Count</th> 
+                  <th>Today Check-in</th>
+                  <th>Today Checkout</th>
+                  <th>Attendance Count</th>
                 </tr>
               </thead>
               <tbody>
            <?php 
            $cnt = 1;
+           $selected_date = isset($_GET['date']) && !empty($_GET['date']) ? $_GET['date'] : date('Y-m-d');
            if(count($members) > 0) {
-               foreach($members as $row) { ?>
+               foreach($members as $row) { 
+                   // fetch selected date's attendance for this member
+                   $att = $db->table('attendance')->where('curr_date', $selected_date)->where('user_id', $row['user_id'])->get()->getRowArray();
+                   $checkin = $att['curr_time'] ?? '-';
+                   $checkout = !empty($att['checkout_time']) ? $att['checkout_time'] : '-';
+               ?>
                 <tr>
                     <td><div class='text-center'><?php echo $cnt; ?></div></td>
                     <td><div class='text-center'><?php echo htmlspecialchars($row['fullname']); ?></div></td>
@@ -78,6 +95,22 @@ $members = $db->table('members')->where('status', 'Active')->get()->getResultArr
                         } else { 
                             echo $row['plan']. ' Months'; 
                         } 
+                    ?></div></td>
+                    <td><div class='text-center'><?php 
+                        if($checkin !== '-') {
+                            echo "<span class='label label-info'>" . htmlspecialchars($checkin) . "</span>";
+                        } else {
+                            echo "<span class='label label-default'>-</span>";
+                        }
+                    ?></div></td>
+                    <td><div class='text-center'><?php 
+                      if($checkout !== '-') {
+                        echo "<span class='label label-success'>" . htmlspecialchars($checkout) . "</span>";
+                      } else {
+                        // show a button so admin can perform checkout directly
+                        echo "<div style='display:inline-block;margin-bottom:4px;'><span class='label label-warning'>Not Checked Out</span></div>";
+                        echo "<div style='margin-top:4px;'><a href='" . site_url("admin/check-attendance?id=" . $row['user_id']) . "'><button class='btn btn-danger btn-sm'>Check Out</button></a></div>";
+                      }
                     ?></div></td>
                     <td><div class='text-center'><?php 
                         if($row['attendance_count'] == 1) { 
@@ -93,7 +126,7 @@ $members = $db->table('members')->where('status', 'Active')->get()->getResultArr
                    $cnt++; 
                }
            } else {
-               echo "<tr><td colspan='4' class='text-center'>No active members found.</td></tr>";
+               echo "<tr><td colspan='6' class='text-center'>No active members found.</td></tr>";
            }
            ?>
               </tbody>

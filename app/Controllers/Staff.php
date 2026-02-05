@@ -407,15 +407,39 @@ class Staff extends BaseController
 
         $db = \Config\Database::connect();
         date_default_timezone_set('Asia/Kathmandu');
-        $current_date = date('Y-m-d h:i A');
-        $exp = explode(' ', $current_date);
-        $curr_date = $exp[0];
-        $curr_time = $exp[1] . ' ' . $exp[2];
+        $curr_date = date('Y-m-d');
+        $curr_time = date('H:i:s');
+
+        // Ensure checkout_time column exists
+        $col = $db->query("SHOW COLUMNS FROM attendance LIKE 'checkout_time'")->getRowArray();
+        if (! $col) {
+            try { 
+                $db->query("ALTER TABLE attendance ADD COLUMN checkout_time VARCHAR(10) NULL DEFAULT NULL"); 
+                log_message('info', 'Added checkout_time column to attendance table');
+            } catch (\Exception $e) {
+                log_message('error', 'Failed to add checkout_time column: ' . $e->getMessage());
+            }
+        }
 
         $existing = $db->query("SELECT * FROM attendance WHERE curr_date = ? AND user_id = ?", [$curr_date, $id])->getRowArray();
         if (! $existing) {
+            // check-in
             $db->query("INSERT INTO attendance (user_id, curr_date, curr_time, present) VALUES (?, ?, ?, 1)", [$id, $curr_date, $curr_time]);
             $db->query("UPDATE members SET attendance_count = attendance_count + 1 WHERE user_id = ?", [$id]);
+            log_message('info', "Check-in: User $id at $curr_time");
+        } else {
+            // if checked in and no checkout, set checkout
+            if (empty($existing['checkout_time'])) {
+                   $mysqli = mysqli_connect("localhost","root","","gymnsb");
+                   $update_sql = "UPDATE attendance SET checkout_time = '" . mysqli_real_escape_string($mysqli, $curr_time) . "' WHERE id = " . intval($existing['id']);
+                   $result = mysqli_query($mysqli, $update_sql);
+                   if (!$result) {
+                       error_log("Checkout update failed: " . mysqli_error($mysqli));
+                   }
+                   mysqli_close($mysqli);
+            } else {
+                log_message('info', "User $id already checked out at {$existing['checkout_time']}");
+            }
         }
 
         return redirect()->to('/staff/attendance');

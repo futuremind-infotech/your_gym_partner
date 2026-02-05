@@ -149,6 +149,14 @@ if (! session()->get('isLoggedIn')) {
                                     </div>
                                 </div>
 
+                                    <div class="control-group">
+                                        <label class="control-label">Services</label>
+                                        <div class="controls">
+                                            <input type="text" name="services" class="span8"
+                                                   value="<?= esc($member['services']) ?>" placeholder="Enter service name (e.g. Fitness)">
+                                        </div>
+                                    </div>
+
                                 <div class="control-group">
                                     <label class="control-label">Plan (Months)</label>
                                     <div class="controls">

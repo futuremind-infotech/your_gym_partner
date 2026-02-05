@@ -195,15 +195,7 @@ while($row=mysqli_fetch_array($result)){
             <div class="control-group">
               <label class="control-label">Services</label>
               <div class="controls">
-                <label>
-                  <input type="radio" value="Fitness" name="services" />
-                  Fitness</label>
-                <label>
-                  <input type="radio" value="Sauna" name="services" />
-                  Sauna</label>
-                <label>
-                  <input type="radio" value="Cardio" name="services" />
-                  Cardio</label>
+                <input type="text" class="span11" name="services" value='<?php echo htmlspecialchars($row['services']); ?>' placeholder="Enter service name" />
               </div>
             </div>
 

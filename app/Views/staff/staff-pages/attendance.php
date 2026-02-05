@@ -60,13 +60,7 @@ if (!session()->get('isLoggedIn')) {
           </div>
           <div class='widget-content nopadding'>
 	  
-	  <?php
-
-      include "dbcon.php";
-     
-
-        
-          echo"<table class='table table-bordered'>
+	  <table class='table table-bordered'>
               <thead>
                 <tr>
                   <th>#</th>
@@ -75,58 +69,63 @@ if (!session()->get('isLoggedIn')) {
                   <th>Choosen Service</th>
                   <th>Action</th>
                 </tr>
-              </thead>";
-
+              </thead>
+              <tbody>
+              <?php
               date_default_timezone_set('Asia/Kathmandu');
-              //$current_date = date('Y-m-d h:i:s');
-                 $current_date = date('Y-m-d h:i A');
-                $exp_date_time = explode(' ', $current_date);
-                 $todays_date =  $exp_date_time['0'];
-                     $qry="SELECT * FROM members WHERE status = 'Active'";
-                    $result=mysqli_query($conn,$qry);
-                   $i=1;
-                   $cnt = 1;
+              $db = \Config\Database::connect();
+              $current_date = date('Y-m-d h:i A');
+              $exp_date_time = explode(' ', $current_date);
+              $todays_date = $exp_date_time['0'];
               
-            while($row=mysqli_fetch_array($result)){ ?>
-            
-           <tbody> 
-               
+              // Get all active members
+              $members = $db->table('members')->where('status', 'Active')->get()->getResultArray();
+              $cnt = 1;
+              
+              foreach($members as $row){ ?>
+                <tr>
                 <td><div class='text-center'><?php echo $cnt; ?></div></td>
                 <td><div class='text-center'><?php echo $row['fullname']; ?></div></td>
                 <td><div class='text-center'><?php echo $row['contact']; ?></div></td>
                 <td><div class='text-center'><?php echo $row['services']; ?></div></td>
 
                 <!-- <span>count</span><br>CHECK IN</td> -->
-                <input type="hidden" name="user_id" value="<?php echo $row['id'];?>">
+                <input type="hidden" name="user_id" value="<?php echo $row['user_id'];?>">
 
             <?php
-                $qry = "select * from attendance where curr_date = '$todays_date' AND user_id = '".$row['user_id']."'";
-                $res = $conn->query($qry);
-                $num_count  = mysqli_num_rows($res);
-                $row_exist = mysqli_fetch_array($res);
-                $curr_date = $row_exist['curr_date'];
-                if($curr_date == $todays_date){
+                // Get attendance record for this user today
+                $attendance = $db->table('attendance')
+                    ->where('curr_date', $todays_date)
+                    ->where('user_id', $row['user_id'])
+                    ->get()
+                    ->getRowArray();
+                
+                $curr_date = $attendance['curr_date'] ?? '';
+                $curr_time = $attendance['curr_time'] ?? '-';
+                $checkout_time = !empty($attendance['checkout_time']) ? $attendance['checkout_time'] : '-';
+                
+                error_log("Attendance - User: {$row['user_id']}, CheckIn: '$curr_time', CheckOut: '$checkout_time'");
+                
+                $has_checkin = ($curr_date == $todays_date && !empty($attendance));
+                $has_checkout = $has_checkin && $checkout_time !== '-';
   
     ?>
-                <td><div class='text-center'><span class="label label-inverse"><?php echo $row_exist['curr_date'];?>  <?php echo $row_exist['curr_time'];?></span></div>
-                <div class='text-center'><a href='<?php echo site_url("staff/delete-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-danger'>Check Out <i class='icon icon-time'></i></button> </a></div>
-                </td>
-
-              <?php } else {
-                  
-                  ?>
-
-                <td><div class='text-center'><a href='<?php echo site_url("staff/check-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-info'>Check In <i class='icon icon-map-marker'></i></button> </a></div></td>
-             
-                <?php $cnt++; }
-
-              ?>
-
+                <td><div class='text-center'>
+                <?php if($has_checkin): ?>
+                  <div><strong>Check-in:</strong> <span class="label label-info"><?php echo $curr_time;?></span></div>
+                  <div><strong>Checkout:</strong> <span class="label <?php echo ($has_checkout ? 'label-success' : 'label-warning'); ?>"><?php echo $checkout_time; ?></span></div>
+                  <?php if(!$has_checkout): ?>
+                  <div style='margin-top:5px;'><a href='<?php echo site_url("staff/check-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-danger'>Check Out <i class='icon icon-time'></i></button> </a></div>
+                  <?php else: ?>
+                  <div style='margin-top:5px;'><span class="label label-success">✓ Checked Out</span></div>
+                  <?php endif; ?>
+                <?php else: ?>
+                  <div><a href='<?php echo site_url("staff/check-attendance?id=" . $row['user_id']); ?>'><button class='btn btn-info'>Check In <i class='icon icon-map-marker'></i></button> </a></div>
+                <?php endif; ?>
+              </tr>
+              <?php $cnt++; ?>
+              <?php } ?>
               </tbody>
-
-           <?php } ?>
-           
-
             </table>
           </div>
         </div>

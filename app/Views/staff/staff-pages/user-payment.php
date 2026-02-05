@@ -110,7 +110,15 @@ while($row=mysqli_fetch_array($result)){
                     </tr>
                     <tr>
                       <td>Amount Per Month:</td>
-                      <td><input id="amount" type="number" name="amount" value='<?php if($row['services'] == 'Fitness') { echo '55';} elseif ($row['services'] == 'Sauna') { echo '35';} else {echo '40';} ?>' /></td>
+                      <?php
+                        // Compute per-month amount from stored total and plan.
+                        $rawAmount = isset($row['amount']) ? floatval($row['amount']) : 0;
+                        $planVal = isset($row['plan']) ? intval($row['plan']) : 1;
+                        // Some legacy views stored plan as days (30,90...). Convert to months when needed.
+                        $months = ($planVal > 12) ? max(1, round($planVal / 30)) : max(1, $planVal);
+                        $per_month = $months ? round($rawAmount / $months, 2) : $rawAmount;
+                      ?>
+                      <td><input id="amount" type="number" name="amount" value='<?php echo $per_month; ?>' step="0.01" /></td>
                     </tr>
 
                     <input type="hidden" name="paid_date" value="<?php echo $row['paid_date']; ?>">
