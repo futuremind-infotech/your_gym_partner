@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 04, 2026 at 08:53 PM
+-- Generation Time: Feb 07, 2026 at 07:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,15 +73,16 @@ CREATE TABLE `attendance` (
   `user_id` varchar(100) NOT NULL,
   `curr_date` text NOT NULL,
   `curr_time` text NOT NULL,
-  `present` tinyint(4) NOT NULL
+  `present` tinyint(4) NOT NULL,
+  `checkout_time` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `attendance`
 --
 
-INSERT INTO `attendance` (`id`, `user_id`, `curr_date`, `curr_time`, `present`) VALUES
-(22, '31', '2026-02-04', '20:58:22', 1);
+INSERT INTO `attendance` (`id`, `user_id`, `curr_date`, `curr_time`, `present`, `checkout_time`) VALUES
+(22, '31', '2026-02-04', '20:58:22', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,7 +151,7 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`user_id`, `fullname`, `username`, `password`, `gender`, `dor`, `services`, `amount`, `paid_date`, `p_year`, `plan`, `address`, `contact`, `status`, `attendance_count`, `ini_weight`, `curr_weight`, `ini_bodytype`, `curr_bodytype`, `progress_date`, `reminder`, `qr_code_path`) VALUES
-(31, 'Test User2', 'testuser', '21232f297a57a5a743894a0e4a801fc3', 'Male', '2026-02-04', 'Gym', 100, '2026-02-04', 2026, '1', 'Test Address', '9999999999', 'Active', 1, 0, 0, '', '', '2026-02-04', 0, NULL),
+(31, 'Test User20', 'testuser', '21232f297a57a5a743894a0e4a801fc3', 'Male', '2026-02-04', 'Fitness', 5100, '2026-02-05', 2026, '12', 'Test Address', '9999999999', 'Active', 1, 0, 0, '', '', '2026-02-04', 0, 'SIMPLE_QR:31'),
 (32, 'UpdatedJohnDoeTest', 'johndoe1154', '482c811da5d5b4bc6d497ffa98491e38', 'Male', '2026-02-04', 'Gym', 250, '2026-02-04', 2026, '3', 'Updated Address Via ', '9876543210', 'Active', 0, 0, 0, '', '', '0000-00-00', 0, NULL),
 (33, 'AdminFinalTest', 'admintest12346', 'b4af804009cb036a4ccdc33431ef9ac9', 'Male', '2026-02-04', 'Gym', 100, '2026-02-04', 2026, '1', 'Addr', '1234567890', 'Active', 0, 0, 0, '', '', '2026-02-04', 0, NULL),
 (34, 'demo33', 'Admin', 'f2d0ff370380124029c2b807a924156c', 'Female', '2026-02-04', 'Sauna', 270, '2026-02-04', 2026, '3', '64 Mulberry Lane', '0258987850', 'Active', 0, 0, 0, '', '', '2026-02-04', 0, NULL);
@@ -333,7 +334,7 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `equipment`
