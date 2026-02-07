@@ -12,7 +12,7 @@ $routes = Services::routes();
 |--------------------------------------------------------------------------
 */
 $routes->setDefaultNamespace('App\Controllers');
-$routes->setDefaultController('Home');
+$routes->setDefaultController('Frontend');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
@@ -20,13 +20,22 @@ $routes->setAutoRoute(false);
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| Frontend Routes
 |--------------------------------------------------------------------------
 */
-$routes->get('/', 'Home::index');
-$routes->get('index', 'Home::index');
-$routes->get('index.php', 'Home::index');
+$routes->get('/', 'Frontend::index');
+$routes->get('about', 'Frontend::about');
+$routes->get('contact', 'Frontend::contact');
+$routes->get('blog', 'Frontend::blog');
+$routes->get('gallery', 'Frontend::gallery');
+$routes->get('pricing', 'Frontend::pricing');
 
+/*
+|--------------------------------------------------------------------------
+| Admin Login Routes
+|--------------------------------------------------------------------------
+*/
+$routes->get('login', 'Home::loginPage');
 $routes->post('login/process', 'Login::process');
 $routes->get('dashboard', 'Dashboard::index');
 

@@ -1,0 +1,826 @@
+﻿<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>RKFitness</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link rel="manifest" href="site.webmanifest"> -->
+    <link rel="shortcut icon" type="image/x-icon" href="img/logo.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- swipper js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="<?= base_url("frontend-css/bootstrap.min.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/owl.carousel.min.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/magnific-popup.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/font-awesome.min.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/themify-icons.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/gijgo.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/nice-select.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/flaticon.css") ?>">
+    <link rel="stylesheet" href="<?= base_url("frontend-css/slicknav.css") ?>">
+
+    <link rel="stylesheet" href="<?= base_url("frontend-css/style.css") ?>">
+    <!-- <link rel="stylesheet" href="<?= base_url("frontend-css/responsive.css") ?>"> -->
+    <style>
+        .modern_gallery {
+    padding: 100px 0;
+    background: #0b0b0b;
+}
+
+.gallery_card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.gallery_card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.gallery_card:hover img {
+    transform: scale(1.12);
+}
+
+.gallery_overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.85),
+        rgba(0,0,0,0.2)
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.gallery_card:hover .gallery_overlay {
+    opacity: 1;
+}
+
+.gallery_overlay h4 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.gallery_overlay span {
+    color: #ffb400;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+.modern_team {
+    padding: 100px 0;
+    background: #0b0b0b;
+}
+
+.trainer_card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.trainer_card img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.trainer_card:hover img {
+    transform: scale(1.08);
+}
+
+.trainer_info {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    text-align: center;
+}
+
+.trainer_info h4 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.trainer_info span {
+    color: #ffb400;
+    font-size: 14px;
+}
+.wellness_area {
+    padding: 110px 0;
+    background: linear-gradient(135deg, #0b0b0b, #151515);
+}
+
+.wellness_text span {
+    color: #ffb400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 14px;
+}
+
+.wellness_text h3 {
+    color: #fff;
+    font-size: 38px;
+    font-weight: 800;
+    margin: 12px 0 18px;
+}
+
+.wellness_text p {
+    color: #ccc;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.wellness_text ul {
+    margin-bottom: 30px;
+    padding: 0;
+}
+
+.wellness_text ul li {
+    color: #fff;
+    list-style: none;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.wellness_image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+}
+
+@media (max-width: 991px) {
+    .wellness_text {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .wellness_text h3 {
+        font-size: 30px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <!--[if lte IE 9]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+        <![endif]-->
+
+    <!-- header-start -->
+ <header>
+    <div class="header-area ">
+        <div id="sticky-header" class="main-header-area">
+            <div class="container-fluid ">
+                <div class="header_bottom_border">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3 col-lg-2">
+                            <div class="logo">
+                                <a href="<?= base_url() ?>">
+                                    <img src="<?= base_url("frontend-img/logo.png") ?>" width="80" alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-7">
+                            <div class="main-menu  d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">
+                                        <li><a href="<?= base_url() ?>">home</a></li>
+                                        <li><a href="<?= base_url("about") ?>">about</a></li>
+                                        <li><a href="<?= base_url("pricing") ?>">pricing</a></li>
+                                        <li><a href="<?= base_url("gallery") ?>">gallery</a></li>
+                                        <li><a href="<?= base_url("blog") ?>">blog</a></li>
+                                        <li><a href="<?= base_url("contact") ?>">Contact</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block">
+                            <div class="Appointment">
+                                <div class="book_btn d-none d-lg-block">
+                                    <a href="<?= base_url('login') ?>" style="background-color: #ff6b6b; margin-right: 10px;">Admin Login</a>
+                                    <a href="https://wa.me/919096229113" target="_blank">Join Us</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</header>
+<!-- header-end -->
+
+    <!-- slider_area_start -->
+    <div class="slider_area">
+        <div class="slider_active owl-carousel">
+            <div class="single_slider  d-flex align-items-center slider_bg_1 overlay">
+                <div class="container">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-xl-12">
+                            <div class="slider_text text-center">
+                                <span>Strong Is for Everyone</span>
+                                <h3>Build Your Strength</h3>
+                                <p>Unisex gym for men & women with professional trainers and modern equipment</p>
+                                <a href="#" class="boxed-btn3">Join Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="single_slider  d-flex align-items-center slider_bg_2 overlay">
+                <div class="container">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-xl-12">
+                            <div class="slider_text text-center">
+                                <span>Fitness Without Limits</span>
+                                <h3>Be Strong. Be Confident</h3>
+                                <p>Professional fitness training for men and women</p>
+                                <a href="#" class="boxed-btn3">Join Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="single_slider  d-flex align-items-center slider_bg_1 overlay">
+                <div class="container">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-xl-12">
+                            <div class="slider_text text-center">
+                                <span>Build Up Your</span>
+                                <h3>Body Shape</h3>
+                                <p>Build Your Body and Fitness with Professional Touch</p>
+                                <a href="#" class="boxed-btn3">Join Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="single_slider  d-flex align-items-center slider_bg_2 overlay">
+                <div class="container">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-xl-12">
+                            <div class="slider_text text-center">
+                                <span>Build Up Your</span>
+                                <h3>Strength</h3>
+                                <p>Build Your Body and Fitness with Professional Touch</p>
+                                <a href="#" class="boxed-btn3">Join Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- slider_area_end -->
+<!-- catagory_area  -->
+<div class="catagory_area">
+    <div class="container-fluid p-0">
+        <div class="row no-gutters">
+            <div class="col-lg-6 col-md-6">
+                <div class="single_catagory text-center overlay2 cat_bg_1">
+                    <h3>Strength Training</h3>
+                    <p>
+                        Build muscle, improve endurance, and increase power <br>
+                        with expert-guided strength workouts designed for all.
+                    </p>
+                    <a href="#" class="boxed-btn3">Start Training</a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="single_catagory text-center overlay2 cat_bg_2">
+                    <h3>Cardio & Fitness</h3>
+                    <p>
+                        Burn calories, boost stamina, and stay active <br>
+                        with high-energy cardio and conditioning programs.
+                    </p>
+                    <a href="#" class="boxed-btn3">Join Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ catagory_area  -->
+
+
+   <!-- features_area_start  -->
+<div class="features_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="section_title text-center mb-73">
+                    <h3>Our Fitness Features</h3>
+                    <p>
+                        Everything you need to build strength, improve endurance, <br>
+                        and achieve your fitness goals in one place.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="single_feature text-center mb-73">
+                    <div class="icon">
+                        <img src="<?= base_url("frontend-img/svg_icon/1.svg") ?>" alt="">
+                    </div>
+                    <h4>Strength Training</h4>
+                    <p>
+                        Advanced weight training programs designed to build muscle,
+                        power, and confidence.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="single_feature text-center">
+                    <div class="icon">
+                        <img src="<?= base_url("frontend-img/svg_icon/2.svg") ?>" alt="">
+                    </div>
+                    <h4>Targeted Muscle Workouts</h4>
+                    <p>
+                        Focused exercises to train specific muscle groups
+                        for better shape and balance.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="single_feature text-center">
+                    <div class="icon">
+                        <img src="<?= base_url("frontend-img/svg_icon/3.svg") ?>" alt="">
+                    </div>
+                    <h4>Muscle Toning</h4>
+                    <p>
+                        Improve muscle definition, flexibility, and overall body strength
+                        with guided routines.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="single_feature text-center">
+                    <div class="icon">
+                        <img src="<?= base_url("frontend-img/svg_icon/4.svg") ?>" alt="">
+                    </div>
+                    <h4>Cardio & Conditioning</h4>
+                    <p>
+                        High-energy cardio workouts to burn fat,
+                        boost stamina, and improve heart health.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- features_area_end  -->
+
+
+<div class="offer_area offer_bg">
+    <div class="container">
+        <div class="row justify-content-end">
+            <div class="col-lg-6">
+                <div class="offer_text">
+                    <h4>Special Membership Offers</h4>
+                    <h3>Best Fitness Plans</h3>
+
+                    <p>
+                        💪 <strong>₹4000</strong> – Yearly Gym Package<br>
+                        🔥 <strong>₹5000</strong> – Gym + Cardio (Yearly)<br>
+                        ❤️ <strong>₹4000</strong> – Cardio Only (Yearly)<br>
+                        🏋️ <strong>₹3000</strong> – Personal Training (Monthly)
+                    </p>
+
+                    <a href="#" class="boxed-btn3">Join Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="priscing_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="section_title text-center mb-73">
+                    <h3>Our Membership Plans</h3>
+                    <p>
+                        Flexible and affordable fitness plans designed for everyone. <br>
+                        Locker facility available at additional cost.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- BASIC PLAN -->
+            <div class="col-lg-4 col-md-6">
+                <div class="single_prising text-center">
+                    <div class="prising_header">
+                        <h3>Basic</h3>
+                        <span>₹4000 / Year</span>
+                    </div>
+                    <div class="pricing_body">
+                        <ul>
+                            <li>Gym Access</li>
+                            <li>Strength Training</li>
+                            <li>Trainer Guidance</li>
+                            <li class="off-color">Locker (Extra Charges)</li>
+                        </ul>
+                    </div>
+                    <div class="pricing_btn">
+                        <a href="#" class="boxed-btn3">Join Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POPULAR PLAN -->
+            <div class="col-lg-4 col-md-6">
+                <div class="single_prising text-center">
+                    <div class="prising_header">
+                        <h3>Popular</h3>
+                        <span>₹5000 / Year</span>
+                    </div>
+                    <div class="pricing_body">
+                        <ul>
+                            <li>Gym + Cardio Access</li>
+                            <li>Trainer Support</li>
+                            <li>Best Value Plan</li>
+                            <li class="off-color">Locker (Extra Charges)</li>
+                        </ul>
+                    </div>
+                    <div class="pricing_btn">
+                        <a href="#" class="boxed-btn3">Most Popular</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREMIUM PLAN -->
+            <div class="col-lg-4 col-md-6">
+                <div class="single_prising text-center">
+                    <div class="prising_header">
+                        <h3>Personal Training</h3>
+                        <span>₹3000 / Month</span>
+                    </div>
+                    <div class="pricing_body">
+                        <ul>
+                            <li>Personal Trainer</li>
+                            <li>Customized Workout Plan</li>
+                            <li>Fast & Safe Results</li>
+                            <li class="off-color">Locker (Extra Charges)</li>
+                        </ul>
+                    </div>
+                    <div class="pricing_btn">
+                        <a href="#" class="boxed-btn3">Start Training</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- modern_gallery_start -->
+<div class="modern_gallery">
+    <div class="container">
+        <div class="row g-4">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="gallery_card">
+                    <img src="<?= base_url("frontend-img/gallery/1.png") ?>" alt="">
+                    <div class="gallery_overlay">
+                        <h4>Strength Training</h4>
+                        <span>Power • Focus • Results</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="gallery_card">
+                    <img src="<?= base_url("frontend-img/gallery/2.png") ?>" alt="">
+                    <div class="gallery_overlay">
+                        <h4>Cardio Zone</h4>
+                        <span>Burn • Sweat • Repeat</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="gallery_card">
+                    <img src="<?= base_url("frontend-img/gallery/3.png") ?>" alt="">
+                    <div class="gallery_overlay">
+                        <h4>Personal Training</h4>
+                        <span>Guided • Professional</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6">
+                <div class="gallery_card">
+                    <img src="<?= base_url("frontend-img/gallery/4.png") ?>" alt="">
+                    <div class="gallery_overlay">
+                        <h4>Modern Equipment</h4>
+                        <span>Latest • Safe • Effective</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div class="gallery_card">
+                    <img src="<?= base_url("frontend-img/gallery/5.png") ?>" alt="">
+                    <div class="gallery_overlay">
+                        <h4>Fitness Lifestyle</h4>
+                        <span>Transform Yourself</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- modern_gallery_end -->
+
+    <a href="#" class="view_pore boxed-btn3">View More</a>
+    <!-- team_area_start -->
+<!-- <div class="team_area modern_team">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="section_title text-center mb-60">
+                    <span class="sub_heading">Expert Coaches</span>
+                    <h3>Meet Our Trainers</h3>
+                    <p>Certified professionals to transform your fitness journey</p>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="swiper trainerSwiper">
+            <div class="swiper-wrapper">
+
+                <div class="swiper-slide">
+                    <div class="trainer_card">
+                        <img src="<?= base_url("frontend-img/team/1.png") ?>" alt="">
+                        <div class="trainer_info">
+                            <h4>Jessica Mino</h4>
+                            <span>Women Fitness Coach</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="trainer_card">
+                        <img src="<?= base_url("frontend-img/team/2.png") ?>" alt="">
+                        <div class="trainer_info">
+                            <h4>Vivek Vishwakarma</h4>
+                            <span>Certified Advanced fitness Coach</span>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="swiper-slide">
+                    <div class="trainer_card">
+                        <img src="<?= base_url("frontend-img/team/3.png") ?>" alt="">
+                        <div class="trainer_info">
+                            <h4>Paulo Rolac</h4>
+                            <span>Personal Trainer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="trainer_card">
+                        <img src="<?= base_url("frontend-img/team/3.png") ?>" alt="">
+                        <div class="trainer_info">
+                            <h4>Paulo Rolac</h4>
+                            <span>Personal Trainer</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div> -->
+<!-- team_area_end -->
+
+    
+<!-- wellness_area_start -->
+<div class="wellness_area">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+                <div class="wellness_text">
+                    <span>Recovery & Relaxation</span>
+                    <h3>Steam Bath & Body Massage</h3>
+                    <p>
+                        Relax, recover, and rejuvenate your body after intense workouts.
+                        Our steam bath and professional massage services help reduce stress,
+                        improve circulation, and speed up muscle recovery.
+                    </p>
+
+                    <ul>
+                        <li>✔ Steam Bath Facility</li>
+                        <li>✔ Professional Body Massage</li>
+                        <li>✔ Muscle Recovery & Relaxation</li>
+                        <li>✔ Hygienic & Peaceful Environment</li>
+                    </ul>
+
+                    <a href="#" class="boxed-btn3">Book Session</a>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="wellness_image">
+                    <img src="<?= base_url("frontend-img/testimonial/mssage.jpg") ?>" alt="Steam & Massage">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- wellness_area_end -->
+
+
+
+
+<!-- footer_start  -->
+<footer class="footer">
+    <div class="footer_top">
+        <div class="container">
+            <div class="row">
+
+                <!-- ABOUT GYM -->
+                <div class="col-xl-3 col-md-6 col-lg-3">
+                    <div class="footer_widget">
+                        <div class="footer_logo">
+                            <a href="#">
+                                <img src="<?= base_url("frontend-img/logo.png") ?>" width="100" alt="Gym Logo">
+                            </a>
+                        </div>
+                        <p>
+                            Located in: Joveli Pada Check Post <br>
+                            Address: 47V2+42X, Joveli Pada, <br>
+                            Sape, Badlapur, Maharashtra 421503
+                        </p>
+                        <p>
+                            <strong>Hours:</strong><br>
+                            Open: 6:00 AM <br>
+                            Close: 10:30 PM
+                        </p>
+
+                        <div class="socail_links">
+                            <ul>
+                                <li><a href="#"><i class="ti-facebook"></i></a></li>
+                                <li><a href="#"><i class="ti-twitter-alt"></i></a></li>
+                                <li><a href="https://www.instagram.com/r.k.fitness_gym.badlapur/" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fa fa-youtube-play"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- USEFUL LINKS -->
+                <div class="col-xl-4 col-md-6 col-lg-4 offset-xl-1">
+                    <div class="footer_widget">
+                        <h3 class="footer_title">
+                            Useful Links
+                        </h3>
+                        <ul class="links">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About Gym</a></li>
+                            <li><a href="#">Membership Plans</a></li>
+                            <li><a href="#">Steam & Massage</a></li>
+                            <li><a href="#">Gallery</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SUBSCRIBE -->
+                <div class="col-xl-4 col-md-6 col-lg-4">
+                    <div class="footer_widget">
+                        <h3 class="footer_title">
+                            Stay Connected
+                        </h3>
+                       
+                        <p class="newsletter_text">
+                            Get fitness tips, offers, and updates about gym, steam & massage services.
+                        </p> 
+                        <a href="https://wa.me/+918554972061" target="_blank" class="boxed-btn3">
+                            Chat on WhatsApp
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="copy-right_text">
+        <div class="container">
+            <div class="footer_border"></div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <p class="copy_right text-center">
+                        Copyright &copy;
+                        <script>document.write(new Date().getFullYear());</script>
+                        All rights reserved | Designed & Developed by 
+                        <a href="https://futuremindinfotechsolutions.com/software_solution" target="_blank"><strong>Futuremind Infotech Solutions</strong></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- footer_end  -->
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+    var swiper = new Swiper(".trainerSwiper", {
+        loop: true,
+        spaceBetween: 30,
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        breakpoints: {
+            0: {
+                slidesPerView: 1,
+            },
+            576: {
+                slidesPerView: 2,
+            },
+            992: {
+                slidesPerView: 3,
+            }
+        }
+    });
+    </script>
+    
+    <!-- JS here -->
+    <script src="<?= base_url("frontend-js/vendor/modernizr-3.5.0.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/vendor/jquery-1.12.4.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/popper.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/bootstrap.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/owl.carousel.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/isotope.pkgd.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/ajax-form.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/waypoints.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.counterup.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/imagesloaded.pkgd.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/scrollIt.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.scrollUp.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/wow.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/gijgo.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/nice-select.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.slicknav.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.magnific-popup.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/plugins.js") ?>"></script>
+
+
+
+    <!--contact js-->
+    <script src="<?= base_url("frontend-js/contact.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.ajaxchimp.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.form.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/jquery.validate.min.js") ?>"></script>
+    <script src="<?= base_url("frontend-js/mail-script.js") ?>"></script>
+
+
+    <script src="<?= base_url("frontend-js/main.js") ?>"></script>
+
+</body>
+
+</html>

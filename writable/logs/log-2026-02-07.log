@@ -1,0 +1,13 @@
+CRITICAL - 2026-02-07 13:28:58 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "frontend/index.php"
+[Method: GET, Route: /]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(226): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('frontend/index.php')
+ 2 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('frontend/index', [], true)
+ 3 APPPATH\Controllers\Frontend.php(9): view('frontend/index')
+ 4 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Frontend->index()
+ 5 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Frontend))
+ 6 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 ROOTPATH\index.php(13): require('C:\\xampp\\htdocs\\your_gym_partner\\public\\index.php')
