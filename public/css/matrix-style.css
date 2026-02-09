@@ -257,18 +257,38 @@ html, body {
 
 /* ================= FORM ================= */
 input,
-select {
+select,
+textarea,
+option {
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid var(--border-light);
   font-size: 14px;
+  color: var(--text-main);
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+/* Ensure form-control/span classes used by templates show readable text */
+.form-control,
+.span8,
+select.form-control,
+select.span8,
+.controls select {
+  color: var(--text-main) !important;
+  background-color: #ffffff !important;
+}
+
+/* Option styling (some browsers limit styling but add important fallback) */
+select option {
+  color: var(--text-main) !important;
+  background-color: #ffffff !important;
 }
 
 /* ================= SCROLLBAR ================= */
