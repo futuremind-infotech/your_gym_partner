@@ -123,6 +123,7 @@ if (!session()->get('isLoggedIn')) {
                                         <option value="Male" <?= old('gender') == 'Male' ? 'selected' : '' ?>>Male</option>
                                         <option value="Female" <?= old('gender') == 'Female' ? 'selected' : '' ?>>Female</option>
                                     </select>
+                                    <span id="gender-mirror" class="help-block" style="display:inline-block;margin-left:12px;color:#111;font-weight:600;"></span>
                                     <?php if (session('errors.gender')): ?>
                                         <span class="help-block text-danger"><?= session('errors.gender') ?></span>
                                     <?php endif; ?>
@@ -212,6 +213,40 @@ $(document).ready(function() {
         let total = amount * plan;
         // You can display total preview here if needed
     });
+});
+</script>
+
+<script>
+// Fix for selects showing blank after selection in some themes
+$(function(){
+    function fixSelectColor(sel){
+        var $s = $(sel);
+        var val = $s.val();
+        if(val === null || val === ''){
+            $s.css('color','');
+        } else {
+            $s.css('color','');
+        }
+    }
+
+    // Apply on page load and on change for all selects in the form
+    $('form select').each(function(){ fixSelectColor(this); });
+    $('form').on('change','select', function(){ fixSelectColor(this); });
+});
+</script>
+
+<script>
+// Mirror selected gender into a visible element as fallback
+$(function(){
+    var $gender = $('select[name="gender"]');
+    var $mirror = $('#gender-mirror');
+    function updateMirror(){
+        var txt = $gender.find('option:selected').text();
+        if(!$gender.val()) txt = '';
+        $mirror.text(txt);
+    }
+    $gender.on('change input', updateMirror);
+    updateMirror();
 });
 </script>
 

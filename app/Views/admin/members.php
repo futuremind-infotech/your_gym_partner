@@ -329,9 +329,6 @@ $members = $result->getResultArray();
   </a>
 </div>
 
-<!--Footer-->
-<div id="footer" class="span12"> <?= date("Y") ?> &copy; Perfect Gym - QR Ready! </div>
-
 <script src="<?= base_url('js/jquery.min.js') ?>"></script>
 <script src="<?= base_url('js/bootstrap.min.js') ?>"></script>
 

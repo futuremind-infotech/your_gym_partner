@@ -1,40 +1,45 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Helpers\PasswordHelper;
 
 class Staff extends BaseController
 {
     public function index()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
         return view('staff/staff-pages/index', ['page' => 'dashboard']);
     }
 
     // ===================== MEMBER METHODS =====================
-    public function members() { 
-        if (! session()->get('isLoggedIn')) {
+    public function members()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        return view('staff/staff-pages/members', ['page' => 'members']); 
+        return view('staff/staff-pages/members', ['page' => 'members']);
     }
 
-    public function memberEntry() { 
-        if (! session()->get('isLoggedIn')) {
+    public function memberEntry()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']); 
+        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']);
     }
 
     // ✅ FIXED addMember - HANDLES POST DATA FOR MEMBER CREATION
-    public function addMember() { 
-        if (! session()->get('isLoggedIn')) {
+    public function addMember()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
-        if (strtolower($this->request->getMethod()) === 'post') {
+
+        if ($this->request->is('post')) {
             $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]|is_unique[members.username]',
@@ -42,34 +47,37 @@ class Staff extends BaseController
                 'gender' => 'required',
                 'services' => 'required',
                 'amount' => 'required|numeric|greater_than[0]',
-                'plan' => 'required|integer|greater_than[0]'
+                'plan' => 'required|integer|greater_than[0]',
             ];
-            
-            if (! $this->validate($rules)) {
+
+            if (!$this->validate($rules)) {
                 return view('staff/staff-pages/member-entry', [
                     'page' => 'members-entry',
-                    'validation' => $this->validator
+                    'validation' => $this->validator,
                 ]);
             }
-            
+
             // Validation passed - proceed with insertion
+            $amount = (float) $this->request->getPost('amount');
+            $plan = (int) $this->request->getPost('plan');
+            $dor = $this->request->getPost('dor') ?? date('Y-m-d');
+
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
-                'password' => md5($this->request->getPost('password')),
-                'dor' => $this->request->getPost('dor') ?: date('Y-m-d'),
+                'password' => PasswordHelper::legacyHash($this->request->getPost('password')),
+                'dor' => $dor,
                 'gender' => $this->request->getPost('gender'),
                 'services' => $this->request->getPost('services'),
-                'amount' => floatval($this->request->getPost('amount')) * intval($this->request->getPost('plan')),
+                'amount' => $amount * $plan,
                 'p_year' => date('Y'),
                 'paid_date' => date('Y-m-d'),
-                'plan' => $this->request->getPost('plan'),
-                'address' => $this->request->getPost('address'),
-                'contact' => $this->request->getPost('contact'),
+                'plan' => $plan,
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact') ?? '',
                 'attendance_count' => 0,
-                
             ];
-            
+
             try {
                 $db = \Config\Database::connect();
                 $db->table('members')->insert($data);
@@ -80,24 +88,25 @@ class Staff extends BaseController
                 return view('staff/staff-pages/member-entry', ['page' => 'members-entry']);
             }
         }
-        
-        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']); 
+
+        return view('staff/staff-pages/member-entry', ['page' => 'members-entry']);
     }
 
     // ✅ FIXED editMember - LOADS FORM DATA FOR EDITING
-    public function editMember() { 
-        if (! session()->get('isLoggedIn')) {
+    public function editMember()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
+
         $member_id = $this->request->getGet('id');
         $data = [];
-        
+
         if ($member_id) {
             $db = \Config\Database::connect();
             $member = $db->table('members')
-                        ->where('user_id', $member_id)
-                        ->get()
+                ->where('user_id', $member_id)
+                ->get()
                         ->getRowArray();
             
             if ($member) {
