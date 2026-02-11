@@ -1,80 +1,13 @@
 <?php
-$session = session();
-if(!$session->get('user_id')){
-    return redirect()->to('/');
-}
 
-$message = $session->getFlashdata('message');
-$error = $session->getFlashdata('error');
-
-// In a proper CI4 MVC, this logic should be in a Controller.
-// However, since we are refactoring views in place and this file seems to act as both a view and a processor in the legacy code:
-// The form in `manage-announcement.php` points here.
-// We will assume the controller `Admin::post_announcement` loads this view OR handles the logic.
-// Checking the View code provided, it seems it handles the POST request directly inside the view (Legacy style).
-// To disable this legacy behavior and rely on the Controller, we should check what the Controller does.
-// But based on the user request to KEEP functionality:
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $msg = $_POST["message"] ?? '';
-    $date = $_POST["date"] ?? '';
-
-    if($msg && $date) {
-        $db = \Config\Database::connect();
-        $builder = $db->table('announcements');
-        $data = [
-            'message' => $msg,
-            'date' => $date
-        ];
-        
-        if($builder->insert($data)) {
-            // Success
-             echo "<script>window.location.href='" . site_url('admin/index') . "';</script>";
-             exit;
-        } else {
-             $error = "Error occurred while posting announcement.";
-        }
-    } else {
-        $error = "Please provide both message and date.";
-    }
+//the isset function to check username is already loged in and stored on the session
+if(!isset($_SESSION['user_id'])){
+header('location:../index.php');	
 }
 ?>
-
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Post Announcement<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Announcement Status</h2>
-    <div class="breadcrumb">
-        <a href="<?= site_url('admin') ?>">Home</a> / Announcement
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-body text-center" style="padding: 50px;">
-        <?php if(isset($error)): ?>
-            <div style="color: var(--danger); margin-bottom: 20px;">
-                <i class="fas fa-exclamation-circle fa-4x"></i>
-            </div>
-            <h3 class="text-danger">Error Occurred</h3>
-            <p><?= $error ?></p>
-            <a href="<?= site_url('admin/manage-announcement') ?>" class="btn btn-warning">Go Back</a>
-        <?php else: ?>
-             <div style="color: var(--secondary); margin-bottom: 20px;">
-                <i class="fas fa-info-circle fa-4x"></i>
-            </div>
-            <h3>Processing...</h3>
-            <p>If you fit this page directly, please go back.</p>
-             <a href="<?= site_url('admin') ?>" class="btn btn-primary">Dashboard</a>
-        <?php endif; ?>
-    </div>
-</div>
-
-<?= $this->endSection() ?>
-
+<!-- Visit codeastro.com for more projects -->
+<html lang="en">
+<head>
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -1,96 +1,11 @@
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Edit Equipment<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Edit Equipment</h2>
-    <div class="breadcrumb">
-        <a href="<?= site_url('admin') ?>">Home</a> / <a href="<?= site_url('admin/equipment') ?>">Equipment</a> / Edit Equipment
-    </div>
-</div>
-
-<?php if(isset($equipment) && $equipment): ?>
-    <form action="<?= site_url('admin/edit-equipment-req') ?>" method="POST">
-        <?= csrf_field() ?>
-        <input type="hidden" name="equip_id" value="<?= $equipment['id'] ?>" />
-        
-        <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-            
-            <!-- Equipment Info -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-edit"></i> Equipment Information</h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <label class="form-label">Equipment Name</label>
-                        <input type="text" class="form-control" name="ename" value="<?= esc($equipment['name']) ?>" required />
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" required><?= esc($equipment['description']) ?></textarea>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity" value="<?= esc($equipment['quantity']) ?>" required />
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">Unit Amount (₹)</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" value="<?= $equipment['amount'] / ($equipment['quantity'] ?: 1) ?>" required />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vendor Info -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-truck"></i> Vendor Details</h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <label class="form-label">Vendor Name</label>
-                        <input type="text" class="form-control" name="vendor" value="<?= esc($equipment['vendor']) ?>" required />
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">Address</label>
-                        <input type="text" class="form-control" name="address" value="<?= esc($equipment['address'] ?? '') ?>" />
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">Contact</label>
-                        <input type="text" class="form-control" name="contact" value="<?= esc($equipment['contact'] ?? '') ?>" />
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-        
-        <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; display: flex; gap: 10px; justify-content: center;">
-            <button type="submit" class="btn btn-success" style="padding: 10px 30px; font-size: 1rem;">
-                <i class="fas fa-save"></i> Update Equipment
-            </button>
-            <a href="<?= site_url('admin/equipment') ?>" class="btn btn-secondary" style="background: var(--gray-500); color: white; padding: 10px 30px; font-size: 1rem;">
-                Cancel
-            </a>
-        </div>
-        
-    </form>
-<?php else: ?>
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle"></i> Equipment not found!
-        <br><br>
-        <a href="<?= site_url('admin/equipment') ?>" class="btn btn-primary">Back to List</a>
-    </div>
-<?php endif; ?>
-
-<?= $this->endSection() ?>
-
+<?php
+if(!isset($_SESSION['user_id'])){
+    redirect()->to('/')->send();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <title>Edit Equipment</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

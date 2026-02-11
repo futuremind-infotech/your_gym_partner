@@ -1,111 +1,14 @@
 <?php
-$db = \Config\Database::connect();
-$id = $_GET['id'] ?? 0;
-// Use Query Builder for safety
-$query = $db->table('staffs')->where('user_id', $id)->get();
-$row = $query->getRowArray();
+
+//the isset function to check username is already loged in and stored on the session
+if(!isset($_SESSION['user_id'])){
+header('location:../index.php');	
+}
 ?>
-
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Edit Staff Details<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Update Staff's Detail</h2>
-    <div class="breadcrumb">
-        <a href="<?= site_url('admin') ?>">Home</a> / <a href="<?= site_url('admin/staffs') ?>">Staffs</a> / Edit Staff Records
-    </div>
-</div>
-
-<?php if($row): ?>
-<form action="<?= site_url('admin/edit-staff-req') ?>" method="POST">
-    
-    <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-        
-        <!-- Staff Details -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-briefcase"></i> Staff Details</h3>
-            </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" name="fullname" value="<?= esc($row['fullname']) ?>" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" value="<?= esc($row['username']) ?>" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" disabled placeholder="**********" style="background-color: var(--gray-100); opacity: 0.7;">
-                    <small style="color: var(--secondary);">Note: Only the members are allowed to change their password.</small>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Gender</label>
-                    <input type="text" class="form-control" name="gender" value="<?= esc($row['gender']) ?>" required>
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact & Designation -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-address-card"></i> Contact & Role</h3>
-            </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <label class="form-label">Contact Number</label>
-                    <input type="number" class="form-control" name="contact" value="<?= esc($row['contact']) ?>" required>
-                    <small style="color: var(--secondary);">(999) 999-9999</small>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Address</label>
-                    <input type="text" class="form-control" name="address" value="<?= esc($row['address']) ?>" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Designation</label>
-                    <select name="designation" class="form-control">
-                        <option value="Cashier" <?= ($row['designation'] == 'Cashier') ? 'selected' : '' ?>>Cashier</option>
-                        <option value="Trainer" <?= ($row['designation'] == 'Trainer') ? 'selected' : '' ?>>Trainer</option>
-                        <option value="GYM Assistant" <?= ($row['designation'] == 'GYM Assistant') ? 'selected' : '' ?>>GYM Assistant</option>
-                        <option value="Front Desk Staff" <?= ($row['designation'] == 'Front Desk Staff') ? 'selected' : '' ?>>Front Desk Staff</option>
-                        <option value="Manager" <?= ($row['designation'] == 'Manager') ? 'selected' : '' ?>>Manager</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    
-    <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem; display: flex; gap: 10px; justify-content: center;">
-        <input type="hidden" name="id" value="<?= esc($row['user_id']) ?>">
-        <button type="submit" class="btn btn-success" style="padding: 10px 30px; font-size: 1rem;">
-            <i class="fas fa-save"></i> Update Staff Details
-        </button>
-        <a href="<?= site_url('admin/staffs') ?>" class="btn btn-secondary" style="background: var(--gray-500); color: white; padding: 10px 30px; font-size: 1rem;">
-            Cancel
-        </a>
-    </div>
-
-</form>
-<?php else: ?>
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle"></i> Staff member not found!
-        <br><br>
-        <a href="<?= site_url('admin/staffs') ?>" class="btn btn-primary">Back to List</a>
-    </div>
-<?php endif; ?>
-
-<?= $this->endSection() ?>
-
+<!-- Visit codeastro.com for more projects -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

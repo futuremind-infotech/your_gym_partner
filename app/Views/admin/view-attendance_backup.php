@@ -1,113 +1,12 @@
 <?php
+
 $db = \Config\Database::connect();
-// Logic to handle filter
-$selected_date = isset($_GET['date']) && !empty($_GET['date']) ? $_GET['date'] : date('Y-m-d');
 $members = $db->table('members')->where('status', 'Active')->get()->getResultArray();
 ?>
-
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Attendance History<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Attendance History</h2>
-    <div class="breadcrumb">
-        <a href="<?= base_url('admin') ?>">Home</a> / View Attendance
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header" style="justify-content: space-between; align-items: center;">
-        <h3 class="card-title"><i class="fas fa-history"></i> Attendance Records</h3>
-        
-        <form method="get" class="d-flex gap-2" 
-              style="background: var(--gray-100); padding: 5px; border-radius: 8px;">
-            <input type="date" name="date" value="<?= esc($selected_date) ?>" 
-                   style="border: 1px solid var(--gray-300); padding: 5px 10px; border-radius: 4px;">
-            <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-            <a href="<?= site_url('admin/view-attendance') ?>" class="btn btn-sm btn-info" title="Today">Today</a>
-        </form>
-    </div>
-    
-    <div class="card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fullname</th>
-                        <th>Plan</th>
-                        <th>Check In</th>
-                        <th>Check Out</th>
-                        <th>Attendance Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php 
-                $cnt = 1;
-                if(count($members) > 0) {
-                    foreach($members as $row) { 
-                        // fetch selected date's attendance for this member
-                        $att = $db->table('attendance')
-                            ->where('curr_date', $selected_date)
-                            ->where('user_id', $row['user_id'])
-                            ->get()->getRowArray();
-                            
-                        $checkin = $att['curr_time'] ?? null;
-                        $checkout = $att['checkout_time'] ?? null;
-                        
-                        // Only show rows if there is an attendance record OR if we want to show all active users status
-                        // The original code showed all active users regardless of attendance, so we keep that.
-                ?>
-                    <tr>
-                        <td class="text-center"><strong><?= $cnt++ ?></strong></td>
-                        <td><?= esc($row['fullname']) ?></td>
-                        <td>
-                            <?php if($row['plan'] == 0): ?>
-                                <span class="badge badge-danger">Expired</span>
-                            <?php else: ?>
-                                <?= $row['plan'] ?> Month<?= $row['plan'] > 1 ? 's' : '' ?>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if($checkin): ?>
-                                <span class="badge badge-info"><?= date('h:i A', strtotime($checkin)) ?></span>
-                            <?php else: ?>
-                                <span style="color: var(--secondary);">-</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if($checkout): ?>
-                                <span class="badge badge-success"><?= date('h:i A', strtotime($checkout)) ?></span>
-                            <?php elseif($checkin): ?>
-                                <div style="display:flex; flex-direction:column; gap:5px;">
-                                    <span class="badge badge-warning">Active</span>
-                                    <a href="<?= site_url('admin/check-attendance?id=' . $row['user_id']) ?>" class="btn btn-sm btn-danger">Check Out</a>
-                                </div>
-                            <?php else: ?>
-                                <span style="color: var(--secondary);">-</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <strong style="color: var(--primary);"><?= $row['attendance_count'] ?> Days</strong>
-                        </td>
-                    </tr>
-                <?php 
-                    }
-                } else {
-                    echo "<tr><td colspan='6' class='text-center'>No active members found.</td></tr>";
-                }
-                ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<?= $this->endSection() ?>
-
+<!-- Visit codeastro.com for more projects -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

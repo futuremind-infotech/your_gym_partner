@@ -1,102 +1,14 @@
-<?= $this->extend('admin/layout') ?>
+<?php
 
-<?= $this->section('title') ?>Add Equipment<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Equipment Entry Form</h2>
-    <div class="breadcrumb">
-        <a href="<?= base_url('admin') ?>">Home</a> / Equipments / Add Equipment
-    </div>
-</div>
-
-<form action="<?= site_url('admin/add-equipment') ?>" method="POST">
-    
-    <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-        
-        <!-- Equipment Info -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-dumbbell"></i> Equipment Info</h3>
-            </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <label class="form-label">Equipment Name</label>
-                    <input type="text" class="form-control" name="ename" placeholder="e.g. Treadmill" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" placeholder="Short Description" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px; min-height: 80px;" required></textarea>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label">Date of Purchase</label>
-                    <input type="date" name="date" class="form-control" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label">Quantity</label>
-                    <input type="number" name="quantity" placeholder="10" class="form-control" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                </div>
-            </div>
-        </div>
-
-        <!-- Vendor & Pricing -->
-        <div style="display:flex; flex-direction:column; gap: 1.5rem;">
-            
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-truck"></i> Vendor Details</h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <label class="form-label">Vendor Name</label>
-                        <input type="text" name="vendor" placeholder="Vendor Name" class="form-control" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                    </div>
-                
-                    <div class="mb-4">
-                        <label class="form-label">Vendor Address</label>
-                        <input type="text" name="address" placeholder="Vendor Address" class="form-control" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">Contact Number</label>
-                        <input type="number" name="contact" placeholder="9876543210" class="form-control" style="width:100%; padding: 8px; border: 1px solid var(--gray-300); border-radius: 4px;" required>
-                        <small style="color: var(--secondary);">(999) 999-9999</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-money-bill"></i> Pricing</h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <label class="form-label">Cost Per Item</label>
-                        <div style="display: flex; align-items: center;">
-                            <span style="padding: 8px 12px; background: var(--gray-200); border: 1px solid var(--gray-300); border-right: none; border-radius: 4px 0 0 4px;">₹</span>
-                            <input type="number" name="amount" placeholder="5000" class="form-control" style="flex:1; padding: 8px; border: 1px solid var(--gray-300); border-left:none; border-radius: 0 4px 4px 0;" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-    
-    <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
-        <button type="submit" class="btn btn-primary" style="padding: 10px 30px; font-size: 1rem;">
-            <i class="fas fa-save"></i> Save Equipment
-        </button>
-    </div>
-    
-</form>
-
-<?= $this->endSection() ?>
-
+//the isset function to check username is already loged in and stored on the session
+if(!isset($_SESSION['user_id'])){
+header('location:../index.php');	
+}
+?>
+<!-- Visit codeastro.com for more projects -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <title>Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

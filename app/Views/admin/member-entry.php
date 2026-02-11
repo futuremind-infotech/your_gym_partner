@@ -1,286 +1,361 @@
-<?php
-// CodeIgniter 4 session check
-if (!session()->get('isLoggedIn')) {
-    return redirect()->to('/'); 
-}
-?>
+<?= $this->extend('admin/layout') ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Gym System Admin - Add Member</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
-<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
-<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-</head>
-<body>
+<?= $this->section('header_title') ?>Add New Member<?= $this->endSection() ?>
 
-<!--Header-part-->
-<div id="header">
-  <h1><a href="<?= site_url('admin') ?>">Perfect Gym Admin</a></h1>
-</div>
-<!--close-Header-part--> 
+<?= $this->section('title') ?>Add Member - Admin Panel<?= $this->endSection() ?>
 
-<!--top-Header-menu-->
-<?php include 'includes/topheader.php'?>
-<!--close-top-Header-menu-->
-
-<!--sidebar-menu-->
-<?php $page='members-entry'; include 'includes/sidebar.php'?>
-<!--sidebar-menu-->
-<div id="content">
-<div id="content-header">
-  <div id="breadcrumb"> <a href="index.php" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="#" class="tip-bottom">Manamge Members</a> <a href="#" class="current">Add Members</a> </div>
-  <h1>Member Entry Form</h1>
-</div>
-<div class="container-fluid">
-  <hr>
-  
-  <!-- VALIDATION ERROR MESSAGES -->
-  <?php if (session()->getFlashdata('error')): ?>
-    <div class="alert alert-danger alert-block">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <h4>Error!</h4>
-      <strong><?= session()->getFlashdata('error') ?></strong>
-    </div>
-  <?php endif; ?>
-  
-  <?php if (isset($validation) && $validation): ?>
-    <div class="alert alert-danger alert-block">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <h4>Validation Errors:</h4>
-      <ul>
-        <?php foreach ($validation->getErrors() as $field => $error): ?>
-          <li><strong><?= ucfirst($field) ?>:</strong> <?= $error ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
-  <?php endif; ?>
-  
-  <!-- SUCCESS MESSAGE -->
-  <?php if (session()->getFlashdata('success')): ?>
-    <div class="alert alert-success alert-block">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <h4>Success!</h4>
-      <strong><?= session()->getFlashdata('success') ?></strong>
-    </div>
-  <?php endif; ?>
-  
-  <div class="row-fluid">
-    <div class="span6">
-      <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-user"></i> </span>
-          <h5>Personal-info</h5>
-        </div>
-        <div class="widget-content nopadding">
-          <form action="<?= site_url('admin/add-member') ?>" method="POST" class="form-horizontal">
-            <?= csrf_field() ?>
-            <div class="control-group">
-              <label class="control-label">Full Name :</label>
-              <div class="controls">
-                <input type="text" class="span11" name="fullname" placeholder="Fullname" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Username :</label>
-              <div class="controls">
-                <input type="text" class="span11" name="username" placeholder="Username" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Password :</label>
-              <div class="controls">
-                <input type="password"  class="span11" name="password" placeholder="**********"  />
-                <span class="help-block">Note: The given information will create an account for this particular member</span>
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Gender :</label>
-              <div class="controls">
-              <select name="gender" required="required" id="select">
-                  <option value="Male" selected="selected">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">D.O.R :</label>
-              <div class="controls">
-                <input type="date" name="dor" class="span11" />
-                <span class="help-block">Date of registration</span>
-              </div>
-            </div>
-        </div>
-        
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-calendar"></i> </span>
-          <h5>Plans</h5>
-        </div>
-        <div class="widget-content nopadding">
-          <div class="form-horizontal">
-            <div class="control-group">
-              <label for="normal" class="control-label">Plans: </label>
-              <div class="controls">
-                <select name="plan" required="required" id="select">
-                  <option value="1" selected="selected">One Month</option>
-                  <option value="3">Three Month</option>
-                  <option value="6">Six Month</option>
-                  <option value="12">One Year</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-	  
-	
-    </div>
-
-    
-    
-    <div class="span6">
-      <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-phone"></i> </span>
-          <h5>Contact Details</h5>
-        </div>
-        <div class="widget-content nopadding">
-          <div class="form-horizontal">
-            <div class="control-group">
-              <label for="normal" class="control-label">Contact Number</label>
-              <div class="controls">
-                <input type="number" id="mask-phone" name="contact" placeholder="9876543210" class="span8 mask text">
-                <span class="help-block blue span8">(999) 999-9999</span> 
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Email Address :</label>
-              <div class="controls">
-                <input type="email" class="span11" name="email" placeholder="Email@example.com" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Address :</label>
-              <div class="controls">
-                <input type="text" class="span11" name="address" placeholder="Address" />
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="widget-title"> <span class="icon"> <i class="fas fa-dumbbell"></i> </span>
-          <h5>Service Details</h5>
-        </div>
-        <div class="widget-content nopadding">
-          <div class="form-horizontal">
-            <div class="control-group">
-              <label class="control-label">Services</label>
-              <div class="controls">
-                <input type="text" class="span8" name="services" placeholder="Enter service (e.g. Fitness, Sauna, Cardio)" />
-                <span class="help-block">Admin may enter any service name here.</span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <label class="control-label">Total Amount</label>
-              <div class="controls">
-                <div class="input-append">
-                  <span class="add-on">₹</span> 
-                  <input type="number" placeholder="50" name="amount" class="span11">
-                  </div>
-              </div>
-            </div>
-            
-          
-            
-            <div class="form-actions text-center">
-              <button type="submit" class="btn btn-success">Submit Member Details</button>
-            </div>
-            </form>
-
-          </div>
-
-
-
-        </div>
-
-        </div>
-      </div>
-
-	</div>
-  </div>
-  
-  
-</div></div>
-
-
-<!--end-main-container-part-->
-
-<!--Footer-part-->
-
-<div class="row-fluid">
-  <div id="footer" class="span12"> <?php echo date("Y");?> &copy; Developed By Naseeb Bajracharya</a> </div>
-</div>
+<?= $this->section('content') ?>
 
 <style>
-#footer {
-  color: white;
-}
+    .form-card {
+        animation: slideUp 0.4s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 </style>
 
-<!--end-Footer-part-->
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Add New Member</h1>
+        <p class="page-subtitle">Register a new member and create their account</p>
+    </div>
+    <a href="<?= base_url('admin/members') ?>" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to Members
+    </a>
+</div>
 
-<script src="<?= base_url('js/excanvas.min.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.min.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.ui.custom.js') ?>"></script> 
-<script src="<?= base_url('js/bootstrap.min.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.flot.min.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.flot.resize.min.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.peity.min.js') ?>"></script> 
-<script src="<?= base_url('js/fullcalendar.min.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.dashboard.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.gritter.min.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.interface.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.chat.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.validate.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.form_validation.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.wizard.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.uniform.js') ?>"></script> 
-<script src="<?= base_url('js/select2.min.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.popover.js') ?>"></script> 
-<script src="<?= base_url('js/jquery.dataTables.min.js') ?>"></script> 
-<script src="<?= base_url('js/matrix.tables.js') ?>"></script> 
+<!-- Flash Messages -->
+<?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-check-circle alert-icon"></i>
+            <div>
+                <strong>Success!</strong> <?= session()->getFlashdata('success') ?>
+            </div>
+            <button class="alert-close">&times;</button>
+        </div>
+    </div>
+<?php endif; ?>
 
-<script type="text/javascript">
-  // This function is called from the pop-up menus to transfer to
-  // a different page. Ignore if the value returned is a null string:
-  function goPage (newURL) {
+<?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-exclamation-circle alert-icon"></i>
+            <div>
+                <strong>Error!</strong> <?= session()->getFlashdata('error') ?>
+            </div>
+            <button class="alert-close">&times;</button>
+        </div>
+    </div>
+<?php endif; ?>
 
-      // if url is empty, skip the menu dividers and reset the menu selection to default
-      if (newURL != "") {
-      
-          // if url is "-", it is this page -- reset the menu:
-          if (newURL == "-" ) {
-              resetMenu();            
-          } 
-          // else, send page to designated URL            
-          else {  
-            document.location.href = newURL;
-          }
-      }
-  }
+<?php if (isset($validation) && $validation): ?>
+    <div class="alert alert-danger">
+        <div style="margin-bottom: 0.5rem; font-weight: 600;">
+            <i class="fas fa-exclamation-triangle"></i> Please fix the following errors:
+        </div>
+        <ul style="margin: 0; padding-left: 1.5rem;">
+            <?php foreach ($validation->getErrors() as $field => $error): ?>
+                <li><?= htmlspecialchars($error) ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <button class="alert-close" style="position: absolute; right: 1rem; top: 1rem;">&times;</button>
+    </div>
+<?php endif; ?>
 
-// resets the menu selection upon entry to this page:
-function resetMenu() {
-   document.gomenu.selector.selectedIndex = 2;
+<!-- Main Form -->
+<form action="<?= site_url('admin/add-member') ?>" method="POST" onsubmit="return validateForm()">
+    <?= csrf_field() ?>
+    
+    <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+        
+        <!-- Personal Information Card -->
+        <div class="card form-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-circle"></i> Personal Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="fullname" class="form-label">
+                        <i class="fas fa-user"></i> Full Name <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="fullname"
+                        name="fullname" 
+                        class="form-control" 
+                        placeholder="Enter full name"
+                        required>
+                    <small class="form-text">First name and last name</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender" class="form-label">
+                        <i class="fas fa-venus-mars"></i> Gender <span style="color: var(--danger);">*</span>
+                    </label>
+                    <select id="gender" name="gender" class="form-select" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dor" class="form-label">
+                        <i class="fas fa-calendar"></i> Date of Registration <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="date" 
+                        id="dor"
+                        name="dor" 
+                        class="form-control"
+                        required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information Card -->
+        <div class="card form-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-lock"></i> Account Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-at"></i> Username <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username"
+                        name="username" 
+                        class="form-control" 
+                        placeholder="Choose a unique username"
+                        required>
+                    <small class="form-text">Must be unique and 3+ characters</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-key"></i> Password <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password"
+                        name="password" 
+                        class="form-control" 
+                        placeholder="Enter a secure password"
+                        required>
+                    <small class="form-text">Minimum 6 characters recommended</small>
+                </div>
+
+                <div style="background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); padding: 1rem; margin-top: 1rem;">
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--gray-700);">
+                        <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                        <strong>Note:</strong> These credentials will allow the member to login to their account
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Card -->
+        <div class="card form-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-address-book"></i> Contact Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="contact" class="form-label">
+                        <i class="fas fa-phone"></i> Contact Number <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="contact"
+                        name="contact" 
+                        class="form-control" 
+                        placeholder="10-digit phone number"
+                        pattern="[0-9]{10}"
+                        required>
+                    <small class="form-text">10-digit mobile number</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i> Email Address <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                         id="email"
+                        name="email" 
+                        class="form-control" 
+                        placeholder="example@email.com"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label">
+                        <i class="fas fa-map-marker-alt"></i> Address <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="address"
+                        name="address" 
+                        class="form-control" 
+                        placeholder="Residential address"
+                        required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service & Plan Card -->
+        <div class="card form-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-dumbbell"></i> Service & Plan
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="services" class="form-label">
+                        <i class="fas fa-list"></i> Service Type <span style="color: var(--danger);">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="services"
+                        name="services" 
+                        class="form-control" 
+                        placeholder="e.g., Fitness, Yoga, Personal Training"
+                        required>
+                    <small class="form-text">Type of service member will subscribe</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="plan" class="form-label">
+                        <i class="fas fa-hourglass-half"></i> Plan Duration <span style="color: var(--danger);">*</span>
+                    </label>
+                    <select id="plan" name="plan" class="form-select" required onchange="updateAmount()">
+                        <option value="">Select Plan</option>
+                        <option value="1">1 Month</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount" class="form-label">
+                        <i class="fas fa-indian-rupee-sign"></i> Monthly Amount <span style="color: var(--danger);">*</span>
+                    </label>
+                    <div style="display: flex; gap: 0;">
+                        <span style="background: var(--gray-200); padding: 0.7rem 0.85rem; border-radius: var(--radius) 0 0 var(--radius); border: 1px solid var(--gray-300); border-right: none; font-weight: 600; color: var(--gray-700);">₹</span>
+                        <input 
+                            type="number" 
+                            id="amount"
+                            name="amount" 
+                            class="form-control" 
+                            placeholder="Enter amount"
+                            style="border-radius: 0 var(--radius) var(--radius) 0; border-left: none;"
+                            min="0"
+                            step="0.01"
+                            required>
+                    </div>
+                    <small class="form-text">Amount per month</small>
+                </div>
+
+                <div style="background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); padding: 1rem; margin-top: 1rem;">
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--gray-700);">
+                        <strong>Total Cost:</strong> <span style="font-weight: 700; color: var(--primary);">₹<span id="totalCost">0</span></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; margin-bottom: 2rem;">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle"></i> Add Member
+        </button>
+        <a href="<?= base_url('admin/members') ?>" class="btn btn-secondary btn-lg">
+            <i class="fas fa-times-circle"></i> Cancel
+        </a>
+    </div>
+</form>
+
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+// Update total cost based on monthly amount and plan duration
+function updateAmount() {
+    const amount = document.getElementById('amount').value || 0;
+    const plan = document.getElementById('plan').value || 0;
+    const totalCost = parseInt(amount) * parseInt(plan);
+    document.getElementById('totalCost').textContent = totalCost;
 }
-</script>
-</body>
-</html>
 
+// Update on amount change as well
+document.getElementById('amount').addEventListener('input', updateAmount);
+
+// Form validation
+function validateForm() {
+    const fullname = document.getElementById('fullname').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const contact = document.getElementById('contact').value.trim();
+    
+    if (fullname.length < 2) {
+        alert('Please enter a valid full name');
+        return false;
+    }
+    
+    if (username.length < 3) {
+        alert('Username must be at least 3 characters');
+        return false;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return false;
+    }
+    
+    if (contact.length !== 10 || isNaN(contact)) {
+        alert('Please enter a valid 10-digit phone number');
+        return false;
+    }
+    
+    return true;
+}
+
+// Initialize total cost on page load
+window.addEventListener('load', updateAmount);
+</script>
+<?= $this->endSection() ?>

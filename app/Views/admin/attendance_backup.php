@@ -1,112 +1,16 @@
 <?php
+
 $db = \Config\Database::connect();
 date_default_timezone_set('Asia/Kathmandu');
-$todays_date = date('Y-m-d');
+$current_date = date('Y-m-d');
+$todays_date = $current_date;
+
 $members = $db->table('members')->where('status', 'Active')->get()->getResultArray();
 $cnt = 1;
 ?>
-
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Take Attendance<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Manage Attendance</h2>
-    <div class="breadcrumb">
-        <a href="<?= base_url('admin') ?>">Home</a> / Attendance
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-calendar-check"></i> Attendance List (<?= date('M d, Y') ?>)</h3>
-    </div>
-    
-    <div class="card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fullname</th>
-                        <th>Contact Number</th>
-                        <th>Chosen Service</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php 
-                if(count($members) > 0) {
-                    foreach($members as $row) { 
-                        $attendance = $db->table('attendance')
-                            ->where('curr_date', $todays_date)
-                            ->where('user_id', $row['user_id'])
-                            ->get()->getRowArray();
-                        $row_exist = !empty($attendance);
-                ?>
-                    <tr>
-                        <td class="text-center"><strong><?= $cnt++ ?></strong></td>
-                        <td><?= esc($row['fullname']) ?></td>
-                        <td><?= esc($row['contact']) ?></td>
-                        <td><span class="badge badge-info"><?= esc($row['services']) ?></span></td>
-                        <td>
-                            <?php if($row_exist) { ?>
-                                <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-start;">
-                                    <span class="badge badge-success">
-                                        Checked In: 
-                                        <?php 
-                                            // Handle time formatting carefully
-                                            $timeStr = $attendance['curr_time'];
-                                            echo date('h:i A', strtotime($timeStr));
-                                        ?>
-                                    </span>
-                                    
-                                    <a href="<?= site_url('admin/delete-attendance?id=' . $row['user_id']) ?>" 
-                                       class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to checkout this user?');">
-                                        <i class="fas fa-sign-out-alt"></i> Check Out
-                                    </a>
-                                </div>
-                            <?php } else { ?>
-                                <button type="button" class="btn btn-sm btn-primary" onclick="checkIn(<?= $row['user_id'] ?>)">
-                                    <i class="fas fa-map-marker-alt"></i> Check In
-                                </button>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                <?php 
-                    }
-                } else {
-                ?>
-                    <tr>
-                        <td colspan="5" class="text-center">No active members found.</td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<?= $this->endSection() ?>
-
-<?= $this->section('scripts') ?>
-<script>
-function checkIn(userId) {
-    // Get the client's actual current time
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const clientTime = `${hours}:${minutes}:${seconds}`;
-    
-    // Redirect with the client's actual time
-    window.location.href = `<?= site_url('admin/check-attendance') ?>?id=${userId}&time=${clientTime}`;
-}
-</script> 
-<?= $this->endSection() ?>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <title>Attendance - Gym System Admin</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

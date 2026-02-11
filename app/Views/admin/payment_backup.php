@@ -1,85 +1,9 @@
-<?= $this->extend('admin/layout') ?>
-
-<?= $this->section('title') ?>Payments<?= $this->endSection() ?>
-
-<?= $this->section('content') ?>
-
-<div class="page-header">
-    <h2 class="page-title">Registered Member's Payment</h2>
-    <div class="breadcrumb">
-        <a href="<?= base_url('admin') ?>">Home</a> / Payments
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header" style="justify-content: space-between;">
-        <h3 class="card-title"><i class="fas fa-hand-holding-usd"></i> Member's Payment Table</h3>
-        
-        <form role="search" method="POST" action="<?= base_url('admin/search-result') ?>" style="display: flex; gap: 10px;">
-            <input type="text" placeholder="Search Member..." name="search" required 
-                   style="padding: 5px 10px; border: 1px solid var(--gray-200); border-radius: 4px;">
-            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
-        </form>
-    </div>
-    
-    <div class="card-body" style="padding: 0;">
-        <div class="table-responsive">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Member</th>
-                        <th>Last Payment Date</th>
-                        <th>Amount</th>
-                        <th>Chosen Service</th>
-                        <th>Plan</th>
-                        <th>Action</th>
-                        <th>Remind</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php
-                $db = \Config\Database::connect();
-                $qry = "SELECT * FROM members";
-                $cnt = 1;
-                $result = $db->query($qry)->getResultArray();
-                
-                foreach ($result as $row) { ?>
-                    <tr>
-                        <td class="text-center"><strong><?= $cnt++ ?></strong></td>
-                        <td><?= esc($row['fullname']) ?></td>
-                        <td>
-                             <?php if($row['paid_date'] == '0'): ?>
-                                <span class="badge badge-danger">New Member</span>
-                             <?php else: ?>
-                                <?= esc($row['paid_date']) ?>
-                             <?php endif; ?>
-                        </td>
-                        <td><strong>₹<?= $row['amount'] ?></strong></td>
-                        <td><?= esc($row['services']) ?></td>
-                        <td><?= esc($row['plan']) ?> Month/s</td>
-                        <td>
-                            <a href="<?= site_url('admin/user-payment?id=' . $row['user_id']) ?>" class="btn btn-sm btn-success">
-                                <i class="fas fa-money-bill-wave"></i> Make Payment
-                            </a>
-                        </td>
-                        <td>
-                             <a href="<?= site_url('admin/sendReminder?id=' . $row['user_id']) ?>" 
-                                class="btn btn-sm btn-danger <?= ($row['reminder'] == 1 ? 'disabled' : '') ?>"
-                                <?= ($row['reminder'] == 1 ? 'style="opacity:0.5;pointer-events:none;"' : '') ?>>
-                                <i class="fas fa-bell"></i> Alert
-                            </a>
-                        </td>
-                    </tr>
-                <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<?= $this->endSection() ?>
-
+<?php
+// ✅ FIXED: Removed session checking (handled by controller)
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <title>Gym System Admin - Payments</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
