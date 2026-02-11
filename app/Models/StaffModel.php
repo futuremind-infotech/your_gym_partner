@@ -6,12 +6,12 @@ use CodeIgniter\Model;
 
 class StaffModel extends Model
 {
-    protected $table = 'staffs';
-    protected $primaryKey = 'user_id';
-    protected $allowedFields = [
+    protected string $table = 'staffs';
+    protected string $primaryKey = 'user_id';
+    protected array $allowedFields = [
         'username','password','email','fullname','address','designation','gender','contact'
     ];
 
-    protected $useTimestamps = false;
+    protected bool $useTimestamps = false;
 }
 ?>

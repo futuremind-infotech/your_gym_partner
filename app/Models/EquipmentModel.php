@@ -6,12 +6,12 @@ use CodeIgniter\Model;
 
 class EquipmentModel extends Model
 {
-    protected $table = 'equipment';
-    protected $primaryKey = 'id';
-    protected $allowedFields = [
+    protected string $table = 'equipment';
+    protected string $primaryKey = 'id';
+    protected array $allowedFields = [
         'name','amount','quantity','vendor','description','address','contact','date'
     ];
 
-    protected $useTimestamps = false;
+    protected bool $useTimestamps = false;
 }
 ?>

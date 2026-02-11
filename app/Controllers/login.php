@@ -1,24 +1,33 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Helpers\PasswordHelper;
 
 class Login extends BaseController
 {
-    public function process()
+    public function process(): object
     {
         $username = $this->request->getPost('user');
-        $password = md5($this->request->getPost('pass'));
+        $password = $this->request->getPost('pass');
+
+        if (empty($username) || empty($password)) {
+            return redirect()->back()->with('error', 'Username and password required');
+        }
 
         $db = \Config\Database::connect();
-        $query = $db->query("SELECT * FROM admin WHERE password=? AND username=?", [$password, $username]);
-        $user = $query->getRowArray();
+        $user = $db->table('admin')
+            ->where('username', $username)
+            ->limit(1)
+            ->get()
+            ->getRowArray();
 
-        if ($user) {
+        if ($user && PasswordHelper::verify($password, $user['password'])) {
             session()->set([
                 'user_id' => $user['user_id'],
                 'username' => $username,
-                'isLoggedIn' => true
+                'isLoggedIn' => true,
             ]);
             return redirect()->to('dashboard');
         }

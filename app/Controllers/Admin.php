@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Helpers\PasswordHelper;
 
 class Admin extends BaseController
 {
     public function index()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
         return view('admin/index', ['page' => 'dashboard']);
@@ -16,72 +18,75 @@ class Admin extends BaseController
     // MEMBERS SECTION - FULL CRUD
     public function members()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
+
         $db = \Config\Database::connect();
         $data['members'] = $db->table('members')->orderBy('user_id', 'DESC')->get()->getResultArray();
         $data['page'] = 'members';
-        
+
         return view('admin/members', $data);
     }
 
     public function memberEntry()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
         return view('admin/member-entry', ['page' => 'members-entry']);
     }
 
     // ✅ FIXED addMember - CLEAN SYNTAX + VALIDATION
-    public function addMember() 
-    { 
-            if (! session()->get('isLoggedIn')) {
+    public function addMember()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
-        if (strtolower($this->request->getMethod()) === 'post') {            $rules = [
+
+        if ($this->request->is('post')) {
+            $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]|is_unique[members.username]',
                 'password' => 'required|min_length[6]',
                 'gender' => 'required',
                 'services' => 'required',
                 'amount' => 'required|numeric|greater_than[0]',
-                'plan' => 'required|integer|greater_than[0]'
+                'plan' => 'required|integer|greater_than[0]',
             ];
-            
-            if (! $this->validate($rules)) {
+
+            if (!$this->validate($rules)) {
                 return view('admin/member-entry', [
                     'page' => 'members-entry',
-                    'validation' => $this->validator
+                    'validation' => $this->validator,
                 ]);
             }
-            
+
             // Validation passed - proceed with insertion
+            $amount = (float) $this->request->getPost('amount');
+            $plan = (int) $this->request->getPost('plan');
+            $dor = $this->request->getPost('dor') ?? date('Y-m-d');
+
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
-                'password' => md5($this->request->getPost('password')),
-                'dor' => $this->request->getPost('dor') ?: date('Y-m-d'),
+                'password' => PasswordHelper::legacyHash($this->request->getPost('password')),
+                'dor' => $dor,
                 'gender' => $this->request->getPost('gender'),
                 'services' => $this->request->getPost('services'),
-                'amount' => floatval($this->request->getPost('amount')) * intval($this->request->getPost('plan')),
+                'amount' => $amount * $plan,
                 'p_year' => date('Y'),
                 'paid_date' => date('Y-m-d'),
-                'plan' => $this->request->getPost('plan'),
-                'address' => $this->request->getPost('address'),
-                'contact' => $this->request->getPost('contact'),
+                'plan' => $plan,
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact') ?? '',
                 'attendance_count' => 0,
-                
-                // Ensure required columns are present to satisfy DB NOT NULL constraints
                 'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
                 'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
                 'progress_date' => date('Y-m-d'),
-                'status' => 'Active'
+                'status' => 'Active',
             ];
-            
+
             try {
                 $db = \Config\Database::connect();
                 $db->table('members')->insert($data);
@@ -92,132 +97,134 @@ class Admin extends BaseController
                 return view('admin/member-entry', ['page' => 'members-entry']);
             }
         }
-        
-        return view('admin/member-entry', ['page' => 'members-entry']); 
+
+        return view('admin/member-entry', ['page' => 'members-entry']);
     }
 
     // ✅ FIXED editMember - LOADS FORM DATA
     public function editMember()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
+
         $member_id = $this->request->getGet('id');
-        
+
         if (empty($member_id) || !is_numeric($member_id)) {
             session()->setFlashdata('error', 'Invalid member ID!');
             return redirect()->to('admin/members');
         }
-        
+
         $db = \Config\Database::connect();
         $member = $db->table('members')
-                    ->where('user_id', intval($member_id))
-                    ->limit(1)
-                    ->get()
-                    ->getRowArray();
-        
+            ->where('user_id', (int) $member_id)
+            ->limit(1)
+            ->get()
+            ->getRowArray();
+
         $data = [
             'page' => 'members-update',
-            'member' => $member
+            'member' => $member,
         ];
-        
+
         return view('admin/edit-member', $data);
     }
 
     // ✅ FIXED addMemberReq - INSERT NEW MEMBER
     public function addMemberReq()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
-        if (strtolower($this->request->getMethod()) === 'post') {
+
+        if ($this->request->is('post')) {
+            $amount = (float) $this->request->getPost('amount');
+            $plan = (int) $this->request->getPost('plan');
+            $dor = $this->request->getPost('dor') ?? date('Y-m-d');
+
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
-                'password' => md5($this->request->getPost('password')),
-                'dor' => $this->request->getPost('dor') ?: date('Y-m-d'),
+                'password' => PasswordHelper::legacyHash($this->request->getPost('password')),
+                'dor' => $dor,
                 'gender' => $this->request->getPost('gender'),
                 'services' => $this->request->getPost('services'),
-                'amount' => floatval($this->request->getPost('amount')) * intval($this->request->getPost('plan')),
+                'amount' => $amount * $plan,
                 'p_year' => date('Y'),
                 'paid_date' => date('Y-m-d'),
-                'plan' => $this->request->getPost('plan'),
-                'address' => $this->request->getPost('address'),
-                'contact' => $this->request->getPost('contact'),
+                'plan' => $plan,
+                'address' => $this->request->getPost('address') ?? '',
+                'contact' => $this->request->getPost('contact') ?? '',
                 'attendance_count' => 0,
-                // Add missing required columns
                 'ini_bodytype' => $this->request->getPost('ini_bodytype') ?? '',
                 'curr_bodytype' => $this->request->getPost('curr_bodytype') ?? '',
                 'progress_date' => date('Y-m-d'),
-                'status' => 'Active'
+                'status' => 'Active',
             ];
 
             $db = \Config\Database::connect();
-            // Use Query Builder to avoid column-order issues
             $db->table('members')->insert($data);
-            
+
             if ($db->affectedRows() > 0) {
                 session()->setFlashdata('success', '✅ New member added successfully!');
             } else {
                 session()->setFlashdata('error', '❌ Error adding member!');
             }
-            
+
             return redirect()->to('admin/members');
         }
-        
+
         return view('admin/member-entry', ['page' => 'members-entry']);
     }
 
     // ✅ FIXED editMemberReq - UPDATE MEMBER (SINGLE COPY)
     public function editMemberReq()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
-        if (strtolower($this->request->getMethod()) === 'post') {
+
+        if ($this->request->is('post')) {
             $user_id = $this->request->getPost('user_id');
-            
+
             if (!$user_id) {
                 session()->setFlashdata('error', '❌ Invalid member ID!');
                 return redirect()->to('admin/members');
             }
-            
+
             $rules = [
                 'fullname' => 'required|min_length[2]',
                 'username' => 'required|min_length[3]',
                 'gender' => 'required',
                 'amount' => 'required|numeric|greater_than[0]',
-                'plan' => 'required|integer|greater_than[0]'
+                'plan' => 'required|integer|greater_than[0]',
             ];
-            
-            if (! $this->validate($rules)) {
+
+            if (!$this->validate($rules)) {
                 $db = \Config\Database::connect();
                 $member = $db->table('members')->where('user_id', $user_id)->get()->getRowArray();
                 return view('admin/edit-member', [
                     'member' => $member,
                     'member_id' => $user_id,
-                    'validation' => $this->validator
+                    'validation' => $this->validator,
                 ]);
             }
-            
+
             $data = [
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
                 'gender' => $this->request->getPost('gender'),
-                'contact' => $this->request->getPost('contact'),
-                'address' => $this->request->getPost('address'),
+                'contact' => $this->request->getPost('contact') ?? '',
+                'address' => $this->request->getPost('address') ?? '',
                 'amount' => $this->request->getPost('amount'),
                 'services' => $this->request->getPost('services'),
-                'plan' => $this->request->getPost('plan')
+                'plan' => $this->request->getPost('plan'),
             ];
-            
+
             try {
                 $db = \Config\Database::connect();
                 $db->table('members')->where('user_id', $user_id)->update($data);
-                
+
                 if ($db->affectedRows() > 0) {
                     session()->setFlashdata('success', '✅ Member updated successfully!');
                 } else {
@@ -229,19 +236,19 @@ class Admin extends BaseController
                 return redirect()->back();
             }
         }
-        
+
         return view('admin/edit-member', ['page' => 'members-update']);
     }
 
-    public function removeMember() 
-    { 
-        if (! session()->get('isLoggedIn')) {
+    public function removeMember()
+    {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
         $id = $this->request->getGet('id') ?? 0;
         if ($id) {
             $db = \Config\Database::connect();
-            $db->query("DELETE FROM members WHERE user_id = ?", [$id]);
+            $db->query('DELETE FROM members WHERE user_id = ?', [$id]);
             session()->setFlashdata('success', 'Member deleted!');
         }
         return redirect()->to('admin/members');
@@ -249,32 +256,32 @@ class Admin extends BaseController
 
     public function updateProgress()
     {
-        if (! session()->get('isLoggedIn')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/');
         }
-        
-        if (strtolower($this->request->getMethod()) === 'post') {
+
+        if ($this->request->is('post')) {
             $member_id = $this->request->getPost('id');
-            $ini_weight = $this->request->getPost('ini_weight');
-            $curr_weight = $this->request->getPost('curr_weight');
-            $ini_bodytype = $this->request->getPost('ini_bodytype');
-            $curr_bodytype = $this->request->getPost('curr_bodytype');
-            
+            $ini_weight = (float) ($this->request->getPost('ini_weight') ?? 0);
+            $curr_weight = (float) ($this->request->getPost('curr_weight') ?? 0);
+            $ini_bodytype = $this->request->getPost('ini_bodytype') ?? '';
+            $curr_bodytype = $this->request->getPost('curr_bodytype') ?? '';
+
             if (!$member_id) {
                 session()->setFlashdata('error', '❌ Invalid member ID!');
                 return redirect()->back();
             }
-            
+
             try {
                 $db = \Config\Database::connect();
                 $db->table('members')->where('user_id', $member_id)->update([
-                    'ini_weight' => $ini_weight ?? 0,
-                    'curr_weight' => $curr_weight ?? 0,
-                    'ini_bodytype' => $ini_bodytype ?? '',
-                    'curr_bodytype' => $curr_bodytype ?? '',
-                    'progress_date' => date('Y-m-d')
+                    'ini_weight' => $ini_weight,
+                    'curr_weight' => $curr_weight,
+                    'ini_bodytype' => $ini_bodytype,
+                    'curr_bodytype' => $curr_bodytype,
+                    'progress_date' => date('Y-m-d'),
                 ]);
-                
+
                 session()->setFlashdata('success', '✅ Progress updated successfully!');
                 return redirect()->to('admin/customer-progress');
             } catch (\Exception $e) {
@@ -282,12 +289,19 @@ class Admin extends BaseController
                 return redirect()->back();
             }
         }
-        
+
         return redirect()->to('admin/customer-progress');
     }
-    
-    public function deleteMember() { return view('admin/actions/delete-member', ['page' => 'members-remove']); }
-    public function memberStatus() { return view('admin/member-status', ['page' => 'member-status']); }
+
+    public function deleteMember()
+    {
+        return view('admin/actions/delete-member', ['page' => 'members-remove']);
+    }
+
+    public function memberStatus()
+    {
+        return view('admin/member-status', ['page' => 'member-status']);
+    }
 
     // ✅ EQUIPMENT SECTION - FULL CRUD
     public function equipment()
