@@ -109,8 +109,10 @@
                         name="fullname" 
                         class="form-control" 
                         placeholder="Enter full name"
+                        pattern="[a-zA-Z\s\-]{3,100}"
+                        title="Name must contain only letters, spaces, and hyphens (3-100 characters)"
                         required>
-                    <small class="form-text">First name and last name</small>
+                    <small class="form-text">First name and last name (letters only)</small>
                 </div>
 
                 <div class="form-group">
@@ -253,8 +255,10 @@
                         name="services" 
                         class="form-control" 
                         placeholder="e.g., Fitness, Yoga, Personal Training"
+                        pattern="[a-zA-Z\s]{2,50}"
+                        title="Service type must contain only letters and spaces (2-50 characters)"
                         required>
-                    <small class="form-text">Type of service member will subscribe</small>
+                    <small class="form-text">Type of service member will subscribe (letters only)</small>
                 </div>
 
                 <div class="form-group">

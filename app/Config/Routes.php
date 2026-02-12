@@ -106,7 +106,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('announcement', 'Admin::announcement');
     $routes->post('post-announcement', 'Admin::postAnnouncement');
     $routes->get('manage-announcement', 'Admin::manageAnnouncement');
-    $routes->post('remove-announcement', 'Admin::removeAnnouncement');
+    $routes->get('remove-announcement', 'Admin::removeAnnouncement');
 
     // ===================== STAFF =====================
     $routes->get('staffs', 'Admin::staffs');

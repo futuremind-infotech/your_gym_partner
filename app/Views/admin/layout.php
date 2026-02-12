@@ -176,7 +176,10 @@
             </div>
             
             <div class="header-actions">
-                <input type="text" class="search-box" placeholder="Search anything..." id="headerSearch">
+                <div style="position: relative; flex: 1; max-width: 400px;">
+                    <input type="text" class="search-box" placeholder="Search members, staff..." id="headerSearch" style="width: 100%;">
+                    <div id="searchResults" style="position: absolute; top: 45px; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); border-radius: var(--radius); max-height: 400px; overflow-y: auto; display: none; z-index: 1000; box-shadow: var(--shadow-md);;"></div>
+                </div>
                 
                 <div class="notification-bell" title="Notifications">
                     <i class="fas fa-bell"></i>
@@ -250,6 +253,82 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
     });
+
+    // Header Search Functionality
+    const headerSearch = document.getElementById('headerSearch');
+    const searchResults = document.getElementById('searchResults');
+    
+    if (headerSearch) {
+        headerSearch.addEventListener('input', function(e) {
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            // Search through members and staff
+            const currentPage = window.location.pathname;
+            const searchUrl = '<?= base_url('admin/members') ?>';
+            
+            fetch(`<?= base_url('admin/members') ?>?search=${encodeURIComponent(query)}`)
+                .then(response => response.text())
+                .then(html => {
+                    // Parse results and display them
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const tableRows = doc.querySelectorAll('table tbody tr');
+                    
+                    if (tableRows.length > 0) {
+                        let resultsHTML = '<div style="padding: 0.5rem;">';
+                        resultsHTML += '<div style="padding: 0.5rem 1rem; color: var(--gray-600); font-size: 0.85rem; font-weight: 600; border-bottom: 1px solid var(--gray-200);">Members</div>';
+                        
+                        let count = 0;
+                        tableRows.forEach(row => {
+                            if (count >= 5) return; // Limit to 5 results
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length >= 2) {
+                                const numberCell = cells[1];
+                                const result = numberCell.textContent.trim();
+                                if (result.toLowerCase().includes(query.toLowerCase())) {
+                                    const link = row.querySelector('a');
+                                    const href = link ? link.href : '<?= base_url('admin/members') ?>';
+                                    resultsHTML += `
+                                        <a href="${href}" style="display: block; padding: 0.75rem 1rem; color: var(--gray-800); border-bottom: 1px solid var(--gray-100); transition: background 0.2s; text-decoration: none;">
+                                            <i class="fas fa-user" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                                            ${result}
+                                        </a>
+                                    `;
+                                    count++;
+                                }
+                            }
+                        });
+                        
+                        if (count === 0) {
+                            resultsHTML += '<div style="padding: 1rem; text-align: center; color: var(--gray-500);">No members found</div>';
+                        }
+                        
+                        resultsHTML += '</div>';
+                        searchResults.innerHTML = resultsHTML;
+                        searchResults.style.display = 'block';
+                    } else {
+                        searchResults.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--gray-500);">No results found</div>';
+                        searchResults.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    searchResults.style.display = 'none';
+                });
+        });
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!headerSearch.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
 });
 </script>
 <?= $this->renderSection('scripts') ?>

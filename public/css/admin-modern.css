@@ -716,6 +716,17 @@ tbody tr:last-child td {
     gap: 0.5rem;
 }
 
+/* Icon Button */
+.btn-icon {
+    padding: 0.5rem 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    min-width: 36px;
+    height: 36px;
+}
+
 /* ============= FORMS ============= */
 .form-group {
     margin-bottom: 1.5rem;

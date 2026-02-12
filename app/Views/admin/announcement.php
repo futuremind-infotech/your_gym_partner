@@ -25,15 +25,16 @@
             </div>
             <div class="card-body">
                 <form action="<?= site_url('admin/post-announcement') ?>" method="POST">
+                    <?= csrf_field() ?>
                     
                     <div class="mb-4">
                         <label class="form-label">Announcement Message</label>
-                        <textarea class="form-control" name="message" rows="6" placeholder="Enter text ..." style="width: 100%; border: 1px solid var(--gray-300); border-radius: 4px; padding: 10px;" required></textarea>
+                        <textarea class="form-control" name="message" rows="6" placeholder="Enter text ..." required></textarea>
                     </div>
                     
                     <div class="mb-4">
                         <label class="form-label">Applied Date</label>
-                        <input type="date" name="date" class="form-control" style="width: 100%; border: 1px solid var(--gray-300); border-radius: 4px; padding: 10px;" required>
+                        <input type="date" name="date" class="form-control" required>
                     </div>
                     
                     <div class="text-center" style="margin-top: 2rem;">

@@ -31,7 +31,7 @@
     <li class="<?php if($page=='payment'){ echo 'active'; }?>"><a href="<?= base_url('admin/payment') ?>"><i class="fas fa-hand-holding-usd"></i> <span>Payments</span></a></li>
     <li class="<?php if($page=='announcement'){ echo 'active'; }?>"><a href="<?= base_url('admin/announcement') ?>"><i class="fas fa-bullhorn"></i> <span>Announcement</span></a></li>
     <li class="<?php if($page=='staff-management'){ echo 'active'; }?>"><a href="<?= base_url('admin/staffs') ?>"><i class="fas fa-briefcase"></i> <span>Staff Management</span></a></li>
-    <li class="submenu"> <a href="#"><i class="fas fa-file"></i> <span>Reports</span></a>
+    <li class="<?php if(in_array($page, ['chart','member-repo','c-p-r'])){ echo 'submenu active'; } else { echo 'submenu'; }?>"> <a href="#"><i class="fas fa-file"></i> <span>Reports</span></a>
     <ul>
         <li class="<?php if($page=='chart'){ echo 'active'; }?>"><a href="<?= base_url('admin/reports') ?>"><i class="fas fa-arrow-right"></i> Chart Representation</a></li>
         <li class="<?php if($page=='member-repo'){ echo 'active'; }?>"><a href="<?= base_url('admin/members-report') ?>"><i class="fas fa-arrow-right"></i> Members Report</a></li>
