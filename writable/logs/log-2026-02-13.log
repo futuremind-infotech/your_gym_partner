@@ -1,0 +1,14 @@
+CRITICAL - 2026-02-13 04:48:52 --> ErrorException: Undefined property: CodeIgniter\View\View::$request
+[Method: GET, Route: admin/sendReminder]
+in APPPATH\Views\admin\sendReminder.php on line 8.
+ 1 APPPATH\Views\admin\sendReminder.php(8): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined property: CodeIgniter\\View\\View::$request', 'C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\sendReminder.php', 8)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\your_gym_partner\\app\\Views\\admin\\sendReminder.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/sendReminder', [], true)
+ 5 APPPATH\Controllers\Admin.php(854): view('admin/sendReminder', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->sendReminder()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(65): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
