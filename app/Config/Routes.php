@@ -100,7 +100,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('userpay', 'Admin::userpay');
     $routes->get('payment-receipt', 'Admin::userpay');
     $routes->post('search-result', 'Admin::searchResult');
-    $routes->post('sendReminder', 'Admin::sendReminder');
+    $routes->match(['get', 'post'], 'sendReminder', 'Admin::sendReminder');
 
     // ===================== ANNOUNCEMENT =====================
     $routes->get('announcement', 'Admin::announcement');

@@ -721,7 +721,21 @@ class Admin extends BaseController
     public function reports() { return view('admin/reports', ['page' => 'chart']); }
     public function customerProgress() { return view('admin/customer-progress', ['page' => 'manage-customer-progress']); }
     public function progressReport() { return view('admin/progress-report', ['page' => 'c-p-r']); }
-    public function viewProgressReport() { return view('admin/view-progress-report', ['page' => 'c-p-r']); }
+    public function viewProgressReport() { 
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to(site_url('admin'));
+        }
+        $db = \Config\Database::connect();
+        $member_id = $this->request->getGet('id');
+        if (!$member_id) {
+            return redirect()->to(site_url('admin/customer-progress'));
+        }
+        $member = $db->table('members')->where('user_id', $member_id)->get()->getRowArray();
+        if (!$member) {
+            return redirect()->to(site_url('admin/customer-progress'));
+        }
+        return view('admin/view-progress-report', ['member' => $member, 'page' => 'c-p-r']);
+    }
     public function membersReport() { return view('admin/members-report', ['page' => 'member-repo']); }
     public function viewMemberReport() { 
         if (!session()->get('isLoggedIn')) {
@@ -738,7 +752,12 @@ class Admin extends BaseController
         }
         return view('admin/view-member-report', ['member' => $member, 'page' => 'member-repo']);
     }
-    public function servicesReport() { return view('admin/services-report', ['page' => 'services-report']); }
+    
+    public function servicesReport() { 
+        $db = \Config\Database::connect();
+        $services = $db->query("SELECT services, count(*) as number FROM members GROUP BY services")->getResultArray() ?? [];
+        return view('admin/services-report', ['services' => $services, 'page' => 'service-repo']); 
+    }
 
     public function payment() { return view('admin/payment', ['page' => 'payment']); }
     public function userPayment()

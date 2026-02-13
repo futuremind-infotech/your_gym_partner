@@ -140,7 +140,7 @@
                 </li>
                 
                 <!-- Reports -->
-                <li class="submenu <?= in_array($page, ['chart', 'member-repo', 'c-p-r'])?'active':'' ?>">
+                <li class="submenu <?= in_array($page, ['chart', 'member-repo', 'c-p-r', 'service-repo'])?'active':'' ?>">
                     <span class="submenu-toggle">
                         <i class="fas fa-chart-bar"></i>
                         <span>Reports</span>
@@ -149,6 +149,21 @@
                         <li class="<?= $page=='chart'?'active':'' ?>">
                             <a href="<?= base_url('admin/reports') ?>">
                                 <i class="fas fa-chart-pie"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="<?= $page=='member-repo'?'active':'' ?>">
+                            <a href="<?= base_url('admin/members-report') ?>">
+                                <i class="fas fa-users"></i> Members Report
+                            </a>
+                        </li>
+                        <li class="<?= $page=='c-p-r'?'active':'' ?>">
+                            <a href="<?= base_url('admin/progress-report') ?>">
+                                <i class="fas fa-signal"></i> Progress Report
+                            </a>
+                        </li>
+                        <li class="<?= $page=='service-repo'?'active':'' ?>">
+                            <a href="<?= base_url('admin/services-report') ?>">
+                                <i class="fas fa-briefcase"></i> Services Report
                             </a>
                         </li>
                     </ul>
