@@ -132,17 +132,19 @@ if (!$member) {
     document.getElementById('totalValue').textContent = total;
   }
 
-  // Alert payment handler
+  // Alert payment handler - send email reminder
   function alertPayment() {
     var fullname = '<?php echo htmlspecialchars($member['fullname']); ?>';
+    var userId = '<?php echo htmlspecialchars($member['user_id']); ?>';
     var amount = parseInt(document.getElementById('amount').value) || 55;
     var plan = parseInt(document.getElementById('plan').value) || 1;
     var total = amount * plan;
     
-    alert('Payment Alert for ' + fullname + '\n\nAmount per month: ₹' + amount + 
-          '\nPlan: ' + plan + ' month(s)' + 
-          '\nTotal Amount: ₹' + total + 
-          '\n\nPlease arrange the payment.');
+    var confirmed = confirm('Send payment reminder email to ' + fullname + '?\n\nAmount Due: ₹' + total);
+    
+    if (confirmed) {
+      window.location.href = '<?= base_url("admin/sendReminder") ?>?id=' + userId;
+    }
   }
 </script>
 

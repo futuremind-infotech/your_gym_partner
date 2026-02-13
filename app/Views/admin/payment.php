@@ -11,15 +11,49 @@
     </div>
 </div>
 
+<!-- Flash Messages -->
+<?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> <strong>Success!</strong> <?= session()->getFlashdata('success') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> <strong>Error!</strong> <?= session()->getFlashdata('error') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('info')): ?>
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="fas fa-info-circle"></i> <?= session()->getFlashdata('info') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<!-- Debug Info (Development) -->
+<?php if (ENVIRONMENT === 'development'): ?>
+<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 12px; display: none;" id="debugInfo">
+    <strong>Debug:</strong> base_url() = <?= htmlspecialchars(base_url()) ?>
+</div>
+<?php endif; ?>
+
 <div class="card">
     <div class="card-header" style="justify-content: space-between;">
         <h3 class="card-title"><i class="fas fa-hand-holding-usd"></i> Member's Payment Table</h3>
         
-        <form role="search" method="POST" action="<?= base_url('admin/search-result') ?>" style="display: flex; gap: 10px;">
-            <input type="text" placeholder="Search Member..." name="search" required 
-                   style="padding: 5px 10px; border: 1px solid var(--gray-200); border-radius: 4px;">
-            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
-        </form>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="<?= site_url('admin/sendBulkReminders') ?>" class="btn btn-warning" title="Send reminders to all members who haven't received one">
+                <i class="fas fa-bell"></i> Send Bulk Reminders
+            </a>
+            <form role="search" method="POST" action="<?= base_url('admin/search-result') ?>" style="display: flex; gap: 10px;">
+                <input type="text" placeholder="Search Member..." name="search" required 
+                       style="padding: 5px 10px; border: 1px solid var(--gray-200); border-radius: 4px;">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
     </div>
     
     <div class="card-body" style="padding: 0;">
@@ -64,11 +98,15 @@
                             </a>
                         </td>
                         <td>
-                             <a href="<?= site_url('admin/sendReminder?id=' . $row['user_id']) ?>" 
-                                class="btn btn-sm btn-danger <?= ($row['reminder'] == 1 ? 'disabled' : '') ?>"
-                                <?= ($row['reminder'] == 1 ? 'style="opacity:0.5;pointer-events:none;"' : '') ?>>
-                                <i class="fas fa-bell"></i> Alert
-                            </a>
+                             <?php if ($row['reminder'] == 1): ?>
+                                <span class="btn btn-sm btn-secondary disabled" style="opacity: 0.6; cursor: not-allowed;">
+                                    <i class="fas fa-check"></i> Sent
+                                </span>
+                             <?php else: ?>
+                                <a href="<?= site_url('admin/sendReminder/' . intval($row['user_id'])) ?>" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-bell"></i> Alert
+                                </a>
+                             <?php endif; ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -79,127 +117,6 @@
 </div>
 
 <?= $this->endSection() ?>
-
-<title>Gym System Admin - Payments</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="<?= base_url('css/bootstrap.min.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/bootstrap-responsive.min.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/fullcalendar.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/matrix-style.css') ?>" />
-<link rel="stylesheet" href="<?= base_url('css/matrix-media.css') ?>" />
-<link href="<?= base_url('font-awesome/css/fontawesome.css') ?>" rel="stylesheet" />
-<link href="<?= base_url('font-awesome/css/all.css') ?>" rel="stylesheet" />
-<link rel="stylesheet" href="<?= base_url('css/jquery.gritter.css') ?>" />
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-</head>
-<body>
-
-<!--Header-part-->
-<div id="header">
-  <h1><a href="<?= base_url('admin') ?>">Perfect Gym Admin</a></h1>
-</div>
-<!--close-Header-part--> 
-
-<!--top-Header-menu-->
-<?php include APPPATH . 'Views/admin/includes/topheader.php'?>
-<!--close-top-Header-menu-->
-
-<!--sidebar-menu-->
-<?php $page='payment'; include APPPATH . 'Views/admin/includes/sidebar.php'?>
-<!--sidebar-menu-->
-
-<div id="content">
-  <div id="content-header">
-    <div id="breadcrumb"> <a href="<?= base_url('admin') ?>" title="Go to Home" class="tip-bottom"><i class="fas fa-home"></i> Home</a> <a href="<?= base_url('admin/payment') ?>" class="current">Payments</a> </div>
-    <h1 class="text-center">Registered Member's Payment <i class="fas fa-group"></i></h1>
-  </div>
-  <div class="container-fluid">
-    <hr>
-    <div class="row-fluid">
-      <div class="span12">
-
-      <div class='widget-box'>
-          <div class='widget-title'> <span class='icon'> <i class='fas fa-th'></i> </span>
-            <h5>Member's Payment table</h5>
-            <form id="custom-search-form" role="search" method="POST" action="<?= base_url('admin/search-result') ?>" class="form-search form-horizontal pull-right">
-                <div class="input-append span12">
-                    <input type="text" class="search-query" placeholder="Search" name="search" required>
-                    <button type="submit" class="btn"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-          </div>
-          
-          <div class='widget-content nopadding'>
-
-
-
-           <!-- ✅ FIXED: Updated to use CodeIgniter database and proper routes -->
-	  
-	  <?php
-      $db = \Config\Database::connect();
-      $qry = "SELECT * FROM members";
-      $cnt = 1;
-      $result = $db->query($qry)->getResultArray();
-
-      echo "<table class='table table-bordered data-table table-hover'>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Member</th>
-                  <th>Last Payment Date</th>
-                  <th>Amount</th>
-                  <th>Chosen Service</th>
-                  <th>Plan</th>
-                  <th>Action</th>
-                  <th>Remind</th>
-                </tr>
-              </thead>";
-              
-      foreach ($result as $row) { ?>
-            
-            <tbody> 
-               
-                <td><div class='text-center'><?php echo $cnt;?></div></td>
-                <td><div class='text-center'><?php echo $row['fullname']?></div></td>
-                <td><div class='text-center'><?php echo($row['paid_date'] == 0 ? "New Member" : $row['paid_date'])?></div></td>
-                
-                <td><div class='text-center'><?php echo '₹'.$row['amount']?></div></td>
-                <td><div class='text-center'><?php echo $row['services']?></div></td>
-                <td><div class='text-center'><?php echo $row['plan']." Month/s"?></div></td>
-                <td><div class='text-center'><a href='<?= site_url('admin/user-payment?id=' . $row['user_id']) ?>'><button class='btn btn-success btn'><i class=''></i> Make Payment</button></a></div></td>
-                <td><div class='text-center'><a href='<?= site_url('admin/sendReminder?id=' . $row['user_id']) ?>'><button class='btn btn-danger btn' <?php echo($row['reminder'] == 1 ? "disabled" : "")?>>Alert</button></a></div></td>
-              </tbody>
-          <?php $cnt++; }
-
-            ?>
-
-            </table>
-          </div>
-        </div>
-   
-		
-	
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--end-main-container-part-->
-
-<!--Footer-part-->
-
-<div class="row-fluid">
-  <div id="footer" class="span12"> <?php echo date("Y");?> &copy; Developed By Naseeb Bajracharya</a> </div>
-</div>
-
-
-<style>
-#footer {
-  color: white;
-}
-</style>
-<!--end-Footer-part-->
 
 <style>
     #custom-search-form {

@@ -74,6 +74,11 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" value="<?= esc($member['email'] ?? '') ?>" placeholder="member@example.com">
+                    </div>
+                    
+                    <div class="mb-4">
                         <label class="form-label">Contact Number</label>
                         <input type="text" name="contact" class="form-control" value="<?= esc($member['contact']) ?>">
                     </div>

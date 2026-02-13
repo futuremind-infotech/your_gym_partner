@@ -91,6 +91,7 @@ class Admin extends BaseController
                 'p_year' => date('Y'),
                 'paid_date' => date('Y-m-d'),
                 'plan' => $plan,
+                'email' => $this->request->getPost('email') ?? '',
                 'address' => $this->request->getPost('address') ?? '',
                 'contact' => $this->request->getPost('contact') ?? '',
                 'attendance_count' => 0,
@@ -227,6 +228,7 @@ class Admin extends BaseController
                 'fullname' => $this->request->getPost('fullname'),
                 'username' => $this->request->getPost('username'),
                 'gender' => $this->request->getPost('gender'),
+                'email' => $this->request->getPost('email') ?? '',
                 'contact' => $this->request->getPost('contact') ?? '',
                 'address' => $this->request->getPost('address') ?? '',
                 'amount' => $this->request->getPost('amount'),
@@ -851,7 +853,296 @@ class Admin extends BaseController
     }
     
     public function searchResult() { return view('admin/search-result', ['page' => 'payment']); }
-    public function sendReminder() { return view('admin/sendReminder', ['page' => 'payment']); }
+    public function sendReminder($member_id = null) {
+        // Initialize database connection first
+        $db = \Config\Database::connect();
+        
+        // Get member_id from URL segment first, then fallback to query/post
+        if (!$member_id) {
+            $member_id = $this->request->getGet('id') ?? $this->request->getPost('member_id');
+        }
+        
+        log_message('info', '═══════════ sendReminder CALLED ═══════════');
+        log_message('info', 'Method: ' . $this->request->getMethod());
+        log_message('info', 'member_id parameter: ' . var_export($member_id, true));
+        log_message('info', 'POST data: ' . json_encode($this->request->getPost()));
+        
+        // Handle POST request (send email or update email)
+        if ($this->request->getMethod() === 'post') {
+            log_message('info', '→ Processing POST request');
+            $action = $this->request->getPost('action');
+            log_message('info', '→ Action: ' . var_export($action, true));
+            
+            if (!$member_id) {
+                log_message('error', '✗ POST: No valid member_id found');
+                return redirect()->back()->with('error', 'Invalid member ID');
+            }
+            
+            log_message('info', '→ Member ID validated: ' . intval($member_id));
+            
+            // If action is to add/update email
+            if ($action === 'update_email') {
+                $email = trim($this->request->getPost('email'));
+                
+                if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    return redirect()->back()->with('error', 'Please enter a valid email address');
+                }
+                
+                // Update email in database
+                $db->query("UPDATE members SET email = ? WHERE user_id = ?", [$email, $member_id]);
+                
+                return redirect()->back()->with('success', 'Email updated successfully. Now you can send the reminder.');
+            }
+            
+            // If action is to send reminder
+            if ($action === 'send_reminder') {
+                try {
+                    log_message('info', '→ POST: Starting send_reminder action for member_id: ' . $member_id);
+                    
+                    $member = $db->query("SELECT * FROM members WHERE user_id = ?", [$member_id])->getRowArray();
+                    
+                    if (!$member) {
+                        log_message('error', 'Member not found for ID: ' . $member_id);
+                        return redirect()->back()->with('error', 'Member not found');
+                    }
+                    
+                    if (empty($member['email'])) {
+                        log_message('warning', 'No email for member ID: ' . $member_id);
+                        return redirect()->back()->with('error', 'Email address is required. Please add email first.');
+                    }
+                    
+                    log_message('info', '→ Member found: ' . $member['fullname'] . ' (' . $member['email'] . ')');
+                    
+                    // Update reminder flag in database FIRST (don't wait for email)
+                    $db->query("UPDATE members SET reminder = 1 WHERE user_id = ?", [$member_id]);
+                    log_message('info', '✓ Reminder flag updated in database for member ID: ' . $member_id);
+                    
+                    // Attempt to send email but don't block (use timeout and error suppression)
+                    log_message('info', '→ Attempting to send email (non-blocking)...');
+                    
+                    try {
+                        $emailService = \Config\Services::email();
+                        $emailService->clear();
+                        
+                        $emailService->setFrom('noreply@yourgymspartner.com', 'Your Gym Partner');
+                        $emailService->setTo(trim($member['email']));
+                        $emailService->setReplyTo('noreply@yourgymspartner.com');
+                        $emailService->setSubject('Payment Reminder - ' . $member['fullname']);
+                        
+                        $memberName = htmlspecialchars($member['fullname'], ENT_QUOTES, 'UTF-8');
+                        $memberService = htmlspecialchars($member['services'], ENT_QUOTES, 'UTF-8');
+                        $memberAmount = htmlspecialchars($member['amount'], ENT_QUOTES, 'UTF-8');
+                        $memberPaidDate = htmlspecialchars($member['paid_date'], ENT_QUOTES, 'UTF-8');
+                        
+                        $emailBody = "
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; color: #333; }
+                                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                                .header { background: #1f4e78; color: white; padding: 20px; border-radius: 5px 5px 0 0; }
+                                .content { background: #f8f9fa; padding: 20px; }
+                                .footer { background: #e9ecef; padding: 15px; text-align: center; font-size: 12px; }
+                                .amount { color: #dc3545; font-size: 18px; font-weight: bold; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <div class='header'>
+                                    <h2>Payment Reminder Notice</h2>
+                                </div>
+                                <div class='content'>
+                                    <p>Dear <strong>" . $memberName . "</strong>,</p>
+                                    <p>This is a friendly reminder that your gym membership payment is due.</p>
+                                    <p><strong>Payment Details:</strong></p>
+                                    <ul>
+                                        <li><strong>Service:</strong> " . $memberService . "</li>
+                                        <li><strong>Amount Due:</strong> <span class='amount'>₹" . $memberAmount . "</span></li>
+                                        <li><strong>Last Payment Date:</strong> " . $memberPaidDate . "</li>
+                                    </ul>
+                                    <p>Please complete your payment at your earliest convenience to avoid any interruption to your membership.</p>
+                                    <p>If you have already made the payment, please disregard this message.</p>
+                                    <p>Thank you for being a valued member of our gym!</p>
+                                    <p>Best regards,<br><strong>Your Gym Partner Administration</strong></p>
+                                </div>
+                                <div class='footer'>
+                                    <p>© 2026 Your Gym Partner. All rights reserved.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+                        
+                        $emailService->setMessage($emailBody);
+                        $emailService->setMailType('html');
+                        
+                        // Try to send but suppress errors and don't wait
+                        @$emailService->send(false);
+                        log_message('info', 'Email send attempt completed for: ' . $member['email']);
+                        
+                    } catch (\Throwable $e) {
+                        log_message('warning', 'Email send error (non-critical): ' . $e->getMessage());
+                    }
+                    
+                    // ALWAYS redirect after updating database
+                    log_message('info', '✓ Redirecting to admin/payment with success message');
+                    return redirect()->to('admin/payment')->with('success', 'Reminder sent to ' . htmlspecialchars($member['email'], ENT_QUOTES, 'UTF-8'));
+                    
+                } catch (\Throwable $e) {
+                    log_message('error', 'Send reminder fatal error: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+                }
+            }
+        }
+        
+        // Handle GET request (display form)
+        log_message('info', '→ Displaying send reminder form for member ID: ' . intval($member_id));
+        
+        if (!$member_id || !is_numeric($member_id) || intval($member_id) <= 0) {
+            log_message('warning', '✗ GET: Invalid member ID provided: ' . var_export($member_id, true));
+            return redirect()->to('admin/payment')->with('error', 'Invalid member ID provided');
+        }
+        
+        $member_id = intval($member_id);
+        log_message('info', '→ Member ID validated as: ' . $member_id);
+        
+        $member = $db->query("SELECT * FROM members WHERE user_id = ?", [$member_id])->getRowArray();
+        
+        if (!$member) {
+            log_message('warning', '✗ GET: Member not found with ID: ' . $member_id);
+            return redirect()->to('admin/payment')->with('error', 'Member not found');
+        }
+        
+        log_message('info', '✓ GET: Rendering form for member: ' . htmlspecialchars($member['fullname']));
+        
+        return view('admin/sendReminder', [
+            'page' => 'payment',
+            'member' => $member
+        ]);
+    }
+
+    // ✅ SEND BULK REMINDERS TO ALL MEMBERS WITHOUT REMINDER
+    public function sendBulkReminders() {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/');
+        }
+
+        if ($this->request->getMethod() === 'post') {
+            try {
+                $db = \Config\Database::connect();
+                
+                // Get all members who haven't received a reminder yet (reminder = 0) and have email
+                $members = $db->query("SELECT * FROM members WHERE reminder = 0 AND email IS NOT NULL AND email != ''")->getResultArray();
+                
+                if (empty($members)) {
+                    return redirect()->to('admin/payment')->with('info', 'No members need reminders at this time.');
+                }
+                
+                $emailService = \Config\Services::email();
+                $successCount = 0;
+                $failedCount = 0;
+                $failedEmails = [];
+                
+                foreach ($members as $member) {
+                    try {
+                        // Clear previous email configurations
+                        $emailService->clear();
+                        
+                        // Set email configuration
+                        $emailService->setFrom('noreply@yourgymspartner.com', 'Your Gym Partner');
+                        $emailService->setTo(trim($member['email']));
+                        $emailService->setReplyTo('noreply@yourgymspartner.com');
+                        $emailService->setSubject('Payment Reminder - ' . $member['fullname']);
+                        
+                        // Prepare email body with proper escaping
+                        $memberName = htmlspecialchars($member['fullname'], ENT_QUOTES, 'UTF-8');
+                        $memberService = htmlspecialchars($member['services'], ENT_QUOTES, 'UTF-8');
+                        $memberAmount = htmlspecialchars($member['amount'], ENT_QUOTES, 'UTF-8');
+                        $memberPaidDate = htmlspecialchars($member['paid_date'], ENT_QUOTES, 'UTF-8');
+                        
+                        $emailBody = "
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; color: #333; }
+                                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                                .header { background: #1f4e78; color: white; padding: 20px; border-radius: 5px 5px 0 0; }
+                                .content { background: #f8f9fa; padding: 20px; }
+                                .footer { background: #e9ecef; padding: 15px; text-align: center; font-size: 12px; }
+                                .amount { color: #dc3545; font-size: 18px; font-weight: bold; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <div class='header'>
+                                    <h2>Payment Reminder Notice</h2>
+                                </div>
+                                <div class='content'>
+                                    <p>Dear <strong>" . $memberName . "</strong>,</p>
+                                    <p>This is a friendly reminder that your gym membership payment is due.</p>
+                                    <p><strong>Payment Details:</strong></p>
+                                    <ul>
+                                        <li><strong>Service:</strong> " . $memberService . "</li>
+                                        <li><strong>Amount Due:</strong> <span class='amount'>₹" . $memberAmount . "</span></li>
+                                        <li><strong>Last Payment Date:</strong> " . $memberPaidDate . "</li>
+                                    </ul>
+                                    <p>Please complete your payment at your earliest convenience to avoid any interruption to your membership.</p>
+                                    <p>If you have already made the payment, please disregard this message.</p>
+                                    <p>Thank you for being a valued member of our gym!</p>
+                                    <p>Best regards,<br><strong>Your Gym Partner Administration</strong></p>
+                                </div>
+                                <div class='footer'>
+                                    <p>© 2026 Your Gym Partner. All rights reserved.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+                        
+                        $emailService->setMessage($emailBody);
+                        $emailService->setMailType('html');
+                        
+                        // Attempt to send the email
+                        if ($emailService->send(false)) {
+                            $successCount++;
+                            log_message('info', 'Bulk reminder sent to: ' . $member['email']);
+                            // Mark reminder as sent
+                            $db->query("UPDATE members SET reminder = 1 WHERE user_id = ?", [$member['user_id']]);
+                        } else {
+                            $failedCount++;
+                            $failedEmails[] = $member['email'];
+                            log_message('warning', 'Failed to send bulk reminder to: ' . $member['email']);
+                        }
+                    } catch (\Throwable $e) {
+                        $failedCount++;
+                        $failedEmails[] = $member['email'];
+                        log_message('error', 'Bulk email exception for ' . $member['email'] . ': ' . $e->getMessage());
+                    }
+                }
+                
+                // Prepare success message
+                $message = "Bulk reminders sent to $successCount member(s)";
+                if ($failedCount > 0) {
+                    $message .= ". Failed to send to $failedCount member(s)";
+                }
+                
+                return redirect()->to('admin/payment')->with('success', $message);
+                
+            } catch (\Throwable $e) {
+                log_message('error', 'Bulk send reminder fatal error: ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Fatal error: ' . $e->getMessage());
+            }
+        }
+        
+        // Handle GET request (display confirmation page)
+        $db = \Config\Database::connect();
+        $pendingMembers = $db->query("SELECT * FROM members WHERE reminder = 0 AND email IS NOT NULL AND email != ''")->getResultArray();
+        
+        return view('admin/sendBulkReminders', [
+            'page' => 'payment',
+            'pendingMembers' => $pendingMembers,
+            'count' => count($pendingMembers)
+        ]);
+    }
+    
     public function searchResultProgress() { return view('admin/search-result-progress', ['page' => 'c-p-r']); }
 
     public function announcement() { return view('admin/announcement', ['page' => 'announcement']); }
